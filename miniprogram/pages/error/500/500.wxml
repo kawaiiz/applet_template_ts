@@ -1,0 +1,8 @@
+<my-nav>
+  <my-nav-btn slot="leftBtn" homepage="/pages/index/index/index"></my-nav-btn>
+  <view slot="center">提示</view>
+</my-nav>
+<view class="page-500">
+  <image class="img" src="../../../public/img/error.png" />
+  <view class="text">程序出了点小差~</view>
+</view>

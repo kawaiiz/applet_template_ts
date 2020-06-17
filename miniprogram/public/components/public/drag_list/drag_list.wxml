@@ -1,0 +1,6 @@
+<!-- 标签上需要绑定序号修改事件
+ bindindexChange="handleIndexChange" 
+ handleIndexChange({from:number,to:number}) -->
+<view class="drag-list">
+  <slot></slot>
+</view>

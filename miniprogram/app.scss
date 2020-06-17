@@ -1,0 +1,15 @@
+@import "./public/wxss/_common.scss";
+@import "./public/wxss/_main.scss";
+
+.page-title{
+  color:#FFFFFF
+}  
+
+//  改变checkbox 样式的css
+checkbox .wx-checkbox-input.wx-checkbox-input-checked{
+  border-color:$c-main !important;
+  background:$c-main !important;
+}
+checkbox .wx-checkbox-input.wx-checkbox-input-checked::before{
+  color:#fff!important;
+}

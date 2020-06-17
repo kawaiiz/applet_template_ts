@@ -1,0 +1,11 @@
+<view class="nav-btn-box">
+  <view class="capsule" style=" border:1rpx solid {{color}};">
+    <navigator class="icon" open-type="navigateBack" delta="1">
+      <i-icon type="return" size="24" color="{{color}}"></i-icon>
+    </navigator>
+    <view class="line" style="border-right: 1rpx solid {{color}};"></view>
+    <navigator class="icon" open-type="switchTab" url="{{homepage}}">
+      <i-icon type="homepage_fill" size="24" color="{{color}}"></i-icon>
+    </navigator>
+  </view>
+</view>

@@ -1,0 +1,6 @@
+<my-nav bgColor="#5593FF">
+  <view slot="center" class="page-title">我的</view>
+</my-nav>
+<view class="user">
+
+</view>

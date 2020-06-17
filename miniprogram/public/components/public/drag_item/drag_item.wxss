@@ -1,0 +1,1 @@
+.drag-item{position:relative;-webkit-transition:-webkit-transform .2s linear;transition:-webkit-transform .2s linear;transition:transform .2s linear;transition:transform .2s linear, -webkit-transform .2s linear}

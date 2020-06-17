@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "i-icon": "/public/plugIn/iview/icon/index",
+    "i-badge": "/public/plugIn/iview/badge/index",
+    "my-nav": "/public/components/public/navigator_bar/index"
+  }
+}

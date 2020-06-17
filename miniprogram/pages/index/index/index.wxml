@@ -1,0 +1,5 @@
+<my-nav bgColor="#5593FF">
+  <view slot="center" class="page-title">掌上志愿宝</view>
+</my-nav>
+<view class="index">
+</view>

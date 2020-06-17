@@ -1,0 +1,26 @@
+.nav-btn-box{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow:nowrap;
+  justify-content:center;
+  align-items:center;
+  .capsule{
+    height: 60rpx;
+    display: flex;
+    flex-flow:nowrap;
+    justify-content:center;
+    align-items:center;
+    border-radius: 30rpx;
+    .icon{
+      width: 85rpx;
+      height: 60rpx;
+      text-align: center;
+      line-height: 60rpx;
+      transform: translateY(-4rpx);
+    }
+    .line{
+      height: 30rpx;
+    }
+  }
+}

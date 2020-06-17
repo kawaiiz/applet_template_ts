@@ -1,0 +1,4 @@
+<!-- 标签上 添加属性  index：在数组中的序号 maxIndex：数组最大的序号 -->
+<view class="drag-item" style="transform:scale({{scale}}) translate({{translateX}}px,{{translateY}}px);z-index:{{isActive?10:1}}" catchlongpress="handleLongpressItem" catchtouchmove="handleTouchmove" catchtouchend="handleTouchend">
+  <slot></slot>
+</view>
