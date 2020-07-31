@@ -24,7 +24,8 @@ Component({
         }
     },
     data: {
-        childInfo: []
+        childInfo: [],
+        timer: null
     },
     observers: {
         'childInfo.**': function (_childInfo) {

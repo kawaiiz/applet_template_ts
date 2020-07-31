@@ -168,24 +168,35 @@ export const getTimeStr = (timeSecond) => {
     const second = Number((timeSecond - min * 60).toFixed(0));
     return `${getHandledValue(min)}: ${getHandledValue(second)}`;
 };
-export const observe = (obj, key, fnList, deep, startObj, startKey) => {
-    let val = obj[key];
-    if (deep && val != null && typeof val === 'object') {
-        Object.keys(val).forEach(childKey => {
-            observe(val, childKey, fnList, deep, startObj || obj, startKey || key);
-        });
+export const setNavStyle = () => {
+    const config = {
+        pixelRate: 0.5,
+        platform: 'ios',
+        capsuleHeight: 44,
+        statusBarHeight: 20,
+        titleHeight: 136,
+        systemHeight: 0,
+        isAllScreen: false,
+        isHighHead: false,
+        phoneSystem: undefined
+    };
+    let res = wx.getSystemInfoSync();
+    console.log(res);
+    config.phoneSystem = res.platform.toLowerCase();
+    config.pixelRate = res.windowWidth / 750;
+    config.platform = res.platform;
+    config.statusBarHeight = res.statusBarHeight;
+    if (res.platform.toLowerCase() == 'android') {
+        config.capsuleHeight += 4;
     }
-    Object.defineProperty(obj, key, {
-        configurable: true,
-        enumerable: true,
-        set: function (value) {
-            val = value;
-            fnList.forEach((item) => {
-                item(startObj && startKey ? startObj[startKey] : value);
-            });
-        },
-        get: function () {
-            return val;
-        }
-    });
+    config.titleHeight = (config.capsuleHeight + config.statusBarHeight) / config.pixelRate;
+    if (res.statusBarHeight >= 44) {
+        config.isHighHead = true;
+    }
+    if (res.windowHeight > 750)
+        config.isAllScreen = true;
+    config.systemHeight = res.windowHeight;
+    console.log(config);
+    return config;
 };
+export const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));

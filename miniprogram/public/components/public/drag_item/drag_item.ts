@@ -1,7 +1,7 @@
-const _ = require('../../../../miniprogram_npm/lodash/index');
+import { throttle } from 'lodash'
 
 import { DragItemInfo } from "./data";
-interface InitData {
+type InitData = {
   itemInfo: DragItemInfo | {},
   scale: number,
   translateX: number,
@@ -14,14 +14,20 @@ interface InitData {
   }
 }
 
-// interface InitProperty { }
-
-interface InitMethod {
-  emitParentEvent: () => void,
-  [methodName: string]: (...arg: any) => any
+type InitProperty = {
+  index: WechatMiniprogram.Component.FullProperty<NumberConstructor>,
+  maxIndex: WechatMiniprogram.Component.FullProperty<NumberConstructor>,
 }
 
-Component<InitData, any, InitMethod>({
+type InitMethod = {
+  initData: () => void,
+  handleLongpressItem: (e: any) => void,
+  handleTouchmove: (...arg: any) => void,
+  handleTouchend: (e: any) => void,
+  emitParentEvent: () => void,
+}
+
+Component<InitData, InitProperty, InitMethod>({
   options: {
     addGlobalClass: true,
   },
@@ -102,7 +108,7 @@ Component<InitData, any, InitMethod>({
       })
     },
     // 移动进行时
-    handleTouchmove: _.throttle(async function (this: WechatMiniprogram.Component.Instance<InitData, any, InitMethod>, e: any) {
+    handleTouchmove: throttle(async function (this: WechatMiniprogram.Component.Instance<InitData, any, InitMethod>, e: any) {
       const { isActive, start } = this.data
       if (!isActive) return
       console.log(e)

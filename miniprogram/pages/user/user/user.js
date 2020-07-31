@@ -6,14 +6,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const _ = require('../../../miniprogram_npm/lodash/index');
+import { debounce } from 'lodash';
 const app = getApp();
 Page({
     data: {
         IMAGEURL: app.globalData.IMAGEURL,
         userInfo: {},
     },
-    getWXUserInfo: _.debounce(function (e) {
+    getWXUserInfo: debounce(function (e) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(e);
             const { userInfo } = e.detail;
@@ -46,9 +46,6 @@ Page({
     initPage() {
     },
     onLoad: function () {
-        app.watchUserInfoFn((userInfo) => {
-            this.setUserInfo(userInfo);
-        });
     },
     onReady: function () {
     },

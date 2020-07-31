@@ -232,34 +232,42 @@ export const getTimeStr = (timeSecond: number | null) => {
 }
 
 /**
-  * 监听属性 并执行监听函数
-  * @deprecated 监听函数
-  * @param {{ [key: string]: any }} obj 目标值的父亲
-  * @param {string} key 目标值的key
-  * @param {boolean} deep 是否是深度监听
-  * @param {any} targetValue 想要监听的值（用于fnlist的值的注入）
-  * @param {function[]} fnList 监听变化后需要触发的函数
-  */
-export const observe = (obj: { [key: string]: any }, key: string, fnList: any[], deep: boolean, startObj?: { [key: string]: any }, startKey?: string, ) => {
-  let val = obj[key]
-  // 判断deep是true 且 val不能为空 且 typeof val==='object'（数组内数值变化也需要深度监听）
-  if (deep && val != null && typeof val === 'object') {
-    Object.keys(val).forEach(childKey => { // 遍历val对象下的每一个key
-      observe(val, childKey, fnList, deep, startObj || obj, startKey || key); // 递归调用监听函数
-    })
+ * @returns {String} 获取系统屏幕相关参数
+ */
+export const setNavStyle = () => {
+  const config: GlobalData.PageConfig = {
+    pixelRate: 0.5,               //px与rpx换算关系
+    platform: 'ios',             //操作平台 用于适配胶囊高度
+    capsuleHeight: 44,           //胶囊高度
+    statusBarHeight: 20,         //手机顶部状态栏高度
+    titleHeight: 136,            //整个导航头高度
+    systemHeight: 0,            //手机屏幕高度
+    isAllScreen: false,        //是否是全面屏手机
+    isHighHead: false,        //是否是刘海屏手机
+    phoneSystem: undefined           //系统版本
   }
-  // var _this = this;
-  Object.defineProperty(obj, key, {
-    configurable: true,
-    enumerable: true,
-    set: function (value) {
-      val = value
-      fnList.forEach((item: any) => {
-        item(startObj && startKey ? startObj[startKey] : value)
-      })
-    },
-    get: function () {
-      return val;
-    }
-  })
+  let res = wx.getSystemInfoSync();
+  console.log(res)
+  // 设置系统
+  config.phoneSystem = res.platform.toLowerCase() as "ios" | "android";
+  config.pixelRate = res.windowWidth / 750;
+  config.platform = res.platform;
+  config.statusBarHeight = res.statusBarHeight;
+  if (res.platform.toLowerCase() == 'android') {
+    config.capsuleHeight += 4;
+  }
+  config.titleHeight = (config.capsuleHeight + config.statusBarHeight) / config.pixelRate;
+  if (res.statusBarHeight >= 44) {
+    config.isHighHead = true;
+  }
+  if (res.windowHeight > 750) config.isAllScreen = true;
+  config.systemHeight = res.windowHeight;
+  console.log(config)
+  return config
 }
+
+/**
+ * @param {Number|null} ms 需要延时的毫秒数
+ * @returns {String} 延时函数
+ */
+export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))

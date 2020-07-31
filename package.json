@@ -10,9 +10,13 @@
   "author": "",
   "license": "",
   "dependencies": {
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "miniprogram-computed": "^2.1.1",
+    "mobx-miniprogram": "^4.13.2",
+    "mobx-miniprogram-bindings": "^1.2.1"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.158",
     "miniprogram-api-typings": "^2.11.0",
     "typescript": "^3.3.3333"
   }

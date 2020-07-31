@@ -1,4 +1,3 @@
-"use strict";
 const app = getApp();
 const util = require('../../../utils/util');
 Component({

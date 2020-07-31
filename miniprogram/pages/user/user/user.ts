@@ -1,4 +1,4 @@
-const _ = require('../../../miniprogram_npm/lodash/index');
+import { debounce } from 'lodash'
 // import { toast } from '../../../public/utils/util';
 
 // 获取应用实例
@@ -26,7 +26,7 @@ Page<InitData, InitPage>({
     userInfo: {},
   },
   // 获取微信信息
-  getWXUserInfo: _.debounce(async function (this: WechatMiniprogram.Page.Instance<InitData, InitPage>, e: any) {
+  getWXUserInfo: debounce(async function (this: WechatMiniprogram.Page.Instance<InitData, InitPage>, e: any) {
     console.log(e)
     const { userInfo } = e.detail
     if (userInfo) {
@@ -61,9 +61,7 @@ Page<InitData, InitPage>({
    * 生命周期函数--监听页面加载
    */
   onLoad: function () {
-    app.watchUserInfoFn((userInfo: any) => {
-      this.setUserInfo(userInfo)
-    })
+
   },
 
   /**

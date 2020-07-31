@@ -2,15 +2,29 @@
 const app = getApp()
 const util = require('../../../utils/util');
 
-interface InitData { }
-
-// interface InitProperty { }
-
-interface InitMethod {
-  [methodName: string]: (...arg: any) => any
+type InitData = {
+  BASEURL: string,
+  IMAGEURL: string,
+  valueList: any[],
+  disabled: boolean,
+  token: string
 }
 
-Component<InitData, any, InitMethod>({
+type InitProperty = {
+  imgList: WechatMiniprogram.Component.FullProperty<ArrayConstructor>,
+  maxLength: WechatMiniprogram.Component.FullProperty<NumberConstructor>,
+}
+
+type InitMethod = {
+  setImg(): void,
+  upImg(tempFilePaths: string, i: number): Promise<undefined>,
+  seeImg(e: any): void,
+  delImg(e: any): void,
+  changeImgArr(): void,
+  changeDisabled(): void,
+}
+
+Component<InitData, InitProperty, InitMethod>({
   options: {
     addGlobalClass: true,
   },
@@ -239,3 +253,5 @@ Component<InitData, any, InitMethod>({
     }
   }
 })
+
+export { }

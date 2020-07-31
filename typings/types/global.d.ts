@@ -1,12 +1,20 @@
 declare namespace GlobalData {
 
-  // 用户信息
-  interface UserInfo {
-    id: number,
-    nickName: string,// 姓名
-    avatarUrl: string,// 头像
-    mobile: string,// 手机号
-    times: number,// 获取次数
+  // 小程序事件对象
+  interface WxAppletsEvent {
+    detail: {
+      value: any
+    },
+    traget: {
+      dataset: {
+        [key: string]: any
+      }
+    },
+    currentTarget: {
+      dataset: {
+        [key: string]: any
+      }
+    }
   }
 
   // 全局屏幕
@@ -19,6 +27,7 @@ declare namespace GlobalData {
     systemHeight: number,//手机屏幕高度
     isAllScreen: boolean,//是否是全面屏手机
     isHighHead: boolean,//是否是刘海屏手机
+    phoneSystem: 'ios' | 'android' | undefined // 系统类型
   }
 
 
@@ -35,13 +44,12 @@ declare namespace GlobalData {
   interface GlobalData {
     IMAGEURL: string, // 图片前缀
     BASEURL: string, // 请求域名
-    pageConfig: PageConfig,// 屏幕参数
-    watchUserInfoFn: any[],// 监听个人信息的函数列表
-    watchStoreFn: any[],// 监听store的函数列表
-    userInfo: UserInfo | {},// 个人信息
     token: string, //token
-    store: Store.Store,// 公共数据
     transmit: Transmit,
     [key: string]: any
   }
+
 }
+
+// 初始化lodash 需要使用global
+declare const global: any

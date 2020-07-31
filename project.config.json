@@ -5,8 +5,8 @@
 	},
 	"miniprogramRoot": "miniprogram/",
 	"compileType": "miniprogram",
-	"libVersion": "2.7.1",
-	"projectname": "zszyb",
+	"libVersion": "2.6.1",
+	"projectname": "applet_templatets",
 	"scripts": {
 		"beforeCompile": "npm run tsc",
 		"beforePreview": "npm run tsc",
@@ -15,16 +15,16 @@
 	"setting": {
 		"urlCheck": false,
 		"es6": true,
-		"enhance": true,
 		"postcss": true,
 		"preloadBackgroundData": false,
 		"minified": true,
 		"newFeature": true,
-		"coverView": true,
-		"nodeModules": true,
 		"autoAudits": false,
+		"coverView": true,
 		"showShadowRootInWxmlPanel": true,
 		"scopeDataCheck": false,
+		"enhance": true,
+		"nodeModules": true,
 		"checkInvalidKey": true,
 		"checkSiteMap": true,
 		"uploadWithSourceMap": true,
@@ -38,7 +38,7 @@
 	},
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
-	"appid": "",
+	"appid": "wxa363b23f23561c2f",
 	"condition": {
 		"search": {
 			"current": -1,
@@ -61,7 +61,21 @@
 		},
 		"miniprogram": {
 			"current": -1,
-			"list": []
+			"list": [
+				{
+					"id": -1,
+					"name": "pages/login/login/login",
+					"pathName": "pages/login/login/login",
+					"query": "test=123456",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "500",
+					"pathName": "pages/error/500/500",
+					"scene": null
+				}
+			]
 		}
 	}
 }

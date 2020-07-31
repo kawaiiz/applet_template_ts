@@ -1,4 +1,3 @@
-// const _ = require('../../../miniprogram_npm/lodash/index');
 
 // 获取应用实例
 const app = getApp<IAppOption>()
@@ -10,7 +9,7 @@ interface InitPage {
 interface InitData {
   BASEURL: string,
   IMAGEURL: string,
- 
+
 }
 
 Page<InitData, InitPage>({
@@ -21,10 +20,9 @@ Page<InitData, InitPage>({
   data: {
     BASEURL: app.globalData.BASEURL,// 域名拼接地址
     IMAGEURL: app.globalData.IMAGEURL,// 图片拼接地址
-  
   },
 
-  
+
 
   /**
    * 生命周期函数--监听页面加载

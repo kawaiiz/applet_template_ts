@@ -1,14 +1,15 @@
 // public/components/public/navigator_btn/index.js
 
-interface InitData { }
+type InitData = {}
 
-// interface InitProperty { }
-
-interface InitMethod {
-  [methodName: string]: (...arg: any) => any
+type InitProperty = {
+  homepage: WechatMiniprogram.Component.FullProperty<StringConstructor>,
+  color: WechatMiniprogram.Component.FullProperty<StringConstructor>,
+}
+type InitMethod = {
 }
 
-Component<InitData, any, InitMethod>({
+Component<InitData, InitProperty, InitMethod>({
   /**
    * 组件的属性列表
    */

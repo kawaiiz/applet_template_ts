@@ -1,0 +1,6 @@
+<view>computed</view>
+<view>{{typeText}}</view>
+<button bindtap="handleChangeType">修改type</button>
+<view>store</view>
+<view>秒数：{{captchaTime}}</view>
+<button bindtap="handleClickCaptcha">发短信</button>

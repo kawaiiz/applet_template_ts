@@ -1,13 +1,12 @@
 
-interface InitData { }
+type InitData = {}
 
-// interface InitProperty { }
+type InitProperty = {}
 
-interface InitMethod {
-  [methodName: string]: (...arg: any) => any
+type InitMethod = {
 }
 
-Component<InitData, any, InitMethod>({
+Component<InitData, InitProperty, InitMethod>({
   options: {
     addGlobalClass: true,
   },
@@ -29,8 +28,31 @@ Component<InitData, any, InitMethod>({
    * 组件的方法列表
    */
   methods: {
+    onLoad(options: any) {
+      console.log(options)
+    },
+    onShow() {
+      console.log('onShow')
+    },
+    onReady() {
+      console.log('onReady')
+    },
+  },
 
-  }
+  lifetimes: {
+    // 生命周期函数，可以为函数，或一个在methods段中定义的方法名
+    attached: function () { },
+    moved: function () { },
+    detached: function () { },
+  },
+
+  pageLifetimes: {
+    // 组件所在页面的生命周期函数
+    show: function () { },
+    hide: function () { },
+    resize: function () { },
+  },
+
 })
 
 export { }

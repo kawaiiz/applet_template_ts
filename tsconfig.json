@@ -23,8 +23,9 @@
       "ES2015"
     ],
     "typeRoots": [
-      "./typings"
-    ],
+      "./typings",
+      "./node_modules/@types"
+    ]
   },
   "include": [
     "./**/*.ts"

@@ -1,6 +1,6 @@
-<view style="{{bgColor?'background:'+bgColor:''}}" class="{{fixed?'fixed':'sticky'}}">
-  <view class="status-bar" style="height: {{(statusBarHeight / pixelRate) + 'rpx'}}"></view>
-  <view class="capsule-line" style="height: {{(capsuleHeight / pixelRate) + 'rpx'}};line-height: {{(capsuleHeight / pixelRate) + 'rpx'}}">
+<view style="{{bgColor?'background:'+bgColor:''}}" class="fixed">
+  <view class="status-bar" style="height: {{(pageConfig.statusBarHeight / pageConfig.pixelRate) + 'rpx'}}"></view>
+  <view class="capsule-line" style="height: {{(pageConfig.capsuleHeight / pageConfig.pixelRate) + 'rpx'}};line-height: {{(pageConfig.capsuleHeight / pageConfig.pixelRate) + 'rpx'}}">
     <view class="left-box">
       <slot name="leftBtn"></slot>
     </view>
@@ -10,4 +10,4 @@
     <view class="right-box"></view>
   </view>
 </view>
-<view class="" style="height: {{((statusBarHeight+capsuleHeight) / pixelRate) + 'rpx'}};{{bgColor?'background:'+bgColor:''}}" wx:if="{{fixed}}"></view>
+<view class="" style="height: {{((pageConfig.statusBarHeight+pageConfig.capsuleHeight) / pageConfig.pixelRate) + 'rpx'}};{{bgColor?'background:'+bgColor:''}}" wx:if="{{!contentFull}}"></view>

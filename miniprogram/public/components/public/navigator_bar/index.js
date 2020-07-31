@@ -1,76 +1,40 @@
-// public/components/navigator_bar/index.js
-let config = require('config');
-
-const app = getApp()
+const { storeBindingsBehavior } = require('../../../../miniprogram_npm/mobx-miniprogram-bindings/index');
+import { store } from '../../../../store/other';
 Component({
-  options: {
-    multipleSlots: true // 在组件定义时的选项中启用多slot支持
-  },
-  /**
-   * 组件的属性列表
-   */
-  properties: {
-    bgColor: {
-      type: String,
-      value: "#fff"
+    behaviors: [storeBindingsBehavior],
+    options: {
+        multipleSlots: true
     },
-    fixed: {
-      type: Boolean,
-      value: true
-    }
-  },
-
-  /**
-   * 组件的初始数据
-   */
-  data: {
-    capsuleHeight: config.capsuleHeight,
-    statusBarHeight: config.statusBarHeight,
-    pixelRate: config.pixelRate,
-  },
-  lifetimes: {
-    // attached: function () {
-    //   // 在组件实例进入页面节点树时执行
-    //   debugger
-    // },
-    // detached: function() {
-    //   // 在组件实例被从页面节点树移除时执行
-    //   this.setData({
-    //     imgList: [],
-    //     valueList: []
-    //   })
-    // },
-    // error(err){
-    //   console.log(err)
-    // }
-  },
-  attached: function () {
-    // 在组件实例进入页面节点树时执行
-    this.setData({
-      imgList: [],
-      valueList: []
-    })
-  },
-  detached: function () {
-    // 在组件实例被从页面节点树移除时执行
-    this.setData({
-      imgList: [],
-      valueList: []
-    })
-  },
-  pageLifetimes: {
-    show: function () {
-      // 页面被展示
+    properties: {
+        bgColor: {
+            type: String,
+            value: "#fff"
+        },
+        contentFull: {
+            type: Boolean,
+            value: false
+        }
     },
-    hide: function () {
-      // 页面被隐藏
+    storeBindings: {
+        store,
+        fields: {
+            pageConfig: () => store.pageConfig,
+        }
     },
-    resize: function (size) {
-      // 页面尺寸变化
-    }
-  },
-  /**
-   * 组件的方法列表
-   */
-  methods: {}
-})
+    data: {},
+    lifetimes: {},
+    attached: function () {
+        console.log(this.data);
+    },
+    detached: function () {
+    },
+    pageLifetimes: {
+        show: function () {
+        },
+        hide: function () {
+        },
+        resize: function () {
+        }
+    },
+    methods: {}
+});

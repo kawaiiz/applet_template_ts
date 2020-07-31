@@ -6,7 +6,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const _ = require('../../../../miniprogram_npm/lodash/index');
+import { throttle } from 'lodash';
 Component({
     options: {
         addGlobalClass: true,
@@ -74,7 +74,7 @@ Component({
                 }
             });
         },
-        handleTouchmove: _.throttle(function (e) {
+        handleTouchmove: throttle(function (e) {
             return __awaiter(this, void 0, void 0, function* () {
                 const { isActive, start } = this.data;
                 if (!isActive)

@@ -1,18 +1,11 @@
 {
   "pages": [
+    "pages/storeAndComputed/storeAndComputed",
     "pages/index/index/index",
     "pages/user/user/user",
     "pages/error/500/500",
     "pages/error/404/404"
   ],
-  "window": {
-    "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "WeChat",
-    "navigationBarTextStyle": "black",
-    "navigationStyle": "custom",
-    "backgroundColorTop": "#5593FF"
-  },
   "tabBar": {
     "list": [
       {
@@ -31,6 +24,14 @@
     "color": "#AAAAAA",
     "selectedColor": "#24A4FF",
     "backgroundColor": "#FFFFFF"
+  },
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "WeChat",
+    "navigationBarTextStyle": "black",
+    "navigationStyle": "custom",
+    "backgroundColorTop": "#5593FF"
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json"
