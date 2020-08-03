@@ -4,7 +4,7 @@ declare namespace WechatMiniprogram {
     interface OtherOption {
       storeBindings: any,
       computed: {
-        [key: string]: (data: any) => any
+        [key: string]: (...data: any[]) => any
       },
       watch: any
     }
