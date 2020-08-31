@@ -1,14 +1,24 @@
+page{
+  background-color: #fff;
+}
 .page-500{
-  padding-top: 275rpx;
+  padding-top: 256rpx;
   .img{
     display: block;
-    width: 375rpx;
-    height: 348rpx;
-    margin: 0 auto;
+    width: 400rpx;
+    height: 310rpx;
+    margin: 0 auto 80rpx;
   }
   .text{
-    color:#666;
     font-size: 32rpx;
     text-align: center;
+    color:#333;
+    margin-bottom: 30rpx;
+    font-weight: bold;
+  }
+  .subtext{
+    font-size: 28rpx;
+    text-align: center;
+    color:#A2A2A2;
   }
 }

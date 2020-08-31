@@ -1,3 +1,4 @@
+import { IRes } from './http'
 /**
  * @param {Number} num 数值
  * @returns {String} 处理后的字符串
@@ -152,7 +153,7 @@ export const toast = (option: ToastPorp | string) => {
     cb = option.cb
     duration = option.duration
   }
-  const time = duration || 1000
+  const time = duration || 1500
   wx.showToast({
     title: title,
     icon: 'none',
@@ -271,3 +272,120 @@ export const setNavStyle = () => {
  * @returns {String} 延时函数
  */
 export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
+/**
+ * @param {Number|null} ms 需要延时的毫秒数
+ * @returns {String} 延时函数
+ */
+export function mockData<T>(type: 'data', item: T): Promise<IRes<T>>;
+export function mockData<T>(type: 'list', item: T, title: string, pageIndex: number, pageSize: number): Promise<IRes<{
+  list: T[];
+  pageCount: number;
+}>>;
+export function mockData<T>(type: 'data' | 'list', item: T, title?: string, pageIndex?: number, pageSize?: number): any {
+  if (type === 'data') {
+    return new Promise(async (resolve) => {
+      await delay(1000)
+      resolve({
+        data: item,
+        code: 1
+      } as IRes<T>)
+    })
+  } else {
+    const dataList: T[] = []
+    for (let i = 0; i < pageSize!; i++) {
+      dataList.push({
+        ...item,
+        id: i + 1 + (pageIndex! - 1) * pageSize!,
+        [title!]: `${i + 1 + (pageIndex! - 1) * pageSize!}条数据`
+      })
+    }
+    return new Promise(async (resolve) => {
+      await delay(1000)
+      resolve({
+        data: {
+          list: dataList,
+          pageCount: 2
+        },
+        code: 1
+      } as IRes<{
+        list: T[];
+        pageCount: number;
+      }>)
+    })
+  }
+}
+
+
+/**
+ * @param {Number|null} arr 一维数组
+ * @param {Number|null} pID 父ID
+ * @desc 将扁平的一维数组 转成多维 
+ */
+export const toTree = (arr: any[], pID: number) => {
+  const ids: number[] = arr.map(a => a.id as number) // 获取所有的id
+  const arrNotParent = arr.filter(
+    ({ pId }) => pId && !ids.includes(pId)// 返回所有父id存在 且 父id不存在与所有的资源id数组中  
+  )
+  const _ = (arr: any[], pID: string | number | null): any[] =>
+    arr
+      .filter(({ pId }) => pId == pID)
+      .map(a => ({
+        ...a,
+        children: _(arr.filter(({ pId }) => pId != pID), a.id),
+      }))
+  // 这里 pID=0是因为后台设置一级页面的父id都是0
+  return _(arr, pID).concat(arrNotParent)
+}
+
+
+/* 
+ *是否已经在错误页
+ */
+const isErrorPage = () => {
+  // 判断当前页是否是错误页，如果是就不跳了
+  const currentPage = getNowPage()
+  return currentPage.route.indexOf('error') === -1
+}
+
+/* 
+ * 前往错误页
+ */
+export const gotoError = () => {
+  // 判断当前页是否是错误页，如果是就不跳了
+  if (isErrorPage()) {
+    wx.navigateTo({
+      url: '/pages/error/500/500?t=error'
+    })
+  }
+}
+
+/* 
+ * 是否已经在启动页
+ */
+const isStartPage = () => {
+  // 判断当前页是否是错误页，如果是就不跳了
+  const currentPage = getNowPage()
+  return currentPage.route.indexOf('startup_page') === -1
+}
+
+/* 
+ * 前往登录页
+ */
+export const gotoLogin = () => {
+  // 判断当前页是否是启动页页，如果是就不跳了
+  if (isStartPage()) {
+    wx.reLaunch({
+      url: "/pages/login/startup_page/startup_page"
+    })
+  }
+}
+
+
+/* 
+ * console 带上路径
+ */
+export const myConsole = (data: any, _this: any) => {
+  // 判断当前页是否是启动页页，如果是就不跳了
+  console.log(`页面：${_this.route}`, data)
+}

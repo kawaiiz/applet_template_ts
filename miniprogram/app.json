@@ -1,30 +1,10 @@
 {
   "pages": [
     "pages/storeAndComputed/storeAndComputed",
-    "pages/index/index/index",
-    "pages/user/user/user",
+    "pages/page_template/page_template",
     "pages/error/500/500",
     "pages/error/404/404"
   ],
-  "tabBar": {
-    "list": [
-      {
-        "pagePath": "pages/index/index/index",
-        "text": "首页",
-        "selectedIconPath": "/public/img/home_active.png",
-        "iconPath": "/public/img/home.png"
-      },
-      {
-        "pagePath": "pages/user/user/user",
-        "text": "我的",
-        "selectedIconPath": "/public/img/user_active.png",
-        "iconPath": "/public/img/user.png"
-      }
-    ],
-    "color": "#AAAAAA",
-    "selectedColor": "#24A4FF",
-    "backgroundColor": "#FFFFFF"
-  },
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",

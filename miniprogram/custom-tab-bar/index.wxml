@@ -1,0 +1,12 @@
+<view class="tabs-box box box-row-center">
+  <block wx:for="{{tabsList}}" wx:key="route">
+    <view class="tab box-tag-big box box-col-center" wx:if="{{activeNum === index}}">
+      <image class="icon" src="{{IMAGEURL}}{{item.icon_active}}" />
+      <view class="text active" style="color:{{item.color_active}}">{{item.text}}</view>
+    </view>
+    <navigator class="tab box-tag-big box box-col-center" open-type="switchTab" url="{{item.route}}" hover-class="none" wx:else>
+      <image class="icon" src="{{IMAGEURL}}{{item.icon}}" />
+      <view class="text" style="color:{{item.color}}">{{item.text}}</view>
+    </navigator>
+  </block>
+</view>

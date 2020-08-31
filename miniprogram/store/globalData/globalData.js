@@ -7,49 +7,53 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const { observable, action } = require('mobx-miniprogram');
-import { setNavStyle, delay } from '../public/utils/util';
+import { setNavStyle, } from '../../public/utils/util';
+import { getUserInfo } from './service';
 const data = {
+    login: 0,
+    token: "",
+    userInfo: {
+        username: "",
+        truename: "",
+        area: []
+    },
     pageConfig: setNavStyle(),
-    captchaDisable: false,
-    captchaTime: 60,
-    defaultCaptchaTime: 60,
 };
 export const dataAction = {
-    getCaptcha: action(function (_data) {
+    getUserInfo: action(function () {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                this.captchaDisable = true;
-                return Promise.resolve();
+                const res = yield getUserInfo();
+                this.userInfo = res.data;
             }
             catch (e) {
                 console.log(e);
-                this.captchaDisable = false;
-                return Promise.reject(e);
             }
         });
     }),
-    setCaptchaTime: action(function () {
+    initGlobalData() {
+        return __awaiter(this, void 0, void 0, function* () {
+        });
+    },
+    setToken: action(function (token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                while (true) {
-                    console.log(this);
-                    const { captchaTime } = this;
-                    yield delay(1000);
-                    if (captchaTime > 0) {
-                        this.captchaTime -= 1;
-                    }
-                    else {
-                        this.captchaTime = this.defaultCaptchaTime;
-                        this.captchaDisable = false;
-                        return;
-                    }
+                this.token = token;
+                wx.setStorageSync('token', token || '');
+                if (token) {
+                    yield this.getUserInfo();
+                    this.login = 1;
+                    yield this.initGlobalData();
+                }
+                else {
+                    this.login = 2;
                 }
             }
             catch (e) {
                 console.log(e);
-                return Promise.reject(e);
+                this.login = 2;
             }
         });
     })
 };
-export const store = observable(Object.assign({}, data, dataAction));
+export const globalDataStore = observable(Object.assign({}, data, dataAction));

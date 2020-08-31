@@ -1,0 +1,44 @@
+@import '../../../public/wxss/main';
+page{
+  background-color: #fff;
+}
+.container{
+  width: 100vw;
+  height: 100vh;
+  padding-top: 200rpx;
+  text-align: center;
+  @include bg-img-cover;
+  .logo{
+    width: 80rpx;
+    height: 80rpx;
+    margin-bottom: 50rpx;
+  }
+  .name{
+    width: 270rpx;
+    height: 98rpx; 
+    margin-bottom: 100rpx;
+  }
+  .img{
+    width: 400rpx;
+    height: 325rpx;
+    margin-bottom: 150rpx;
+  }
+  .btn{
+    @include btn-style;
+    display: inline-block;
+    margin: 0 auto;
+    letter-spacing: 10rpx;
+    padding:30rpx 88rpx;
+  }
+}
+
+.tip{
+  width: 100vw;
+  padding: 0 30rpx;
+  position: fixed;
+  bottom: 60rpx;
+  left: 0;
+  text-align: center;
+  color:$c-main;
+  font-size:24rpx;
+}

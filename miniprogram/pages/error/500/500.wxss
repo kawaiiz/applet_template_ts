@@ -1,1 +1,1 @@
-.page-500{padding-top:275rpx}.page-500 .img{display:block;width:375rpx;height:348rpx;margin:0 auto}.page-500 .text{color:#666;font-size:32rpx;text-align:center}
+page{background-color:#fff}.page-500{padding-top:256rpx}.page-500 .img{display:block;width:400rpx;height:310rpx;margin:0 auto 80rpx}.page-500 .text{font-size:32rpx;text-align:center;color:#333;margin-bottom:30rpx;font-weight:bold}.page-500 .subtext{font-size:28rpx;text-align:center;color:#A2A2A2}

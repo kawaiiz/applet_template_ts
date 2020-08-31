@@ -5,6 +5,10 @@
   flex-flow:nowrap;
   justify-content:center;
   align-items:center;
+  &.other{
+    padding:0 15rpx;
+    justify-content:flex-start;
+  }
   .capsule{
     height: 60rpx;
     display: flex;

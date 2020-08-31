@@ -1,6 +1,7 @@
-import { getNowPage } from './util'
+import { gotoLogin, gotoError } from './util'
 import { BASEURL } from "./config"
 import http from './api.request'
+import { globalDataStore } from '../../store/globalData/globalData'
 /*
 * 请求函数说明
 *
@@ -9,9 +10,9 @@ import http from './api.request'
 * 3.请求成功返回promise分为两种情况 ①status/code=1 返回resolve ②status/code=0 返回reject
 *
 * */
-interface IRes<T> {
+export interface IRes<T> {
   code: number,
-  errmsg?: string,
+  errMsg?: string,
   data: T
 }
 
@@ -91,7 +92,7 @@ const getToken = async (): Promise<any> => {
           },
           success(res: any) {
             if (res.statusCode === 200 && res.data.code === 1) {
-              wx.setStorageSync('token', res.data.data)
+              globalDataStore.setToken(res.data.data)
               isRefreshing = false
               resolve()
             } else {
@@ -110,24 +111,6 @@ const getToken = async (): Promise<any> => {
   })
 }
 
-/* 
-  是否已经在错误页
-*/
-const isErrorPage = () => {
-  // 判断当前页是否是错误页，如果是就不跳了
-  let currentPage = getNowPage()
-  return currentPage.route.indexOf('error') === -1
-}
-
-const gotoError = () => {
-  // 判断当前页是否是错误页，如果是就不跳了
-  if (isErrorPage()) {
-    wx.navigateTo({
-      url: '/pages/error/500/500?t=error'
-    })
-  }
-}
-
 class HttpRequest implements HttpRequestInterface {
   requestTask = null;// 请求的对象
   BASEURL = BASEURL;// 请求的域名
@@ -142,19 +125,24 @@ class HttpRequest implements HttpRequestInterface {
       }
     }
     if (res && (res.statusCode == 200)) {
-      if (typeof res.data === 'string') {
-        res.data = JSON.parse(res.data)
+      let data: any = res.data
+      if (typeof data === 'string') {
+        data = JSON.parse(data)
       }
-      if (res.data.code === 1) {
-        return Promise.resolve(res.data)
-      } else if (res.data.code == 2) {
-        return this.interceptorsResponent(option)
-      } else if (res.data.code == 0) {
-        return Promise.reject(res.data)
+      if (data.code === 1) {
+        return Promise.resolve(data)
+      } else if (data.code == 2) {
+        // 登录失效 则前往启动页
+        globalDataStore.setToken("")
+        gotoLogin()
+        return Promise.reject(data)
+        // return this.interceptorsResponent(option)
+      } else if (data.code == 0) {
+        return Promise.reject(data)
       } else {
-        console.log(res, option)
+        console.log(data, option)
         gotoError()
-        return Promise.reject(res.data)
+        return Promise.reject(data)
       }
     } else {
       console.log(res, option)
@@ -191,15 +179,20 @@ class HttpRequest implements HttpRequestInterface {
     if (option.contentType === 'multipart/form-data; boundary=XXX' && option.method === 'POST') {
       option.data = createFormData(option.data)
     }
+    // option.data = 
     // option.data.token = token; 
     // 'application/x-www-form-urlencoded;charset=UTF-8' 
     // 'multipart/form-data; boundary=XXX' 
+    // if () {
+
+    // }
     return {
       url: option.allUrl ? option.allUrl : this.BASEURL + option.url,
       data: option.data,
       header: {
-        'Content-Type': option.contentType ? option.contentType : 'application/json;charset=UTF-8',
-        'token': token
+        // 'Content-Type': option.contentType ? option.contentType : 'application/json;charset=UTF-8',
+        'Content-Type': option.contentType ? option.contentType : 'text/plain;charset=UTF-8',
+        'Authorization': token
       },
       method: option.method ? option.method : 'POST',
       success: (res: any) => {
@@ -272,7 +265,6 @@ class HttpRequest implements HttpRequestInterface {
           title: '请稍等',
         })
       }
-      option.contentType = 'multipart/form-data; boundary=XXX'
       await this.interceptorsRequest()
       // 这里因为必须要跳出这个promise 要把resolve传进去
       let options = this.createOptions(option, resolve, reject)

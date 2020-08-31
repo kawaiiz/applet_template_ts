@@ -1,3 +1,11 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 export function getHandledValue(num) {
     return num < 10 ? "0" + num : num.toString();
 }
@@ -116,7 +124,7 @@ export const toast = (option) => {
         cb = option.cb;
         duration = option.duration;
     }
-    const time = duration || 1000;
+    const time = duration || 1500;
     wx.showToast({
         title: title,
         icon: 'none',
@@ -200,3 +208,63 @@ export const setNavStyle = () => {
     return config;
 };
 export const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+export function mockData(type, item, title, pageIndex, pageSize) {
+    if (type === 'data') {
+        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            yield delay(1000);
+            resolve({
+                data: item,
+                code: 1
+            });
+        }));
+    }
+    else {
+        const dataList = [];
+        for (let i = 0; i < pageSize; i++) {
+            dataList.push(Object.assign({}, item, { id: i + 1 + (pageIndex - 1) * pageSize, [title]: `${i + 1 + (pageIndex - 1) * pageSize}条数据` }));
+        }
+        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            yield delay(1000);
+            resolve({
+                data: {
+                    list: dataList,
+                    pageCount: 2
+                },
+                code: 1
+            });
+        }));
+    }
+}
+export const toTree = (arr, pID) => {
+    const ids = arr.map(a => a.id);
+    const arrNotParent = arr.filter(({ pId }) => pId && !ids.includes(pId));
+    const _ = (arr, pID) => arr
+        .filter(({ pId }) => pId == pID)
+        .map(a => (Object.assign({}, a, { children: _(arr.filter(({ pId }) => pId != pID), a.id) })));
+    return _(arr, pID).concat(arrNotParent);
+};
+const isErrorPage = () => {
+    const currentPage = getNowPage();
+    return currentPage.route.indexOf('error') === -1;
+};
+export const gotoError = () => {
+    if (isErrorPage()) {
+        wx.navigateTo({
+            url: '/pages/error/500/500?t=error'
+        });
+    }
+};
+const isStartPage = () => {
+    const currentPage = getNowPage();
+    return currentPage.route.indexOf('startup_page') === -1;
+};
+export const gotoLogin = () => {
+    if (isStartPage()) {
+        wx.reLaunch({
+            url: "/pages/login/startup_page/startup_page"
+        });
+    }
+};
+export const myConsole = (data, _this) => {
+    console.log(`页面：${_this.route}`, data);
+};

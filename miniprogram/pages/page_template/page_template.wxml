@@ -1,0 +1,16 @@
+<view class="container" style="background-image:url('{{IMAGEURL}}login_bg.png')">
+  <view>
+    <image class="logo" src="{{IMAGEURL}}logo.png" />
+  </view>
+  <view>
+    <image class="name" src="{{IMAGEURL}}name.png" />
+  </view>
+  <view>
+    <image class="img" src="{{IMAGEURL}}login_painting.png" />
+  </view>
+  <navigator class="btn" open-type="redirect" url="/pages/login/login/login" wx:if="{{login === 2}}">
+    立即登录
+  </navigator>
+  {{token}}
+</view>
+<view class="tip">小程序仅限立方制药内部员工使用，主要用于公司内部业务的管理，需要登录账号后才可做相关操作。</view>

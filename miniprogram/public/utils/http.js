@@ -6,9 +6,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { getNowPage } from './util';
+import { gotoLogin, gotoError } from './util';
 import { BASEURL } from "./config";
 import http from './api.request';
+import { globalDataStore } from '../../store/globalData/globalData';
 let isRefreshing = false;
 let requests = [];
 let responents = [];
@@ -41,7 +42,7 @@ const getToken = () => __awaiter(this, void 0, void 0, function* () {
                     },
                     success(res) {
                         if (res.statusCode === 200 && res.data.code === 1) {
-                            wx.setStorageSync('token', res.data.data);
+                            globalDataStore.setToken(res.data.data);
                             isRefreshing = false;
                             resolve();
                         }
@@ -60,17 +61,6 @@ const getToken = () => __awaiter(this, void 0, void 0, function* () {
         });
     });
 });
-const isErrorPage = () => {
-    let currentPage = getNowPage();
-    return currentPage.route.indexOf('error') === -1;
-};
-const gotoError = () => {
-    if (isErrorPage()) {
-        wx.navigateTo({
-            url: '/pages/error/500/500?t=error'
-        });
-    }
-};
 class HttpRequest {
     constructor() {
         this.requestTask = null;
@@ -84,22 +74,25 @@ class HttpRequest {
             }
         }
         if (res && (res.statusCode == 200)) {
-            if (typeof res.data === 'string') {
-                res.data = JSON.parse(res.data);
+            let data = res.data;
+            if (typeof data === 'string') {
+                data = JSON.parse(data);
             }
-            if (res.data.code === 1) {
-                return Promise.resolve(res.data);
+            if (data.code === 1) {
+                return Promise.resolve(data);
             }
-            else if (res.data.code == 2) {
-                return this.interceptorsResponent(option);
+            else if (data.code == 2) {
+                globalDataStore.setToken("");
+                gotoLogin();
+                return Promise.reject(data);
             }
-            else if (res.data.code == 0) {
-                return Promise.reject(res.data);
+            else if (data.code == 0) {
+                return Promise.reject(data);
             }
             else {
-                console.log(res, option);
+                console.log(data, option);
                 gotoError();
-                return Promise.reject(res.data);
+                return Promise.reject(data);
             }
         }
         else {
@@ -134,8 +127,8 @@ class HttpRequest {
             url: option.allUrl ? option.allUrl : this.BASEURL + option.url,
             data: option.data,
             header: {
-                'Content-Type': option.contentType ? option.contentType : 'application/json;charset=UTF-8',
-                'token': token
+                'Content-Type': option.contentType ? option.contentType : 'text/plain;charset=UTF-8',
+                'Authorization': token
             },
             method: option.method ? option.method : 'POST',
             success: (res) => {
@@ -209,7 +202,6 @@ class HttpRequest {
                     title: '请稍等',
                 });
             }
-            option.contentType = 'multipart/form-data; boundary=XXX';
             yield this.interceptorsRequest();
             let options = this.createOptions(option, resolve, reject);
             const requestTask = wx.request(options);

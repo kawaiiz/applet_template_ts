@@ -1,8 +1,9 @@
 // public/components/navigator_bar/index.js
 const { storeBindingsBehavior } = require('../../../../miniprogram_npm/mobx-miniprogram-bindings/index')
-import { store, OtherStore } from '../../../../store/other'
+import { globalDataStore, } from '../../../../store/globalData/globalData'
+import { GlobalDataStore } from '../../../../store/globalData/data'
 
-type InitData = {} & OtherStore
+type InitData = {} & GlobalDataStore
 
 type InitProperty = {
   bgColor: WechatMiniprogram.Component.FullProperty<StringConstructor>,
@@ -32,9 +33,9 @@ Component<InitData, InitProperty, InitMethod>({
     }
   },
   storeBindings: {
-    store,
+    store: globalDataStore,
     fields: {
-      pageConfig: () => store.pageConfig,
+      pageConfig: () => globalDataStore.pageConfig,
     }
   },
   /**
@@ -46,7 +47,6 @@ Component<InitData, InitProperty, InitMethod>({
 
   },
   attached: function () {
-    console.log(this.data)
   },
   detached: function () {
 

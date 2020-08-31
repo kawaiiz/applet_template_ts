@@ -1,8 +1,9 @@
 <my-nav>
-  <my-nav-btn slot="leftBtn" homepage="/pages/index/index/index"></my-nav-btn>
+  <my-nav-btn type="back" slot="leftBtn" homepage="/pages/index/index/index"></my-nav-btn>
   <view slot="center">提示</view>
 </my-nav>
 <view class="page-500">
   <image class="img" src="../../../public/img/error.png" />
-  <view class="text">程序出了点小差~</view>
+  <view class="text">网络出了点小差~</view>
+  <view class="subtext">请稍后再试~</view>
 </view>

@@ -1,11 +1,10 @@
 const { observable, action } = require('mobx-miniprogram')
-import { setNavStyle, delay } from '../public/utils/util'
-import { GetCaptchaData } from '../service/other'
+import { delay } from '../../public/utils/util'
+import { GetCaptchaData } from './service'
 // import { getCaptcha, GetCaptchaData } from '../service/other'
 
 // store数据 加问号  可以与页面内的initData做合集 使用
 export interface OtherStore {
-  pageConfig?: GlobalData.PageConfig,
   captchaDisable?: boolean,
   captchaTime?: number,
   defaultCaptchaTime?: number
@@ -17,15 +16,15 @@ export type OtherAction = {
   setCaptchaTime(): void
 }
 
-const data = {
-  pageConfig: setNavStyle(),// 页面参数
+const data: OtherStore = {
   captchaDisable: false,// 短信禁用
-  captchaTime: 60,// 短信间隔时间
+  captchaTime: 60,// 短信间隔时间  
   defaultCaptchaTime: 60,// 默认短信间隔时间 用于重置captchaTime
 }
 
-export const dataAction = {
-  getCaptcha: action(async function (this: any, _data: GetCaptchaData) {
+export const dataAction: OtherAction = {
+  // 获取短信
+  getCaptcha: action(async function (this: OtherStore & OtherAction, _data: GetCaptchaData) {
     try {
       // await getCaptcha(data)
       this.captchaDisable = true
@@ -36,6 +35,7 @@ export const dataAction = {
       return Promise.reject(e)
     }
   }),
+  // 设置短信时间
   setCaptchaTime: action(async function (this: OtherStore & OtherAction) {
     try {
       while (true) {

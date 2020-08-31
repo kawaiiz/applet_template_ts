@@ -3,7 +3,9 @@ declare namespace GlobalData {
   // 小程序事件对象
   interface WxAppletsEvent {
     detail: {
-      value: any
+      value: any,
+      current: number,
+      source: string
     },
     traget: {
       dataset: {
@@ -14,7 +16,8 @@ declare namespace GlobalData {
       dataset: {
         [key: string]: any
       }
-    }
+    },
+    type: string
   }
 
   // 全局屏幕
@@ -33,8 +36,8 @@ declare namespace GlobalData {
 
   // 转发
   interface Transmit {
-    // title: string,
-    // path: string,
+    title?: string,
+    path?: string,
     imageUrl: string,
     success: (res: any) => void,
     fail: (res: any) => void,
@@ -44,7 +47,6 @@ declare namespace GlobalData {
   interface GlobalData {
     IMAGEURL: string, // 图片前缀
     BASEURL: string, // 请求域名
-    token: string, //token
     transmit: Transmit,
     [key: string]: any
   }

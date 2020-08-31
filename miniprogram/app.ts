@@ -1,23 +1,28 @@
 // app.ts
-import { toast, autoUpdate } from './public/utils/util'
+import { toast, autoUpdate, } from './public/utils/util'
 import * as config from './public/utils/config'
 import './lodash_init'
+import { globalDataStore } from './store/globalData/globalData'
 
 App<IAppOption>({
   onLaunch(_option: any) {
-    this.globalData.token = wx.getStorageSync('token') || '';
+    this.checkLogin()
   },
   onShow() {
     autoUpdate()
   },
+  // 检查是否有token 有token就获取用户信息
+  async checkLogin() {
+    const token = wx.getStorageSync('token') || '';
+    await globalDataStore.setToken(token)
+  },
   globalData: {
     IMAGEURL: config.IMAGEURL,
     BASEURL: config.BASEURL,
-    token: '', //token
     transmit: {
-      // title: '',
-      // path: '',
-      imageUrl: config.IMAGEURL + 'cover_new.png',
+      title: '终端开发管理系统',
+      path: '/pages/login/startup_page/startup_page',
+      imageUrl: config.IMAGEURL + 'cover.jpg',
       success: function (res: any) {
         console.log(res)
         toast({ title: '转发成功' })

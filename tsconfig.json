@@ -20,7 +20,7 @@
     "strictPropertyInitialization": true,
     "sourceMap": false,
     "lib": [
-      "ES2015"
+      "ES2018"
     ],
     "typeRoots": [
       "./typings",
