@@ -115,7 +115,7 @@ class HttpRequest {
     createOptions(option, resolve, reject) {
         let token = '';
         try {
-            token = wx.getStorageSync('token');
+            token = globalDataStore.token || '';
         }
         catch (e) {
             console.log(e);

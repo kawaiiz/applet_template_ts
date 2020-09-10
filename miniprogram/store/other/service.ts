@@ -1,6 +1,5 @@
 import http from '../../public/utils/api.request';
-
-export interface GetCaptchaData { mobile: string, type?: string }
+import { GetCaptchaData } from './data'
 
 // 获取短信
 export function getCaptcha(data: GetCaptchaData) {

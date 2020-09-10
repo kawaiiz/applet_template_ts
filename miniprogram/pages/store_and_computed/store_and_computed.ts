@@ -1,6 +1,7 @@
 const computedBehavior = require('miniprogram-computed')
 const { storeBindingsBehavior } = require('mobx-miniprogram-bindings')
-import { store, dataAction, OtherStore, OtherAction } from '../../store/other/other'
+import { store, dataAction } from '../../store/other/other'
+import { OtherAction, OtherStore } from '../../store/other/data'
 import { toast } from '../../public/utils/util'
 
 type InitComputed = {

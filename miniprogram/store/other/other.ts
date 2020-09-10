@@ -1,21 +1,7 @@
 const { observable, action } = require('mobx-miniprogram')
 import { delay } from '../../public/utils/util'
-import { GetCaptchaData } from './service'
 // import { getCaptcha, GetCaptchaData } from '../service/other'
-
-// store数据 加问号  可以与页面内的initData做合集 使用
-export interface OtherStore {
-  captchaDisable?: boolean,
-  captchaTime?: number,
-  defaultCaptchaTime?: number
-}
-
-// action动作
-export type OtherAction = {
-  getCaptcha(data: GetCaptchaData): void,
-  setCaptchaTime(): void
-}
-
+import { OtherStore, OtherAction, GetCaptchaData } from './data'
 const data: OtherStore = {
   captchaDisable: false,// 短信禁用
   captchaTime: 60,// 短信间隔时间  

@@ -1,8 +1,12 @@
+export interface UserInfo {
+
+}
+
 export interface GlobalDataStore {
   login?: number,
   token?: string,
   pageConfig?: GlobalData.PageConfig,
-  userInfo?: Store.UserInfo,
+  userInfo?: UserInfo,
 }
 
 // action动作

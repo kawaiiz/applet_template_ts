@@ -1,6 +1,6 @@
 {
   "pages": [
-    "pages/storeAndComputed/storeAndComputed",
+    "pages/store_and_computed/store_and_computed",
     "pages/page_template/page_template",
     "pages/error/500/500",
     "pages/error/404/404"

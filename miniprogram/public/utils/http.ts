@@ -172,7 +172,7 @@ class HttpRequest implements HttpRequestInterface {
     //给每次请求配上token
     let token = ''
     try {
-      token = wx.getStorageSync('token');
+      token = globalDataStore.token || '';
     } catch (e) {
       console.log(e)
     }

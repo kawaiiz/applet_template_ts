@@ -1,30 +1,37 @@
-// public/components/up_img/up_img.js
-const app = getApp()
-const util = require('../../../utils/util');
+const computedBehavior = require('miniprogram-computed')
+
+import { ShowListItem, ValueListItem } from './data'
+import { IRes } from '../../../utils/http'
+import { gotoLogin, toast } from '../../../utils/util'
+
 
 type InitData = {
-  BASEURL: string,
-  IMAGEURL: string,
-  valueList: any[],
-  disabled: boolean,
-  token: string
+  showList: ShowListItem[],// 用于显示用的数组
+  valueList: ValueListItem[],// 用于传给父组件的数组 存的是返回的信息
+  disabled: boolean,// 上传时需要禁用上传按钮
 }
 
 type InitProperty = {
-  imgList: WechatMiniprogram.Component.FullProperty<ArrayConstructor>,
+  BASEURL: WechatMiniprogram.Component.FullProperty<StringConstructor>,
+  token: WechatMiniprogram.Component.FullProperty<StringConstructor>,
+  upFileUrl: WechatMiniprogram.Component.FullProperty<StringConstructor>,
+  imageList: WechatMiniprogram.Component.FullProperty<ArrayConstructor>,
   maxLength: WechatMiniprogram.Component.FullProperty<NumberConstructor>,
 }
 
 type InitMethod = {
-  setImg(): void,
-  upImg(tempFilePaths: string, i: number): Promise<undefined>,
-  seeImg(e: any): void,
-  delImg(e: any): void,
-  changeImgArr(): void,
-  changeDisabled(): void,
+  handleClickSeeImage(e: GlobalData.WxAppletsEvent): void,
+  handleClickDel(e: GlobalData.WxAppletsEvent): void,
+  handleClickAdd(): void,
+  upImageAll(tempFilePaths: string[]): void,
+  upImage(tempFilePath: string): Promise<{ showListItem: ShowListItem, valueListItem?: any }>,
+  handleDownloadData(data: { showListItem: ShowListItem, valueListItem?: any }[]): void,
+  handleChangeValueList(): void,
+  handleChangeDisabled(): void,
 }
 
 Component<InitData, InitProperty, InitMethod>({
+  behaviors: [computedBehavior],
   options: {
     addGlobalClass: true,
   },
@@ -32,226 +39,234 @@ Component<InitData, InitProperty, InitMethod>({
    * 组件的属性列表
    */
   properties: {
-    //存储图片的返回信息
-    // valueList: {
-    //   type: Array,
-    //   value: [],
-    //   observer: 'changeImgArr'
-    // },
-    // disabled: {
-    //   type: Boolean,
-    //   value: false,
-    //   observer: 'changeDisabled'
-    // },
-    imgList: { //存储图片
+    BASEURL: {
+      type: String,
+      value: ''
+    },// 域名  如果返回的url是截取的 需要自己拼接一下
+    upFileUrl: {
+      type: String,
+      value: ''
+    },// 上传图片的地址
+    imageList: {
       type: Array,
       value: []
-    },
+    },// 默认的图片
     maxLength: {
       type: Number,
       value: 1000000
+    },// 最大上传数量
+    token: {
+      type: String,
+      value: ''
+    },// 最大上传数量
+  },
+  watch: {
+    // 初始化组件  有传值说明需要回填数据
+    imageList(this: WechatMiniprogram.Component.Instance<InitData, InitProperty, InitMethod>, imageList: any[]) {
+      const { BASEURL } = this.data
+      const newShowList: ShowListItem[] = []
+      const newValueList: any[] = []
+      imageList.forEach(item => {
+        if (typeof item === 'object') {
+          newShowList.push({
+            ...item,
+            path: (item.path as string).indexOf(BASEURL) !== -1 ? item.path : `${BASEURL}${item.path}`,
+            error: false
+          })
+          newValueList.push(item)
+        } else if (typeof item === 'string') {
+          newShowList.push({
+            path: item.indexOf(BASEURL) !== -1 ? item : `${BASEURL}${item}`,
+            error: false
+          })
+          newValueList.push({
+            path: item
+          })
+        }
+      })
+      this.setData({
+        showList: newShowList,
+        valueList: newValueList
+      })
+    },
+    valueList(this: WechatMiniprogram.Component.Instance<InitData, InitProperty, InitMethod>, _valueList: any[]) {
+      this.handleChangeValueList()
+    },
+    disabled(this: WechatMiniprogram.Component.Instance<InitData, InitProperty, InitMethod>, _disabled: boolean) {
+      this.handleChangeDisabled()
+    },
+    showList(this: any, showList: any) {
+      console.log(showList)
     }
   },
-
   /**
    * 组件的初始数据
    */
   data: {
-    BASEURL: app.globalData.BASEURL,
-    IMAGEURL: app.globalData.IMAGEURL,
-    valueList: [],
-    disabled: false,
-    token: ''
-  },
-  observers: {
-    'valueList.**': function () {
-      this.changeImgArr()
-    },
-    'disabled': function () {
-      this.changeDisabled()
-    }
-  },
-  lifetimes: {
-    attached: function () {
-      // 在组件实例进入页面节点树时执行
-      this.setData({
-        imgList: [],
-        valueList: []
-      })
-    },
-    detached: function () {
-      // 在组件实例被从页面节点树移除时执行
-      this.setData({
-        imgList: [],
-        valueList: []
-      })
-    },
+    showList: [],// 用于显示用的数组
+    valueList: [],// 用于传给父组件的数组
+    disabled: false,// 上传时需要禁用上传按钮
   },
 
-  pageLifetimes: {
-    show: function () {
-      // 页面被展示
-    },
-    hide: function () {
-      // 页面被隐藏
-    },
-    // resize: function (size) {
-    //   // 页面尺寸变化
-    // }
-  },
   /**
    * 组件的方法列表
    */
   methods: {
-    setImg() {
-      const { maxLength, imgList } = this.data
-      const nowCount = maxLength - imgList.length
-      console.log(maxLength, imgList, nowCount)
+    // 点击查看大图
+    handleClickSeeImage(e) {
+      const { showList } = this.data
+      const { index } = e.currentTarget.dataset
+      const arr = showList.map(item => item.path)
+      wx.previewImage({
+        current: arr[index],
+        urls: arr
+      })
+    },
+    // 点击删除
+    handleClickDel(e) {
+      const { index } = e.currentTarget.dataset
+      const { showList, valueList } = this.data
+      const newShowList = [...showList]
+      const newValueList = [...valueList]
+      newShowList.splice(index, 1)
+      newValueList.splice(index, 1)
+      this.setData({
+        showList: newShowList,
+        valueList: newValueList
+      })
+    },
+    // 点击添加图片
+    handleClickAdd() {
+      const { maxLength, showList } = this.data
+      const surplusNum = maxLength - showList.length
       wx.chooseImage({
-        count: nowCount > 9 ? 9 : nowCount, // 默认9
-        sizeType: ['compressed'], // 可以指定是原图还是压缩图，默认二者都有
+        count: surplusNum > 9 ? 9 : surplusNum, // 默认9
         sourceType: ['camera', "album"], // 可以指定来源是相册还是相机，默认二者都有
         success: (res) => {
           // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
-
-          const { imgList, maxLength, valueList } = this.data
-          if (imgList.length + res.tempFilePaths.length > maxLength) {
-            util.toast({
-              title: `最多上传${maxLength}张照片`
-            })
-          } else {
-            wx.showLoading({
-              title: '请等待',
-            })
-            const token = wx.getStorageSync('token')
-            this.setData({
-              token
-            }, () => {
-              let arr = []
-              for (let i = 0; i < res.tempFilePaths.length; i++) {
-                arr.push(this.upImg(res.tempFilePaths[i], i + valueList.length))
-              }
-              Promise.all(arr).then(() => {
-                wx.hideLoading()
-              }).catch(err => {
-                console.log(err)
-                wx.hideLoading()
-              })
-            })
-          }
+          this.upImageAll(res.tempFilePaths)
         },
         fail: function (err) {
           console.log(err)
         }
       })
     },
-    //上传图片
-    upImg(tempFilePaths, i) {
-      let _this = this
+    // promise all 控制请求提示
+    async upImageAll(tempFilePaths) {
+      try {
+        wx.showLoading({
+          title: '请等待',
+        })
+        this.setData({
+          disabled: true
+        })
+        const requestList: Promise<{ showListItem: ShowListItem, valueListItem?: any }>[] = []
+        tempFilePaths.forEach((item) => {
+          requestList.push(this.upImage(item))
+        })
+        const res = await Promise.all(requestList)
+        this.handleDownloadData(res)
+        this.setData({
+          disabled: false
+        })
+        wx.hideLoading()
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    // 单个上传主体
+    upImage(tempFilePath) {
+      const { token, upFileUrl } = this.data
       return new Promise((resolve) => {
-        let del = 'imgList[' + i + '].del'
-        let error = 'imgList[' + i + '].error'
-        let str = 'valueList[' + i + ']'
-        let imgStr = 'imgList[' + i + '].path'
-        const { token, BASEURL } = this.data
         wx.uploadFile({
-          url: `${BASEURL}/xcx/file/upload`, //仅为示例，非真实的接口地址
-          filePath: tempFilePaths,
+          url: upFileUrl,
+          filePath: tempFilePath,
           name: 'file',
           header: {
-            'XToken': `Bearer ${token}`
+            token,
+          },
+          formData: {
+            token
           },
           success: (res) => {
-            let data = JSON.parse(res.data)
-            // data ={code:200,data: {id:1,filePath:''}}
-            if (data.code === 200) {
-              _this.setData({
-                [imgStr]: data.data.path,
-                [str]: data.data.id,
-                [del]: true,
-                [error]: false
+            let data: IRes<any> = JSON.parse(res.data)
+            if (data.code === 1) {
+              resolve({
+                showListItem: {
+                  error: false,
+                  path: data.data.path
+                },
+                valueListItem: {
+                  ...data.data,
+                  path: data.data.path
+                }
               })
             } else if (data.code === 0) {
-              util.toast({
-                title: data.msg
+              resolve({
+                showListItem: {
+                  error: true,
+                  path: data.data.path
+                }
               })
             } else if (data.code === 2) {
-              wx.removeStorage({
-                key: 'token'
-              })
-              app.globalData.token = ''
-              app.globalData.userInfo = {}
-              util.toast({
-                title: data.msg || "当前登录信息已经失效，请重新授权登录",
-                cb: () => {
-                  setTimeout(function () {
-                    wx.reLaunch({
-                      url: '/pages/login/login'
-                    })
-                  }, 1500)
-                }
+              toast({
+                title: data.errMsg || '登录失效，请重新登录',
+                cb: gotoLogin
               })
             }
           },
-          fail() {
-            _this.setData({
-              [imgStr]: tempFilePaths,
-              [str]: "",
-              [del]: true,
-              [error]: true
+          fail: (err) => {
+            console.log(err)
+            resolve({
+              showListItem: {
+                error: true,
+                path: tempFilePath
+              }
             })
-          },
-          complete() {
-            _this.setData({
-              disabled: false
-            })
-            resolve()
           }
         })
       })
     },
-    // 预览图片
-    seeImg(e) {
-      const { imgList } = this.data
-      let index = e.currentTarget.dataset.index
-      console.log(imgList)
-      let showList = []
-      for (let i = 0; i < imgList.length; i++) {
-        showList.push(app.globalData.BASEURL + imgList[i].path)
-      }
-      wx.previewImage({
-        current: showList[index], // 当前显示图片的http链接
-        urls: showList // 需要预览的图片http链接列表
+    // 处理上传后的数据
+    handleDownloadData(data) {
+      const { showList, valueList } = this.data
+      const newShowList: ShowListItem[] = [...showList]
+      const newValueList: any[] = [...valueList]
+      data.forEach((item, index) => {
+        const successIndex = index + valueList.length
+        if (item.showListItem.error) {
+          newShowList[successIndex] = item.showListItem
+          newValueList[successIndex] = null
+        } else {
+          newShowList[successIndex] = item.showListItem
+          newValueList[successIndex] = item.valueListItem
+        }
       })
-    },
-    delImg(e) {
-      const { imgList, valueList } = this.data
-      let index = e.currentTarget.dataset.index
-      let loaclvalueList = [...valueList]
-      let loaclImgList = [...imgList]
-      loaclImgList.splice(index, 1)
-      loaclvalueList.splice(index, 1)
       this.setData({
-        imgList: loaclImgList,
-        valueList: loaclvalueList
+        showList: newShowList,
+        valueList: newValueList
       })
     },
     //侦听图片数量变化触发函数
-    changeImgArr() {
-      const { valueList } = this.data
-      let value = valueList.filter((item: number) => typeof item === 'number')
-      console.log(value)
-      this.triggerEvent('setImg', {
-        imgList: value
+    handleChangeValueList() {
+      this.triggerEvent('changevaluelist', {
+        valueList: this.data.valueList.filter(item => !!item)
       })
     },
     //侦听上传事件 触发disabled事件
-    changeDisabled() {
-      this.triggerEvent('setDisabled', {
+    handleChangeDisabled() {
+      this.triggerEvent('changedisabled', {
         disabled: this.data.disabled
       })
-    }
-  }
+    },
+  },
+
+  lifetimes: {
+    // 生命周期函数，可以为函数，或一个在methods段中定义的方法名
+    attached: function () { },
+    moved: function () { },
+    detached: function () { },
+  },
 })
 
 export { }

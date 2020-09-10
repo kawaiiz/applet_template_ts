@@ -1,198 +1,226 @@
-const app = getApp();
-const util = require('../../../utils/util');
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+const computedBehavior = require('miniprogram-computed');
+import { gotoLogin, toast } from '../../../utils/util';
 Component({
+    behaviors: [computedBehavior],
     options: {
         addGlobalClass: true,
     },
     properties: {
-        imgList: {
+        BASEURL: {
+            type: String,
+            value: ''
+        },
+        upFileUrl: {
+            type: String,
+            value: ''
+        },
+        imageList: {
             type: Array,
             value: []
         },
         maxLength: {
             type: Number,
             value: 1000000
+        },
+        token: {
+            type: String,
+            value: ''
+        },
+    },
+    watch: {
+        imageList(imageList) {
+            const { BASEURL } = this.data;
+            const newShowList = [];
+            const newValueList = [];
+            imageList.forEach(item => {
+                if (typeof item === 'object') {
+                    newShowList.push(Object.assign({}, item, { path: item.path.indexOf(BASEURL) !== -1 ? item.path : `${BASEURL}${item.path}`, error: false }));
+                    newValueList.push(item);
+                }
+                else if (typeof item === 'string') {
+                    newShowList.push({
+                        path: item.indexOf(BASEURL) !== -1 ? item : `${BASEURL}${item}`,
+                        error: false
+                    });
+                    newValueList.push({
+                        path: item
+                    });
+                }
+            });
+            this.setData({
+                showList: newShowList,
+                valueList: newValueList
+            });
+        },
+        valueList(_valueList) {
+            this.handleChangeValueList();
+        },
+        disabled(_disabled) {
+            this.handleChangeDisabled();
+        },
+        showList(showList) {
+            console.log(showList);
         }
     },
     data: {
-        BASEURL: app.globalData.BASEURL,
-        IMAGEURL: app.globalData.IMAGEURL,
+        showList: [],
         valueList: [],
         disabled: false,
-        token: ''
-    },
-    observers: {
-        'valueList.**': function () {
-            this.changeImgArr();
-        },
-        'disabled': function () {
-            this.changeDisabled();
-        }
-    },
-    lifetimes: {
-        attached: function () {
-            this.setData({
-                imgList: [],
-                valueList: []
-            });
-        },
-        detached: function () {
-            this.setData({
-                imgList: [],
-                valueList: []
-            });
-        },
-    },
-    pageLifetimes: {
-        show: function () {
-        },
-        hide: function () {
-        },
     },
     methods: {
-        setImg() {
-            const { maxLength, imgList } = this.data;
-            const nowCount = maxLength - imgList.length;
-            console.log(maxLength, imgList, nowCount);
+        handleClickSeeImage(e) {
+            const { showList } = this.data;
+            const { index } = e.currentTarget.dataset;
+            const arr = showList.map(item => item.path);
+            wx.previewImage({
+                current: arr[index],
+                urls: arr
+            });
+        },
+        handleClickDel(e) {
+            const { index } = e.currentTarget.dataset;
+            const { showList, valueList } = this.data;
+            const newShowList = [...showList];
+            const newValueList = [...valueList];
+            newShowList.splice(index, 1);
+            newValueList.splice(index, 1);
+            this.setData({
+                showList: newShowList,
+                valueList: newValueList
+            });
+        },
+        handleClickAdd() {
+            const { maxLength, showList } = this.data;
+            const surplusNum = maxLength - showList.length;
             wx.chooseImage({
-                count: nowCount > 9 ? 9 : nowCount,
-                sizeType: ['compressed'],
+                count: surplusNum > 9 ? 9 : surplusNum,
                 sourceType: ['camera', "album"],
                 success: (res) => {
-                    const { imgList, maxLength, valueList } = this.data;
-                    if (imgList.length + res.tempFilePaths.length > maxLength) {
-                        util.toast({
-                            title: `最多上传${maxLength}张照片`
-                        });
-                    }
-                    else {
-                        wx.showLoading({
-                            title: '请等待',
-                        });
-                        const token = wx.getStorageSync('token');
-                        this.setData({
-                            token
-                        }, () => {
-                            let arr = [];
-                            for (let i = 0; i < res.tempFilePaths.length; i++) {
-                                arr.push(this.upImg(res.tempFilePaths[i], i + valueList.length));
-                            }
-                            Promise.all(arr).then(() => {
-                                wx.hideLoading();
-                            }).catch(err => {
-                                console.log(err);
-                                wx.hideLoading();
-                            });
-                        });
-                    }
+                    this.upImageAll(res.tempFilePaths);
                 },
                 fail: function (err) {
                     console.log(err);
                 }
             });
         },
-        upImg(tempFilePaths, i) {
-            let _this = this;
+        upImageAll(tempFilePaths) {
+            return __awaiter(this, void 0, void 0, function* () {
+                try {
+                    wx.showLoading({
+                        title: '请等待',
+                    });
+                    this.setData({
+                        disabled: true
+                    });
+                    const requestList = [];
+                    tempFilePaths.forEach((item) => {
+                        requestList.push(this.upImage(item));
+                    });
+                    const res = yield Promise.all(requestList);
+                    this.handleDownloadData(res);
+                    this.setData({
+                        disabled: false
+                    });
+                    wx.hideLoading();
+                }
+                catch (e) {
+                    console.log(e);
+                }
+            });
+        },
+        upImage(tempFilePath) {
+            const { token, upFileUrl } = this.data;
             return new Promise((resolve) => {
-                let del = 'imgList[' + i + '].del';
-                let error = 'imgList[' + i + '].error';
-                let str = 'valueList[' + i + ']';
-                let imgStr = 'imgList[' + i + '].path';
-                const { token, BASEURL } = this.data;
                 wx.uploadFile({
-                    url: `${BASEURL}/xcx/file/upload`,
-                    filePath: tempFilePaths,
+                    url: upFileUrl,
+                    filePath: tempFilePath,
                     name: 'file',
                     header: {
-                        'XToken': `Bearer ${token}`
+                        token,
+                    },
+                    formData: {
+                        token
                     },
                     success: (res) => {
                         let data = JSON.parse(res.data);
-                        if (data.code === 200) {
-                            _this.setData({
-                                [imgStr]: data.data.path,
-                                [str]: data.data.id,
-                                [del]: true,
-                                [error]: false
+                        if (data.code === 1) {
+                            resolve({
+                                showListItem: {
+                                    error: false,
+                                    path: data.data.path
+                                },
+                                valueListItem: Object.assign({}, data.data, { path: data.data.path })
                             });
                         }
                         else if (data.code === 0) {
-                            util.toast({
-                                title: data.msg
-                            });
-                        }
-                        else if (data.code === 2) {
-                            wx.removeStorage({
-                                key: 'token'
-                            });
-                            app.globalData.token = '';
-                            app.globalData.userInfo = {};
-                            util.toast({
-                                title: data.msg || "当前登录信息已经失效，请重新授权登录",
-                                cb: () => {
-                                    setTimeout(function () {
-                                        wx.reLaunch({
-                                            url: '/pages/login/login'
-                                        });
-                                    }, 1500);
+                            resolve({
+                                showListItem: {
+                                    error: true,
+                                    path: data.data.path
                                 }
                             });
                         }
+                        else if (data.code === 2) {
+                            toast({
+                                title: data.errMsg || '登录失效，请重新登录',
+                                cb: gotoLogin
+                            });
+                        }
                     },
-                    fail() {
-                        _this.setData({
-                            [imgStr]: tempFilePaths,
-                            [str]: "",
-                            [del]: true,
-                            [error]: true
+                    fail: (err) => {
+                        console.log(err);
+                        resolve({
+                            showListItem: {
+                                error: true,
+                                path: tempFilePath
+                            }
                         });
-                    },
-                    complete() {
-                        _this.setData({
-                            disabled: false
-                        });
-                        resolve();
                     }
                 });
             });
         },
-        seeImg(e) {
-            const { imgList } = this.data;
-            let index = e.currentTarget.dataset.index;
-            console.log(imgList);
-            let showList = [];
-            for (let i = 0; i < imgList.length; i++) {
-                showList.push(app.globalData.BASEURL + imgList[i].path);
-            }
-            wx.previewImage({
-                current: showList[index],
-                urls: showList
+        handleDownloadData(data) {
+            const { showList, valueList } = this.data;
+            const newShowList = [...showList];
+            const newValueList = [...valueList];
+            data.forEach((item, index) => {
+                const successIndex = index + valueList.length;
+                if (item.showListItem.error) {
+                    newShowList[successIndex] = item.showListItem;
+                    newValueList[successIndex] = null;
+                }
+                else {
+                    newShowList[successIndex] = item.showListItem;
+                    newValueList[successIndex] = item.valueListItem;
+                }
             });
-        },
-        delImg(e) {
-            const { imgList, valueList } = this.data;
-            let index = e.currentTarget.dataset.index;
-            let loaclvalueList = [...valueList];
-            let loaclImgList = [...imgList];
-            loaclImgList.splice(index, 1);
-            loaclvalueList.splice(index, 1);
             this.setData({
-                imgList: loaclImgList,
-                valueList: loaclvalueList
+                showList: newShowList,
+                valueList: newValueList
             });
         },
-        changeImgArr() {
-            const { valueList } = this.data;
-            let value = valueList.filter((item) => typeof item === 'number');
-            console.log(value);
-            this.triggerEvent('setImg', {
-                imgList: value
+        handleChangeValueList() {
+            this.triggerEvent('changevaluelist', {
+                valueList: this.data.valueList.filter(item => !!item)
             });
         },
-        changeDisabled() {
-            this.triggerEvent('setDisabled', {
+        handleChangeDisabled() {
+            this.triggerEvent('changedisabled', {
                 disabled: this.data.disabled
             });
-        }
-    }
+        },
+    },
+    lifetimes: {
+        attached: function () { },
+        moved: function () { },
+        detached: function () { },
+    },
 });
