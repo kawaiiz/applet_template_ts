@@ -288,7 +288,7 @@ export function mockData<T>(type: 'data' | 'list', item: T, title?: string, page
       await delay(1000)
       resolve({
         data: item,
-        code: 1
+        status: 1
       } as IRes<T>)
     })
   } else {
@@ -307,7 +307,7 @@ export function mockData<T>(type: 'data' | 'list', item: T, title?: string, page
           list: dataList,
           pageCount: 2
         },
-        code: 1
+        status: 1
       } as IRes<{
         list: T[];
         pageCount: number;
@@ -376,7 +376,7 @@ export const gotoLogin = () => {
   // 判断当前页是否是启动页页，如果是就不跳了
   if (isStartPage()) {
     wx.reLaunch({
-      url: "/pages/login/startup_page/startup_page"
+      url: "/pages/login/login"
     })
   }
 }
@@ -388,4 +388,8 @@ export const gotoLogin = () => {
 export const myConsole = (data: any, _this: any) => {
   // 判断当前页是否是启动页页，如果是就不跳了
   console.log(`页面：${_this.route}`, data)
+}
+
+export const isHaveBASEURL = (string: string, BASEURL: string) => {
+  return string.indexOf(BASEURL) !== -1
 }

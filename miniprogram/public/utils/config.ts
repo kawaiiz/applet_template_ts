@@ -5,7 +5,7 @@
 // export const BASEURL: string = 'http://192.168.0.142:8090';
 
 // 姚本如电脑
-export const BASEURL: string = 'http://192.168.0.92:8090';
+export const BASEURL: string = 'http://192.168.0.134:8081';
 
 /*  
 * 图片icon地址

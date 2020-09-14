@@ -11,8 +11,8 @@ import { globalDataStore } from '../../store/globalData/globalData'
 *
 * */
 export interface IRes<T> {
-  code: number,
-  errMsg?: string,
+  status: number,
+  errorMsg?: string,
   data: T
 }
 
@@ -124,26 +124,25 @@ class HttpRequest implements HttpRequestInterface {
         requestList.splice(i, 1)
       }
     }
-    if (res && (res.statusCode == 200)) {
+    if (res && (res.statusCode === 200)) {
       let data: any = res.data
       if (typeof data === 'string') {
         data = JSON.parse(data)
       }
-      if (data.code === 1) {
+      if (data.status === 200) {
         return Promise.resolve(data)
-      } else if (data.code == 2) {
-        // 登录失效 则前往启动页
-        globalDataStore.setToken("")
-        gotoLogin()
-        return Promise.reject(data)
-        // return this.interceptorsResponent(option)
-      } else if (data.code == 0) {
-        return Promise.reject(data)
       } else {
-        console.log(data, option)
-        gotoError()
+        // gotoError()
         return Promise.reject(data)
       }
+    } else if (res.statusCode === 401) {
+      // 登录失效 则前往启动页
+      globalDataStore.setToken("")
+      gotoLogin()
+      return Promise.reject()
+    } else if (res.statusCode === 403) {
+      // 登录失效 则前往启动页
+      return Promise.reject(res.data)
     } else {
       console.log(res, option)
       gotoError()
@@ -191,7 +190,7 @@ class HttpRequest implements HttpRequestInterface {
       data: option.data,
       header: {
         // 'Content-Type': option.contentType ? option.contentType : 'application/json;charset=UTF-8',
-        'Content-Type': option.contentType ? option.contentType : 'text/plain;charset=UTF-8',
+        'Content-Type': option.contentType ? option.contentType : 'application/json;charset=UTF-8',
         'Authorization': token
       },
       method: option.method ? option.method : 'POST',

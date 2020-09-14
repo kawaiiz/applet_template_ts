@@ -2,7 +2,7 @@ const computedBehavior = require('miniprogram-computed')
 
 import { ShowListItem, ValueListItem } from './data'
 import { IRes } from '../../../utils/http'
-import { gotoLogin, toast } from '../../../utils/util'
+import { gotoLogin, toast, isHaveBASEURL } from '../../../utils/util'
 
 
 type InitData = {
@@ -17,6 +17,7 @@ type InitProperty = {
   upFileUrl: WechatMiniprogram.Component.FullProperty<StringConstructor>,
   imageList: WechatMiniprogram.Component.FullProperty<ArrayConstructor>,
   maxLength: WechatMiniprogram.Component.FullProperty<NumberConstructor>,
+  onlyShow: WechatMiniprogram.Component.FullProperty<BooleanConstructor>,
 }
 
 type InitMethod = {
@@ -58,10 +59,13 @@ Component<InitData, InitProperty, InitMethod>({
     token: {
       type: String,
       value: ''
-    },// 最大上传数量
+    },// 
+    onlyShow: {
+      type: Boolean,
+      value: false
+    }
   },
   watch: {
-    // 初始化组件  有传值说明需要回填数据
     imageList(this: WechatMiniprogram.Component.Instance<InitData, InitProperty, InitMethod>, imageList: any[]) {
       const { BASEURL } = this.data
       const newShowList: ShowListItem[] = []
@@ -70,7 +74,7 @@ Component<InitData, InitProperty, InitMethod>({
         if (typeof item === 'object') {
           newShowList.push({
             ...item,
-            path: (item.path as string).indexOf(BASEURL) !== -1 ? item.path : `${BASEURL}${item.path}`,
+            path: isHaveBASEURL(item.path as string, BASEURL) ? item.path : `${BASEURL}${item.path}`,
             error: false
           })
           newValueList.push(item)
@@ -95,9 +99,9 @@ Component<InitData, InitProperty, InitMethod>({
     disabled(this: WechatMiniprogram.Component.Instance<InitData, InitProperty, InitMethod>, _disabled: boolean) {
       this.handleChangeDisabled()
     },
-    showList(this: any, showList: any) {
-      console.log(showList)
-    }
+    // showList(this: any, showList: any) {
+    //   console.log(showList)
+    // }
   },
   /**
    * 组件的初始数据
@@ -176,42 +180,44 @@ Component<InitData, InitProperty, InitMethod>({
     },
     // 单个上传主体
     upImage(tempFilePath) {
-      const { token, upFileUrl } = this.data
+      const { token, upFileUrl, BASEURL } = this.data
       return new Promise((resolve) => {
         wx.uploadFile({
           url: upFileUrl,
           filePath: tempFilePath,
           name: 'file',
           header: {
-            token,
+            Authorization: token,
           },
           formData: {
             token
           },
           success: (res) => {
             let data: IRes<any> = JSON.parse(res.data)
-            if (data.code === 1) {
+            if (res.statusCode === 401) {
+              toast({
+                title: data.errorMsg || '登录失效，请重新登录',
+                cb: gotoLogin
+              })
+              return
+            }
+            if (data.status === 200) {
               resolve({
                 showListItem: {
                   error: false,
-                  path: data.data.path
+                  path: isHaveBASEURL(data.data.path as string, BASEURL) ? data.data.path : `${BASEURL}${data.data.path}`,
                 },
                 valueListItem: {
                   ...data.data,
-                  path: data.data.path
+                  path: isHaveBASEURL(data.data.path as string, BASEURL) ? data.data.path : `${BASEURL}${data.data.path}`,
                 }
               })
-            } else if (data.code === 0) {
+            } else {
               resolve({
                 showListItem: {
                   error: true,
                   path: data.data.path
                 }
-              })
-            } else if (data.code === 2) {
-              toast({
-                title: data.errMsg || '登录失效，请重新登录',
-                cb: gotoLogin
               })
             }
           },

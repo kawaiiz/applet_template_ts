@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const computedBehavior = require('miniprogram-computed');
-import { gotoLogin, toast } from '../../../utils/util';
+import { gotoLogin, toast, isHaveBASEURL } from '../../../utils/util';
 Component({
     behaviors: [computedBehavior],
     options: {
@@ -34,6 +34,10 @@ Component({
             type: String,
             value: ''
         },
+        onlyShow: {
+            type: Boolean,
+            value: false
+        }
     },
     watch: {
         imageList(imageList) {
@@ -42,7 +46,7 @@ Component({
             const newValueList = [];
             imageList.forEach(item => {
                 if (typeof item === 'object') {
-                    newShowList.push(Object.assign({}, item, { path: item.path.indexOf(BASEURL) !== -1 ? item.path : `${BASEURL}${item.path}`, error: false }));
+                    newShowList.push(Object.assign({}, item, { path: isHaveBASEURL(item.path, BASEURL) ? item.path : `${BASEURL}${item.path}`, error: false }));
                     newValueList.push(item);
                 }
                 else if (typeof item === 'string') {
@@ -66,9 +70,6 @@ Component({
         disabled(_disabled) {
             this.handleChangeDisabled();
         },
-        showList(showList) {
-            console.log(showList);
-        }
     },
     data: {
         showList: [],
@@ -137,41 +138,42 @@ Component({
             });
         },
         upImage(tempFilePath) {
-            const { token, upFileUrl } = this.data;
+            const { token, upFileUrl, BASEURL } = this.data;
             return new Promise((resolve) => {
                 wx.uploadFile({
                     url: upFileUrl,
                     filePath: tempFilePath,
                     name: 'file',
                     header: {
-                        token,
+                        Authorization: token,
                     },
                     formData: {
                         token
                     },
                     success: (res) => {
                         let data = JSON.parse(res.data);
-                        if (data.code === 1) {
+                        if (res.statusCode === 401) {
+                            toast({
+                                title: data.errorMsg || '登录失效，请重新登录',
+                                cb: gotoLogin
+                            });
+                            return;
+                        }
+                        if (data.status === 200) {
                             resolve({
                                 showListItem: {
                                     error: false,
-                                    path: data.data.path
+                                    path: isHaveBASEURL(data.data.path, BASEURL) ? data.data.path : `${BASEURL}${data.data.path}`,
                                 },
-                                valueListItem: Object.assign({}, data.data, { path: data.data.path })
+                                valueListItem: Object.assign({}, data.data, { path: isHaveBASEURL(data.data.path, BASEURL) ? data.data.path : `${BASEURL}${data.data.path}` })
                             });
                         }
-                        else if (data.code === 0) {
+                        else {
                             resolve({
                                 showListItem: {
                                     error: true,
                                     path: data.data.path
                                 }
-                            });
-                        }
-                        else if (data.code === 2) {
-                            toast({
-                                title: data.errMsg || '登录失效，请重新登录',
-                                cb: gotoLogin
                             });
                         }
                     },

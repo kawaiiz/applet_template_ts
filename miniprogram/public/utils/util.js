@@ -214,7 +214,7 @@ export function mockData(type, item, title, pageIndex, pageSize) {
             yield delay(1000);
             resolve({
                 data: item,
-                code: 1
+                status: 1
             });
         }));
     }
@@ -230,7 +230,7 @@ export function mockData(type, item, title, pageIndex, pageSize) {
                     list: dataList,
                     pageCount: 2
                 },
-                code: 1
+                status: 1
             });
         }));
     }
@@ -261,10 +261,13 @@ const isStartPage = () => {
 export const gotoLogin = () => {
     if (isStartPage()) {
         wx.reLaunch({
-            url: "/pages/login/startup_page/startup_page"
+            url: "/pages/login/login"
         });
     }
 };
 export const myConsole = (data, _this) => {
     console.log(`页面：${_this.route}`, data);
+};
+export const isHaveBASEURL = (string, BASEURL) => {
+    return string.indexOf(BASEURL) !== -1;
 };

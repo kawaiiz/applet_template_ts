@@ -1,9 +1,9 @@
 <view class="box box-row-start-wrap">
   <view class="img-block item" wx:for="{{showList}}" wx:key="path" style="background-image:url({{item.path}})" bindtap="handleClickSeeImage" data-index="{{index}}">
-    <view class="del" catchtap="handleClickDel" data-index="{{index}}">×</view>
+    <view class="del" catchtap="handleClickDel" data-index="{{index}}" wx:if="{{!onlyShow}}">×</view>
     <view class="error-tip" wx:if="{{item.error}}">!</view>
   </view>
-  <view class="img-block add box box-row-center" bindtap="handleClickAdd">
+  <view class="img-block add box box-row-center" bindtap="handleClickAdd" wx:if="{{!onlyShow}}">
     <view class="text">+</view>
   </view>
 </view>
