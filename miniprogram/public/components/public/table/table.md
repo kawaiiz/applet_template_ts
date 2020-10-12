@@ -14,7 +14,7 @@
 `tipSubtitle`无数据时的提示文本副标题标题  
 `select`控制是否出现勾选。  
 `selectKey`勾选的初始值  
-`generic:action-td`当列表项内具有操作列，操作列的内容需要自定义时，使用到了抽象节点，该属性指明抽象节点的组件。操作列位置可以不固定，如需多个操作列要修改内部代码，内容不限,点击事件由`bindclickaction`触发，抽象节点的组件代码在下面贴出。  
+`generic:action-td`当列表项内具有操作列，需要在`columns`内添加`key:action`的一项，操作列的内容往往需要自定义，小程序不提供react,vue的`rander函数`，所以使用到了抽象节点，该属性指明抽象节点的组件。操作列位置可以不固定，如需多个操作列要修改内部代码，内容不限,点击事件由`bindclickaction`触发，抽象节点的组件代码在下面贴出。  
 2. 事件介绍  
 `bindcheckkey`勾选事件 返回被勾选项的rowKey数组
 `bindclicklistitem`点击列表行事件 
