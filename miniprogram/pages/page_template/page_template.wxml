@@ -13,4 +13,3 @@
   </navigator>
   {{token}}
 </view>
-<view class="tip">小程序仅限立方制药内部员工使用，主要用于公司内部业务的管理，需要登录账号后才可做相关操作。</view>

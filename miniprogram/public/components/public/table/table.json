@@ -1,0 +1,9 @@
+{
+  "component": true,
+  "usingComponents": {
+    "i-load-more": "/public/plugIn/iview/load-more/index"
+  },
+  "componentGenerics": {
+    "action-td": true
+  }
+}
