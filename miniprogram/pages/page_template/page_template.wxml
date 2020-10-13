@@ -1,0 +1,4 @@
+<my-nav>
+  <my-nav-btn slot="leftBtn" type="back"></my-nav-btn>
+  <view slot="center" class="page-title">页面模板</view>
+</my-nav>
