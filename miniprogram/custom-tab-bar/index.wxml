@@ -1,4 +1,4 @@
-<view class="tabs-box box box-row-center">
+<view class="tabs-box box box-row-center" style="padding-bottom:{{pageConfig.isHighHead?30:0}}rpx">
   <block wx:for="{{tabsList}}" wx:key="route">
     <view class="tab box-tag-big box box-col-center" wx:if="{{activeNum === index}}">
       <image class="icon" src="{{IMAGEURL}}{{item.icon_active}}" />

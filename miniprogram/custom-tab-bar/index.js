@@ -1,6 +1,9 @@
+const { storeBindingsBehavior } = require('mobx-miniprogram-bindings');
+import { globalDataStore, } from '../store/globalData/globalData';
 import { getNowPage } from '../public/utils/util';
 const app = getApp();
 Component({
+    behaviors: [storeBindingsBehavior],
     options: {
         addGlobalClass: true,
     },
@@ -11,33 +14,41 @@ Component({
             {
                 route: "/pages/index/index/index",
                 text: "首页",
-                icon: "home.png",
-                icon_active: "home_active.png",
+                icon: "tab_index.png",
+                icon_active: "tab_index_active.png",
                 color: "#D0D0D0",
-                color_active: "#677BEE"
+                color_active: "#629BFF"
             },
             {
-                route: "/pages/terminal/terminal/terminal",
-                text: "终端",
-                icon: "terminal.png",
-                icon_active: "terminal_active.png",
+                route: "/pages/map/index/index",
+                text: "找车位",
+                icon: "tab_map.png",
+                icon_active: "tab_map_active.png",
                 color: "#D0D0D0",
-                color_active: "#677BEE"
+                color_active: "#629BFF"
             },
             {
-                route: "/pages/user/user/user",
+                route: "/pages/user/index/index",
                 text: "我的",
-                icon: "user.png",
-                icon_active: "user_active.png",
+                icon: "tab_user.png",
+                icon_active: "tab_user_active.png",
                 color: "#D0D0D0",
-                color_active: "#677BEE"
+                color_active: "#629BFF"
             }
         ],
         activeNum: NaN,
     },
+    storeBindings: {
+        store: globalDataStore,
+        fields: {
+            pageConfig: (store) => store.pageConfig
+        }
+    },
     methods: {
         setActiveTab() {
             try {
+                console.log(this.data.pageConfig);
+                console.log(this.data);
                 const page = getNowPage();
                 const { tabsList } = this.data;
                 this.setData({

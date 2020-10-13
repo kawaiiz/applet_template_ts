@@ -1,4 +1,8 @@
+const { storeBindingsBehavior } = require('mobx-miniprogram-bindings')
+import { globalDataStore, } from '../store/globalData/globalData'
+import { GlobalDataStore } from '../store/globalData/data'
 import { getNowPage } from '../public/utils/util'
+
 const app = getApp<IAppOption>()
 
 interface Tab {
@@ -14,15 +18,16 @@ type InitData = {
   IMAGEURL: string,
   tabsList: Tab[],
   activeNum: number
-}
+} & GlobalDataStore
 
 type InitProperty = {}
 
 type InitMethod = {
   setActiveTab(): void
-} 
+}
 
 Component<InitData, InitProperty, InitMethod>({
+  behaviors: [storeBindingsBehavior],
   options: {
     addGlobalClass: true,
   },
@@ -42,31 +47,36 @@ Component<InitData, InitProperty, InitMethod>({
       {
         route: "/pages/index/index/index",
         text: "首页",
-        icon: "home.png", // 非活跃图标
-        icon_active: "home_active.png", // 活跃图标
+        icon: "tab_index.png", // 非活跃图标
+        icon_active: "tab_index_active.png", // 活跃图标
         color: "#D0D0D0", // 非活跃颜色
-        color_active: "#677BEE" // 活跃颜色
+        color_active: "#629BFF" // 活跃颜色
       },
       {
-        route: "/pages/terminal/terminal/terminal",
-        text: "终端",
-        icon: "terminal.png", // 非活跃图标
-        icon_active: "terminal_active.png", // 活跃图标
+        route: "/pages/map/index/index",
+        text: "找车位",
+        icon: "tab_map.png", // 非活跃图标
+        icon_active: "tab_map_active.png", // 活跃图标
         color: "#D0D0D0", // 非活跃颜色
-        color_active: "#677BEE" // 活跃颜色
+        color_active: "#629BFF" // 活跃颜色
       },
       {
-        route: "/pages/user/user/user",
+        route: "/pages/user/index/index",
         text: "我的",
-        icon: "user.png", // 非活跃图标
-        icon_active: "user_active.png", // 活跃图标
+        icon: "tab_user.png", // 非活跃图标
+        icon_active: "tab_user_active.png", // 活跃图标
         color: "#D0D0D0", // 非活跃颜色
-        color_active: "#677BEE" // 活跃颜色
+        color_active: "#629BFF" // 活跃颜色
       }
     ],
     activeNum: NaN,// 当前活跃项
   },
-
+  storeBindings: {
+    store: globalDataStore,
+    fields: {
+      pageConfig: (store: GlobalDataStore) => store.pageConfig
+    }
+  },
   /**
    * 组件的方法列表
    */

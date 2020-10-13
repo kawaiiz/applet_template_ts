@@ -1,6 +1,6 @@
 .tabs-box{
   width: 100vw;
-  height: 100rpx;
+ 
   position: fixed;
   bottom: 0;
   left: 0;
@@ -9,6 +9,7 @@
   border-radius:30rpx 30rpx 0 0 ;
   background-color: #fff;
   .tab{
+    height: 100rpx;
     padding: 18rpx 10rpx 10rpx;
     .icon{
       width: 40rpx;
