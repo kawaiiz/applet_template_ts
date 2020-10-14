@@ -15,7 +15,7 @@ const data: GlobalDataStore = {
   pageConfig: setNavStyle(),// 屏幕参数
 }
 
-export const dataAction: GlobalDataAction = {
+export const globalAction: GlobalDataAction = {
   // 获取用户信息 如果过期 则要前往登录 没过期就前往首页
   getUserInfo: action(async function (this: GlobalDataStore & GlobalDataAction) {
     try {
@@ -54,6 +54,6 @@ export const dataAction: GlobalDataAction = {
 /** 用于与业务无关的信息 如屏幕信息、获取短信的标识 */
 export default {
   ...data,
-  ...dataAction
+  ...globalAction
 } as GlobalDataStore & GlobalDataAction
 

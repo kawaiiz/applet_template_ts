@@ -13,7 +13,7 @@ const data = {
     captchaTime: 60,
     defaultCaptchaTime: 60,
 };
-export const dataAction = {
+export const otherAction = {
     getCaptcha: action(function (_data) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -51,4 +51,4 @@ export const dataAction = {
         });
     })
 };
-export default Object.assign({}, data, dataAction);
+export default Object.assign({}, data, otherAction);

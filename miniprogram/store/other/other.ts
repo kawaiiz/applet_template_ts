@@ -8,7 +8,7 @@ const data: OtherStore = {
   defaultCaptchaTime: 60,// 默认短信间隔时间 用于重置captchaTime
 }
 
-export const dataAction: OtherAction = {
+export const otherAction: OtherAction = {
   // 获取短信
   getCaptcha: action(async function (this: OtherStore & OtherAction, _data: GetCaptchaData) {
     try {
@@ -46,6 +46,6 @@ export const dataAction: OtherAction = {
 /** 用于与业务无关的信息 如屏幕信息、获取短信的标识 */
 export default {
   ...data,
-  ...dataAction
+  ...otherAction
 } as OtherStore & OtherAction
 

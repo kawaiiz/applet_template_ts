@@ -19,7 +19,7 @@ const data = {
     },
     pageConfig: setNavStyle(),
 };
-export const dataAction = {
+export const globalAction = {
     getUserInfo: action(function () {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -56,4 +56,4 @@ export const dataAction = {
         });
     })
 };
-export default Object.assign({}, data, dataAction);
+export default Object.assign({}, data, globalAction);

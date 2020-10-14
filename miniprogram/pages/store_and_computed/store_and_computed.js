@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 const computedBehavior = require('miniprogram-computed');
 const { storeBindingsBehavior } = require('mobx-miniprogram-bindings');
 import store from '../../store/index/index';
-import { dataAction } from '../../store/other/other';
+import { otherAction } from '../../store/other/other';
 import { toast } from '../../public/utils/util';
 Component({
     behaviors: [computedBehavior, storeBindingsBehavior],
@@ -44,7 +44,7 @@ Component({
             console.log(_type);
         }
     },
-    methods: Object.assign({}, dataAction, { handleChangeType() {
+    methods: Object.assign({}, otherAction, { handleChangeType() {
             const { type } = this.data;
             this.setData({
                 type: !type

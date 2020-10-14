@@ -1,7 +1,7 @@
 const computedBehavior = require('miniprogram-computed')
 const { storeBindingsBehavior } = require('mobx-miniprogram-bindings')
 import store from '../../store/index/index'
-import { dataAction } from '../../store/other/other'
+import { otherAction } from '../../store/other/other'
 import { OtherAction, OtherStore } from '../../store/other/data'
 import { toast } from '../../public/utils/util'
 
@@ -9,7 +9,7 @@ type InitComputed = {
   typeText: string
 }
 
-type InitData = {
+type InitData = { 
   type: boolean
 } & InitComputed & OtherStore
 
@@ -70,7 +70,7 @@ Component<InitData, InitProperty, InitMethod>({
    * 组件的方法列表
    */
   methods: {
-    ...dataAction,
+    ...otherAction,
     // 修改登录方式
     handleChangeType() {
       const { type } = this.data
