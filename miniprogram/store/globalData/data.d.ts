@@ -1,5 +1,7 @@
 export interface UserInfo {
-
+  id: number,
+  mobile: string, // 手机号
+  isAuth: boolean // 是否认证
 }
 
 export interface GlobalDataStore {

@@ -1,5 +1,5 @@
 const { storeBindingsBehavior } = require('mobx-miniprogram-bindings')
-import { globalDataStore, } from '../store/globalData/globalData'
+import store from '../store/index/index'
 import { GlobalDataStore } from '../store/globalData/data'
 import { getNowPage } from '../public/utils/util'
 
@@ -72,7 +72,7 @@ Component<InitData, InitProperty, InitMethod>({
     activeNum: NaN,// 当前活跃项
   },
   storeBindings: {
-    store: globalDataStore,
+    store,
     fields: {
       pageConfig: (store: GlobalDataStore) => store.pageConfig
     }

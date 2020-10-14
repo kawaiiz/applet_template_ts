@@ -2,7 +2,7 @@
 import { toast, autoUpdate, } from './public/utils/util'
 import * as config from './public/utils/config'
 import './lodash_init'
-import { globalDataStore } from './store/globalData/globalData'
+import store from './store/index/index'
 
 App<IAppOption>({
   onLaunch(_option: any) {
@@ -14,7 +14,7 @@ App<IAppOption>({
   // 检查是否有token 有token就获取用户信息
   async checkLogin() {
     const token = wx.getStorageSync('token') || '';
-    await globalDataStore.setToken(token)
+    await store.setToken(token)
   },
   globalData: {
     IMAGEURL: config.IMAGEURL,

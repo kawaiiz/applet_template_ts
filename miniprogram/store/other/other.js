@@ -6,7 +6,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const { observable, action } = require('mobx-miniprogram');
+const { action } = require('mobx-miniprogram');
 import { delay } from '../../public/utils/util';
 const data = {
     captchaDisable: false,
@@ -51,4 +51,4 @@ export const dataAction = {
         });
     })
 };
-export const store = observable(Object.assign({}, data, dataAction));
+export default Object.assign({}, data, dataAction);

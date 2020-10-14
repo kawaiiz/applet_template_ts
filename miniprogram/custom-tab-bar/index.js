@@ -1,5 +1,5 @@
 const { storeBindingsBehavior } = require('mobx-miniprogram-bindings');
-import { globalDataStore, } from '../store/globalData/globalData';
+import store from '../store/index/index';
 import { getNowPage } from '../public/utils/util';
 const app = getApp();
 Component({
@@ -39,7 +39,7 @@ Component({
         activeNum: NaN,
     },
     storeBindings: {
-        store: globalDataStore,
+        store,
         fields: {
             pageConfig: (store) => store.pageConfig
         }
@@ -47,8 +47,6 @@ Component({
     methods: {
         setActiveTab() {
             try {
-                console.log(this.data.pageConfig);
-                console.log(this.data);
                 const page = getNowPage();
                 const { tabsList } = this.data;
                 this.setData({

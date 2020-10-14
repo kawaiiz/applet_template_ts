@@ -1,7 +1,7 @@
 import { gotoLogin, gotoError } from './util'
 import { BASEURL } from "./config"
 import http from './api.request'
-import { globalDataStore } from '../../store/globalData/globalData'
+import store from '../../store/index/index'
 /*
 * 请求函数说明
 *
@@ -92,7 +92,7 @@ const getToken = async (): Promise<any> => {
           },
           success(res: any) {
             if (res.statusCode === 200 && res.data.code === 1) {
-              globalDataStore.setToken(res.data.data)
+              store.setToken(res.data.data)
               isRefreshing = false
               resolve()
             } else {
@@ -137,7 +137,7 @@ class HttpRequest implements HttpRequestInterface {
       }
     } else if (res.statusCode === 401) {
       // 登录失效 则前往启动页
-      globalDataStore.setToken("")
+      store.setToken("")
       gotoLogin()
       return Promise.reject()
     } else if (res.statusCode === 403) {
@@ -171,7 +171,7 @@ class HttpRequest implements HttpRequestInterface {
     //给每次请求配上token
     let token = ''
     try {
-      token = globalDataStore.token || '';
+      token = store.token || '';
     } catch (e) {
       console.log(e)
     }

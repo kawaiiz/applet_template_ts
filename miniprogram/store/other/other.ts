@@ -1,4 +1,4 @@
-const { observable, action } = require('mobx-miniprogram')
+const { action } = require('mobx-miniprogram')
 import { delay } from '../../public/utils/util'
 // import { getCaptcha, GetCaptchaData } from '../service/other'
 import { OtherStore, OtherAction, GetCaptchaData } from './data'
@@ -44,8 +44,8 @@ export const dataAction: OtherAction = {
 }
 
 /** 用于与业务无关的信息 如屏幕信息、获取短信的标识 */
-export const store: OtherStore & OtherAction = observable({
+export default {
   ...data,
   ...dataAction
-})
+} as OtherStore & OtherAction
 

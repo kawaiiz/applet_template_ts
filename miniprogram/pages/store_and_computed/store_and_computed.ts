@@ -1,6 +1,7 @@
 const computedBehavior = require('miniprogram-computed')
 const { storeBindingsBehavior } = require('mobx-miniprogram-bindings')
-import { store, dataAction } from '../../store/other/other'
+import store from '../../store/index/index'
+import { dataAction } from '../../store/other/other'
 import { OtherAction, OtherStore } from '../../store/other/data'
 import { toast } from '../../public/utils/util'
 
@@ -93,6 +94,7 @@ Component<InitData, InitProperty, InitMethod>({
 
         this.setCaptchaTime()
       } catch (e) {
+        console.log(e)
         toast(e.errMsg || '短信发送失败，请稍后重试！')
       }
     },

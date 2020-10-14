@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { gotoLogin, gotoError } from './util';
 import { BASEURL } from "./config";
 import http from './api.request';
-import { globalDataStore } from '../../store/globalData/globalData';
+import store from '../../store/index/index';
 let isRefreshing = false;
 let requests = [];
 let responents = [];
@@ -42,7 +42,7 @@ const getToken = () => __awaiter(this, void 0, void 0, function* () {
                     },
                     success(res) {
                         if (res.statusCode === 200 && res.data.code === 1) {
-                            globalDataStore.setToken(res.data.data);
+                            store.setToken(res.data.data);
                             isRefreshing = false;
                             resolve();
                         }
@@ -86,7 +86,7 @@ class HttpRequest {
             }
         }
         else if (res.statusCode === 401) {
-            globalDataStore.setToken("");
+            store.setToken("");
             gotoLogin();
             return Promise.reject();
         }
@@ -113,7 +113,7 @@ class HttpRequest {
     createOptions(option, resolve, reject) {
         let token = '';
         try {
-            token = globalDataStore.token || '';
+            token = store.token || '';
         }
         catch (e) {
             console.log(e);

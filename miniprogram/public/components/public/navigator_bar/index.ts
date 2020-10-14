@@ -1,6 +1,6 @@
 // public/components/navigator_bar/index.js
 const { storeBindingsBehavior } = require('../../../../miniprogram_npm/mobx-miniprogram-bindings/index')
-import { globalDataStore, } from '../../../../store/globalData/globalData'
+import store from '../../../../store/index/index'
 import { GlobalDataStore } from '../../../../store/globalData/data'
 
 type InitData = {} & GlobalDataStore
@@ -33,9 +33,9 @@ Component<InitData, InitProperty, InitMethod>({
     }
   },
   storeBindings: {
-    store: globalDataStore,
+    store,
     fields: {
-      pageConfig: () => globalDataStore.pageConfig,
+      pageConfig: () => store.pageConfig,
     }
   },
   /**

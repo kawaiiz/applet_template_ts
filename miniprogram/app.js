@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { toast, autoUpdate, } from './public/utils/util';
 import * as config from './public/utils/config';
 import './lodash_init';
-import { globalDataStore } from './store/globalData/globalData';
+import store from './store/index/index';
 App({
     onLaunch(_option) {
         this.checkLogin();
@@ -20,7 +20,7 @@ App({
     checkLogin() {
         return __awaiter(this, void 0, void 0, function* () {
             const token = wx.getStorageSync('token') || '';
-            yield globalDataStore.setToken(token);
+            yield store.setToken(token);
         });
     },
     globalData: {

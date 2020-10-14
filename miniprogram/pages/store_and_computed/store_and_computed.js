@@ -8,7 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 const computedBehavior = require('miniprogram-computed');
 const { storeBindingsBehavior } = require('mobx-miniprogram-bindings');
-import { store, dataAction } from '../../store/other/other';
+import store from '../../store/index/index';
+import { dataAction } from '../../store/other/other';
 import { toast } from '../../public/utils/util';
 Component({
     behaviors: [computedBehavior, storeBindingsBehavior],
@@ -61,6 +62,7 @@ Component({
                     this.setCaptchaTime();
                 }
                 catch (e) {
+                    console.log(e);
                     toast(e.errMsg || '短信发送失败，请稍后重试！');
                 }
             });

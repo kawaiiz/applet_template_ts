@@ -6,16 +6,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const { observable, action } = require('mobx-miniprogram');
+const { action } = require('mobx-miniprogram');
 import { setNavStyle, } from '../../public/utils/util';
 import { getUserInfo } from './service';
 const data = {
     login: 0,
     token: "",
     userInfo: {
-        username: "",
-        truename: "",
-        area: []
+        id: NaN,
+        mobile: '',
+        isAuth: false
     },
     pageConfig: setNavStyle(),
 };
@@ -56,4 +56,4 @@ export const dataAction = {
         });
     })
 };
-export const globalDataStore = observable(Object.assign({}, data, dataAction));
+export default Object.assign({}, data, dataAction);

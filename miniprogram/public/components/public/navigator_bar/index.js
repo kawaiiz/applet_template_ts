@@ -1,5 +1,5 @@
 const { storeBindingsBehavior } = require('../../../../miniprogram_npm/mobx-miniprogram-bindings/index');
-import { globalDataStore, } from '../../../../store/globalData/globalData';
+import store from '../../../../store/index/index';
 Component({
     behaviors: [storeBindingsBehavior],
     options: {
@@ -16,9 +16,9 @@ Component({
         }
     },
     storeBindings: {
-        store: globalDataStore,
+        store,
         fields: {
-            pageConfig: () => globalDataStore.pageConfig,
+            pageConfig: () => store.pageConfig,
         }
     },
     data: {},
