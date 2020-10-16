@@ -90,9 +90,9 @@ const getToken = async (): Promise<any> => {
           header: {
             'content-type': 'multipart/form-data; boundary=XXX'
           },
-          success(res: any) {
+          async success(res: any) {
             if (res.statusCode === 200 && res.data.code === 1) {
-              store.setToken(res.data.data)
+              await store.setToken(res.data.data)
               isRefreshing = false
               resolve()
             } else {
@@ -118,7 +118,7 @@ class HttpRequest implements HttpRequestInterface {
   /**
    * 请求成功
    */
-  requestSuccess(res: any, option: InitOption) {
+  async requestSuccess(res: any, option: InitOption) {
     for (let i = 0; i < requestList.length; i++) {
       if (requestList[i] === this.requestTask) {
         requestList.splice(i, 1)
@@ -137,7 +137,7 @@ class HttpRequest implements HttpRequestInterface {
       }
     } else if (res.statusCode === 401) {
       // 登录失效 则前往启动页
-      store.setToken("")
+      await store.setToken("")
       gotoLogin()
       return Promise.reject()
     } else if (res.statusCode === 403) {

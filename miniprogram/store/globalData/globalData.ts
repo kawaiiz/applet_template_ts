@@ -5,7 +5,7 @@ import { getUserInfo } from './service'
 import { GlobalDataStore, GlobalDataAction } from './data'
 // import { value } from './mock'
 const data: GlobalDataStore = {
-  login: 0,// 是否登录 0 未判断/ 1 已登录/ 2 未登录
+  loginFlag: 0,// 是否登录 0 未判断/ 1 已登录/ 2 未登录
   token: "",// token
   userInfo: {
     id: NaN,
@@ -39,14 +39,14 @@ export const globalAction: GlobalDataAction = {
       wx.setStorageSync('token', token || '')
       if (token) {
         await this.getUserInfo() // 先用获取用户信息来校验token是否有效 无效返回启动页
-        this.login = 1 // 登录有效 设置登录位
+        this.loginFlag = 1 // 登录有效 设置登录位
         await this.initGlobalData()
       } else {
-        this.login = 2 // token清除 设置登录位
+        this.loginFlag = 2 // token清除 设置登录位
       }
     } catch (e) {
       console.log(e)
-      this.login = 2 // token清除 设置登录位
+      this.loginFlag = 2 // token清除 设置登录位
     }
   })
 }

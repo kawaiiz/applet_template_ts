@@ -5,7 +5,7 @@ export interface UserInfo {
 }
 
 export interface GlobalDataStore {
-  login?: number,
+  loginFlag?: number,
   token?: string,
   pageConfig?: GlobalData.PageConfig,
   userInfo?: UserInfo,
