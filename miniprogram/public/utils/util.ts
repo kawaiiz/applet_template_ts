@@ -1,64 +1,5 @@
 import { IRes } from './http'
-/**
- * @param {Number} num 数值
- * @returns {String} 处理后的字符串
- * @description 如果传入的数值小于10，即位数只有1位，则在前面补充0
- */
 
-export function getHandledValue(num: number) {
-  return num < 10 ? "0" + num : num.toString();
-} // 处理日期数据
-
-/**
- * @param {Number} timeStamp 传入的时间戳
- * @param {Number} startType 要返回的时间字符串的格式类型，不传则返回年开头的完整时间
- */
-export function getDate(data: Date | string | number, startType?: "yyyy-mm-dd" | "yyyy-mm-dd hh:mm:ss" | "yyyymmddhh hhmm" | "hh:mm" | "yyyy年mm月dd日") {
-  // 传 时间或时间戳
-  let d: Date
-  if (typeof data === "object") {
-    d = data
-  } else if (typeof data === "string") {
-    d = new Date(data);
-  } else if (typeof data === "number") {
-    if (!isMillisecond(data)) {
-      d = new Date(data * 1000);
-    } else {
-      d = new Date(data);
-    }
-  } else {
-    d = new Date(data);
-  }
-  let year = d.getFullYear();
-  let month = getHandledValue(d.getMonth() + 1);
-  let date = getHandledValue(d.getDate());
-  let hours = getHandledValue(d.getHours());
-  let minutes = getHandledValue(d.getMinutes());
-  let second = getHandledValue(d.getSeconds());
-  let resStr = "";
-  if (startType === "yyyy-mm-dd") resStr = year + "-" + month + "-" + date; else if (startType === "yyyy-mm-dd hh:mm:ss") resStr = year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + second; else if (startType === "yyyymmddhh hhmm") resStr = year + month + date + " " + hours + minutes; else if (startType === "hh:mm") resStr = hours + ":" + minutes; else if (startType === "yyyy年mm月dd日") resStr = year + "年" + month + "月" + date + "日"; else resStr = month + "-" + date + " " + hours + ":" + minutes;
-  return {
-    time: resStr,
-    year: year,
-    month: month,
-    date: date,
-    hours: hours,
-    minutes: minutes,
-    second: second
-  };
-}
-
-/**
- * @desc 获取url参数的值
- * @param {string} timeStamp 请求参数字符串
- * @param {string} startType 需要的参数
- */
-export const getQueryString = (query: string, name: string) => {
-  var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-  var r = query.match(reg);
-  //if (r!=null) return r[2]; return '';
-  return r ? decodeURIComponent(r[2]) : null;
-}
 
 /**
  * @desc 获取当前页面
@@ -167,72 +108,6 @@ export const toast = (option: ToastPorp | string) => {
 }
 
 /**
- * @param {Number} timeStamp 判断时间戳格式是否是毫秒
- * @returns {Boolean}
- */
-const isMillisecond = (timeStamp: number) => {
-  const timeStr = String(timeStamp)
-  return timeStr.length > 10
-}
-
-/**
- * @param {Number} timeStamp 传入的时间戳
- * @param {Number} currentTime 当前时间时间戳
- * @returns {Boolean} 传入的时间戳是否早于当前时间戳
- */
-const isEarly = (timeStamp: number, currentTime: number) => {
-  return timeStamp < currentTime
-}
-
-/**
- * @param {String|Number} timeStamp 时间戳
- * @returns {String} 相对时间字符串
- */
-export const getRelativeTime = (timeStamp: number) => {
-  // 判断当前传入的时间戳是秒格式还是毫秒
-  const IS_MILLISECOND = isMillisecond(timeStamp)
-  // 如果是毫秒格式则转为秒格式
-  if (IS_MILLISECOND) Math.floor(timeStamp /= 1000)
-  // 传入的时间戳可以是数值或字符串类型，这里统一转为数值类型
-  timeStamp = Number(timeStamp)
-  // 获取当前时间时间戳
-  let currentTime = new Date().getTime()
-  const IS_MILLISECOND_CURRENT = isMillisecond(currentTime)
-  // 如果是毫秒格式则转为秒格式
-  if (IS_MILLISECOND_CURRENT) Math.floor(currentTime /= 1000)
-  // 判断传入时间戳是否早于当前时间戳
-  const IS_EARLY = isEarly(timeStamp, currentTime)
-  // 获取两个时间戳差值
-  let diff = Number((currentTime - timeStamp).toFixed(0))
-  // 如果IS_EARLY为false则差值取反
-  if (!IS_EARLY) diff = -diff
-  let resStr = ""
-  const dirStr = IS_EARLY ? "前" : "后"
-  // 少于等于59秒
-  if (diff <= 59) resStr = diff + "秒" + dirStr
-  // 多于59秒，少于等于59分钟59秒
-  else if (diff > 59 && diff <= 3599) resStr = Math.floor(diff / 60) + "分钟" + dirStr
-  // 多于59分钟59秒，少于等于23小时59分钟59秒
-  else if (diff > 3599 && diff <= 86399) resStr = Math.floor(diff / 3600) + "小时" + dirStr
-  // 多于23小时59分钟59秒，少于等于29天59分钟59秒
-  else if (diff > 86399 && diff <= 2623859) resStr = Math.floor(diff / 86400) + "天" + dirStr
-  else resStr = getDate(timeStamp, "yyyy-mm-dd hh:mm:ss").time
-  return resStr
-}
-
-
-/**
- * @param {Number|null} timeSecond 秒数
- * @returns {String} 00:03时间字符串
- */
-export const getTimeStr = (timeSecond: number | null) => {
-  timeSecond = timeSecond ? timeSecond : 0
-  const min = Math.floor(timeSecond / 60)
-  const second = Number((timeSecond - min * 60).toFixed(0))
-  return `${getHandledValue(min)}: ${getHandledValue(second)}`
-}
-
-/**
  * @returns {String} 获取系统屏幕相关参数
  */
 export const setNavStyle = () => {
@@ -316,29 +191,6 @@ export function mockData<T>(type: 'data' | 'list', item: T, title?: string, page
   }
 }
 
-
-/**
- * @param {Number|null} arr 一维数组
- * @param {Number|null} pID 父ID
- * @desc 将扁平的一维数组 转成多维 
- */
-export const toTree = (arr: any[], pID: number) => {
-  const ids: number[] = arr.map(a => a.id as number) // 获取所有的id
-  const arrNotParent = arr.filter(
-    ({ pId }) => pId && !ids.includes(pId)// 返回所有父id存在 且 父id不存在与所有的资源id数组中  
-  )
-  const _ = (arr: any[], pID: string | number | null): any[] =>
-    arr
-      .filter(({ pId }) => pId == pID)
-      .map(a => ({
-        ...a,
-        children: _(arr.filter(({ pId }) => pId != pID), a.id),
-      }))
-  // 这里 pID=0是因为后台设置一级页面的父id都是0
-  return _(arr, pID).concat(arrNotParent)
-}
-
-
 /* 
  *是否已经在错误页
  */
@@ -361,12 +213,12 @@ export const gotoError = () => {
 }
 
 /* 
- * 是否已经在启动页
+ * 是否已经在登录页
  */
 const isStartPage = () => {
   // 判断当前页是否是错误页，如果是就不跳了
   const currentPage = getNowPage()
-  return currentPage.route.indexOf('startup_page') === -1
+  return currentPage.route.indexOf('pages/index/index/index') === -1
 }
 
 /* 
@@ -376,11 +228,10 @@ export const gotoLogin = () => {
   // 判断当前页是否是启动页页，如果是就不跳了
   if (isStartPage()) {
     wx.reLaunch({
-      url: "/pages/login/login"
+      url: "/pages/index/index/index"
     })
   }
 }
-
 
 /* 
  * console 带上路径
@@ -390,6 +241,10 @@ export const myConsole = (data: any, _this: any) => {
   console.log(`页面：${_this.route}`, data)
 }
 
+
+/* 
+ * 用于判断图片返回的路径是否带有域名
+ */
 export const isHaveBASEURL = (string: string, BASEURL: string) => {
   return string.indexOf(BASEURL) !== -1
 }

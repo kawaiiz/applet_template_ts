@@ -6,62 +6,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-export function getHandledValue(num) {
-    return num < 10 ? "0" + num : num.toString();
-}
-export function getDate(data, startType) {
-    let d;
-    if (typeof data === "object") {
-        d = data;
-    }
-    else if (typeof data === "string") {
-        d = new Date(data);
-    }
-    else if (typeof data === "number") {
-        if (!isMillisecond(data)) {
-            d = new Date(data * 1000);
-        }
-        else {
-            d = new Date(data);
-        }
-    }
-    else {
-        d = new Date(data);
-    }
-    let year = d.getFullYear();
-    let month = getHandledValue(d.getMonth() + 1);
-    let date = getHandledValue(d.getDate());
-    let hours = getHandledValue(d.getHours());
-    let minutes = getHandledValue(d.getMinutes());
-    let second = getHandledValue(d.getSeconds());
-    let resStr = "";
-    if (startType === "yyyy-mm-dd")
-        resStr = year + "-" + month + "-" + date;
-    else if (startType === "yyyy-mm-dd hh:mm:ss")
-        resStr = year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + second;
-    else if (startType === "yyyymmddhh hhmm")
-        resStr = year + month + date + " " + hours + minutes;
-    else if (startType === "hh:mm")
-        resStr = hours + ":" + minutes;
-    else if (startType === "yyyy年mm月dd日")
-        resStr = year + "年" + month + "月" + date + "日";
-    else
-        resStr = month + "-" + date + " " + hours + ":" + minutes;
-    return {
-        time: resStr,
-        year: year,
-        month: month,
-        date: date,
-        hours: hours,
-        minutes: minutes,
-        second: second
-    };
-}
-export const getQueryString = (query, name) => {
-    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-    var r = query.match(reg);
-    return r ? decodeURIComponent(r[2]) : null;
-};
 export const getNowPage = () => {
     const pages = getCurrentPages();
     return pages[pages.length - 1];
@@ -136,46 +80,6 @@ export const toast = (option) => {
         }
     });
 };
-const isMillisecond = (timeStamp) => {
-    const timeStr = String(timeStamp);
-    return timeStr.length > 10;
-};
-const isEarly = (timeStamp, currentTime) => {
-    return timeStamp < currentTime;
-};
-export const getRelativeTime = (timeStamp) => {
-    const IS_MILLISECOND = isMillisecond(timeStamp);
-    if (IS_MILLISECOND)
-        Math.floor(timeStamp /= 1000);
-    timeStamp = Number(timeStamp);
-    let currentTime = new Date().getTime();
-    const IS_MILLISECOND_CURRENT = isMillisecond(currentTime);
-    if (IS_MILLISECOND_CURRENT)
-        Math.floor(currentTime /= 1000);
-    const IS_EARLY = isEarly(timeStamp, currentTime);
-    let diff = Number((currentTime - timeStamp).toFixed(0));
-    if (!IS_EARLY)
-        diff = -diff;
-    let resStr = "";
-    const dirStr = IS_EARLY ? "前" : "后";
-    if (diff <= 59)
-        resStr = diff + "秒" + dirStr;
-    else if (diff > 59 && diff <= 3599)
-        resStr = Math.floor(diff / 60) + "分钟" + dirStr;
-    else if (diff > 3599 && diff <= 86399)
-        resStr = Math.floor(diff / 3600) + "小时" + dirStr;
-    else if (diff > 86399 && diff <= 2623859)
-        resStr = Math.floor(diff / 86400) + "天" + dirStr;
-    else
-        resStr = getDate(timeStamp, "yyyy-mm-dd hh:mm:ss").time;
-    return resStr;
-};
-export const getTimeStr = (timeSecond) => {
-    timeSecond = timeSecond ? timeSecond : 0;
-    const min = Math.floor(timeSecond / 60);
-    const second = Number((timeSecond - min * 60).toFixed(0));
-    return `${getHandledValue(min)}: ${getHandledValue(second)}`;
-};
 export const setNavStyle = () => {
     const config = {
         pixelRate: 0.5,
@@ -235,14 +139,6 @@ export function mockData(type, item, title, pageIndex, pageSize) {
         }));
     }
 }
-export const toTree = (arr, pID) => {
-    const ids = arr.map(a => a.id);
-    const arrNotParent = arr.filter(({ pId }) => pId && !ids.includes(pId));
-    const _ = (arr, pID) => arr
-        .filter(({ pId }) => pId == pID)
-        .map(a => (Object.assign({}, a, { children: _(arr.filter(({ pId }) => pId != pID), a.id) })));
-    return _(arr, pID).concat(arrNotParent);
-};
 const isErrorPage = () => {
     const currentPage = getNowPage();
     return currentPage.route.indexOf('error') === -1;
@@ -256,12 +152,12 @@ export const gotoError = () => {
 };
 const isStartPage = () => {
     const currentPage = getNowPage();
-    return currentPage.route.indexOf('startup_page') === -1;
+    return currentPage.route.indexOf('pages/index/index/index') === -1;
 };
 export const gotoLogin = () => {
     if (isStartPage()) {
         wx.reLaunch({
-            url: "/pages/login/login"
+            url: "/pages/index/index/index"
         });
     }
 };

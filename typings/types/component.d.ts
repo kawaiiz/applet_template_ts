@@ -2,7 +2,13 @@
 declare namespace WechatMiniprogram {
   namespace Component {
     interface OtherOption {
-      storeBindings: any,
+      storeBindings: {
+        store: any,
+        fields?: {
+          [key: string]: <T>(store: T) => any
+        },
+        actions?: string[]
+      },
       computed: {
         [key: string]: (...data: any[]) => any
       },

@@ -1,7 +1,7 @@
 {
   "component": true,
   "usingComponents": {
-    "i-load-more": "/public/plugIn/iview/load-more/index"
+    "i-load-more": "/public/components/public/load_more/index"
   },
   "componentGenerics": {
     "action-td": true

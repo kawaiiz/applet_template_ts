@@ -1,6 +1,5 @@
 {
   "usingComponents": {
-    "i-icon": "/public/plugIn/iview/icon/index",
     "my-nav": "/public/components/public/navigator_bar/index",
     "my-nav-btn": "/public/components/public/navigator_btn/index"
   }

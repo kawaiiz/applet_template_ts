@@ -10,7 +10,7 @@ const { action } = require('mobx-miniprogram');
 import { setNavStyle, } from '../../public/utils/util';
 import { getUserInfo } from './service';
 const data = {
-    login: 0,
+    loginFlag: 0,
     token: "",
     userInfo: {
         id: NaN,
@@ -42,16 +42,16 @@ export const globalAction = {
                 wx.setStorageSync('token', token || '');
                 if (token) {
                     yield this.getUserInfo();
-                    this.login = 1;
+                    this.loginFlag = 1;
                     yield this.initGlobalData();
                 }
                 else {
-                    this.login = 2;
+                    this.loginFlag = 2;
                 }
             }
             catch (e) {
                 console.log(e);
-                this.login = 2;
+                this.loginFlag = 2;
             }
         });
     })

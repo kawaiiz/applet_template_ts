@@ -25,7 +25,13 @@
     "typeRoots": [
       "./typings",
       "./node_modules/@types"
-    ]
+    ],
+    "baseUrl": "./",
+    "paths": {
+      "@vant/weapp/*": [
+        "./miniprogram/miniprogram_npm/@vant/weapp/*"
+      ]
+    }
   },
   "include": [
     "./**/*.ts"

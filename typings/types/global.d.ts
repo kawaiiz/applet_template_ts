@@ -5,7 +5,8 @@ declare namespace GlobalData {
     detail: {
       value: any,
       current: number,
-      source: string
+      source: string,
+      [key: string]: any
     },
     traget: {
       dataset: {

@@ -41,14 +41,16 @@ const getToken = () => __awaiter(this, void 0, void 0, function* () {
                         'content-type': 'multipart/form-data; boundary=XXX'
                     },
                     success(res) {
-                        if (res.statusCode === 200 && res.data.code === 1) {
-                            store.setToken(res.data.data);
-                            isRefreshing = false;
-                            resolve();
-                        }
-                        else {
-                            reject();
-                        }
+                        return __awaiter(this, void 0, void 0, function* () {
+                            if (res.statusCode === 200 && res.data.code === 1) {
+                                yield store.setToken(res.data.data);
+                                isRefreshing = false;
+                                resolve();
+                            }
+                            else {
+                                reject();
+                            }
+                        });
                     },
                     fail(e) {
                         reject(e);
@@ -68,36 +70,38 @@ class HttpRequest {
         this.queue = {};
     }
     requestSuccess(res, option) {
-        for (let i = 0; i < requestList.length; i++) {
-            if (requestList[i] === this.requestTask) {
-                requestList.splice(i, 1);
+        return __awaiter(this, void 0, void 0, function* () {
+            for (let i = 0; i < requestList.length; i++) {
+                if (requestList[i] === this.requestTask) {
+                    requestList.splice(i, 1);
+                }
             }
-        }
-        if (res && (res.statusCode === 200)) {
-            let data = res.data;
-            if (typeof data === 'string') {
-                data = JSON.parse(data);
+            if (res && (res.statusCode === 200)) {
+                let data = res.data;
+                if (typeof data === 'string') {
+                    data = JSON.parse(data);
+                }
+                if (data.status === 200) {
+                    return Promise.resolve(data);
+                }
+                else {
+                    return Promise.reject(data);
+                }
             }
-            if (data.status === 200) {
-                return Promise.resolve(data);
+            else if (res.statusCode === 401) {
+                yield store.setToken("");
+                gotoLogin();
+                return Promise.reject();
+            }
+            else if (res.statusCode === 403) {
+                return Promise.reject(res.data);
             }
             else {
-                return Promise.reject(data);
+                console.log(res, option);
+                gotoError();
+                return Promise.reject(res.data);
             }
-        }
-        else if (res.statusCode === 401) {
-            store.setToken("");
-            gotoLogin();
-            return Promise.reject();
-        }
-        else if (res.statusCode === 403) {
-            return Promise.reject(res.data);
-        }
-        else {
-            console.log(res, option);
-            gotoError();
-            return Promise.reject(res.data);
-        }
+        });
     }
     requestFail(err, option) {
         console.log(err);
