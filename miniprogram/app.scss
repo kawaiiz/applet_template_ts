@@ -1,5 +1,6 @@
 @import "./public/wxss/_common.scss";
 @import "./public/wxss/_main.scss";
+@import './miniprogram_npm/@vant/weapp/common/index.wxss';
 
 //  改变checkbox 样式的css
 checkbox .wx-checkbox-input.wx-checkbox-input-checked{
