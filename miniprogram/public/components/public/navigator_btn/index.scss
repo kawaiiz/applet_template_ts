@@ -9,6 +9,21 @@
     padding:0 15rpx;
     justify-content:flex-start;
   }
+  .icon{
+    width: 85rpx;
+    height: 60rpx;
+    text-align: center;
+    line-height: 60rpx;
+    display: flex;
+    -ms-flex-flow: nowrap;
+    flex-flow: nowrap;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+  }
   .capsule{
     height: 60rpx;
     display: flex;
@@ -16,21 +31,6 @@
     justify-content:center;
     align-items:center;
     border-radius: 30rpx;
-    .icon{
-      width: 85rpx;
-      height: 60rpx;
-      text-align: center;
-      line-height: 60rpx;
-      display: flex;
-      -ms-flex-flow: nowrap;
-      flex-flow: nowrap;
-      -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-      justify-content: center;
-      -webkit-box-align: center;
-      -ms-flex-align: center;
-      align-items: center;
-    }
     .line{
       height: 30rpx;
     }
