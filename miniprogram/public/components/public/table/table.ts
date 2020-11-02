@@ -83,9 +83,10 @@ Component<InitData, InitProperty, InitMethod>({
 
   computed: {
     showDataList(data: InitData & WechatMiniprogram.Component.PropertyOptionToData<InitProperty>) {
-      const needReaderColums = data.columns.filter(item => item.render)
-      return data.dataList.map((item, index) => {
-        let newItem = { ...item }
+      const { columns, dataList, rowKey } = data
+      const needReaderColums = columns.filter(item => item.render)
+      return dataList.map((item, index) => {
+        let newItem = { ...item, row_key: `${item[rowKey]}` }
         needReaderColums.forEach((item1) => {
           newItem[item1.key] = item1.render(newItem[item1.key], item, index, getNowPage().data)
         })
@@ -182,12 +183,11 @@ Component<InitData, InitProperty, InitMethod>({
     attached: function () {
       const { rowKey, columns } = this.data
       if (!rowKey) {
-        console.error('table组件必须指明每一行的唯一标识的字段名，且必须为字符串，数字将会被转为字符串')
+        console.error('table组件必须指明每一行的唯一标识的字段名，且必须为字符串，数字将会被转为字符串,for循环中的wx:key不使用该字段，用的是computed中设置的row_key字段')
       }
       if (!columns) {
         console.error('table组件必须指明columns')
       }
-
     },
     moved: function () { },
     detached: function () { },
