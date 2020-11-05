@@ -70,7 +70,7 @@ Component<InitData, InitProperty, InitMethod>({
     },// 是否出现下划线
     disabled: {
       type: Boolean,
-      value: true
+      value: false
     },// 禁用
     titleWidth: {
       type: String,
