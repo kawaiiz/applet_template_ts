@@ -1,0 +1,37 @@
+@charset "UTF-8";
+@import "../../../wxss/main";
+.tabs{
+  width: 100vw;
+  background: #FFFFFF;
+  box-shadow: 0 10rpx 45rpx 0  rgba(0, 0, 0, 0.05);
+  border-radius: 0 0 50rpx 50rpx;
+  overflow: hidden;
+  white-space: nowrap;
+  .tab{
+    display: inline-block;
+    width: 250rpx;
+    height: 80rpx;
+    position: relative;
+    line-height: 80rpx;
+    text-align: center;
+    &.active{
+      .text{
+        color: $c-main;
+      }
+    }
+    .text{
+      font-size: 26rpx;
+      font-weight: blod;
+      color: #333333;
+    }
+    .line{
+      width: 75rpx;
+      height: 4rpx;
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: $c-main;
+    }
+  }
+}

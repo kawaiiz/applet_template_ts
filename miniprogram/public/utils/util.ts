@@ -201,7 +201,7 @@ const isErrorPage = () => {
 }
 
 /* 
- * 前往错误页
+ * 前往错误页 
  */
 export const gotoError = () => {
   // 判断当前页是否是错误页，如果是就不跳了
@@ -248,3 +248,4 @@ export const myConsole = (data: any, _this: any) => {
 export const isHaveBASEURL = (string: string, BASEURL: string) => {
   return string.indexOf(BASEURL) !== -1
 }
+

@@ -1,0 +1,17 @@
+.form-container{
+  margin: 30rpx 30rpx 70rpx;
+  .icon{
+    &.icon-1{
+      width: 15rpx;
+      height: 8rpx; 
+    }
+    &.icon-2{ 
+      width: 18rpx;
+      height: 20rpx; 
+    }
+  }
+}
+
+.submit-btn{
+  margin: 0 30rpx;
+}

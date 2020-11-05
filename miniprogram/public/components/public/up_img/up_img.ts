@@ -270,6 +270,12 @@ Component<InitData, InitProperty, InitMethod>({
   lifetimes: {
     // 生命周期函数，可以为函数，或一个在methods段中定义的方法名
     attached: function () { },
+    ready: function () {
+      const { BASEURL, token, upFileUrl } = this.data
+      if (!BASEURL) console.error('props中缺少BASEURL！')
+      if (!token) console.error('props中缺少token！')
+      if (!upFileUrl) console.error('props中缺少upFileUrl！')
+    },
     moved: function () { },
     detached: function () { },
   },

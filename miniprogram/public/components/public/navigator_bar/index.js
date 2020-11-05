@@ -18,7 +18,7 @@ Component({
     storeBindings: {
         store,
         fields: {
-            pageConfig: () => store.pageConfig,
+            pageConfig: (store) => store.pageConfig,
         }
     },
     data: {},

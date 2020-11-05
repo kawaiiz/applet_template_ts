@@ -33,13 +33,27 @@ interface InitOption {
   contentType?: string
 }
 
+interface UploadFileOption {
+  url: string,
+  allUrl?: string,
+  filePath: string
+  name?: string,
+  header?: Object,
+  formData?: any
+  timeout?: number,
+  requestLoading?: boolean,
+  requestType: string // 用于区分request还是upFile
+}
+
 interface HttpRequestInterface {
   requestSuccess: (res: any, option: InitOption) => Promise<any>;
   requestFail: (res: any, option: InitOption) => void;
   createOptions(option: InitOption, resolve: any, reject: any): WechatMiniprogram.RequestOption;
-  request: (option: InitOption) => Promise<any>;
+  createUpFileOption(option: UploadFileOption, resolve: any, reject: any): WechatMiniprogram.UploadFileOption;
+  request: <T>(option: InitOption) => Promise<IRes<T>>;
+  upFile: <T>(option: UploadFileOption) => Promise<IRes<T>>
   interceptorsRequest: () => Promise<any>
-  interceptorsResponent: (option: InitOption) => Promise<any>
+  interceptorsResponent: (option: InitOption | UploadFileOption) => Promise<any>
 }
 
 /**
@@ -118,7 +132,7 @@ class HttpRequest implements HttpRequestInterface {
   /**
    * 请求成功
    */
-  async requestSuccess(res: any, option: InitOption) {
+  async requestSuccess(res: any, option: InitOption | UploadFileOption) {
     for (let i = 0; i < requestList.length; i++) {
       if (requestList[i] === this.requestTask) {
         requestList.splice(i, 1)
@@ -136,13 +150,17 @@ class HttpRequest implements HttpRequestInterface {
         return Promise.reject(data)
       }
     } else if (res.statusCode === 401) {
-      // 登录失效 则前往启动页
+      // 无权限
       await store.setToken("")
       gotoLogin()
       return Promise.reject()
     } else if (res.statusCode === 403) {
-      // 登录失效 则前往启动页
+      // 拒绝访问
       return Promise.reject(res.data)
+    } else if (res.data.status == 'token过期标识') {
+      // 拦截请求
+      // 更新token
+      return this.interceptorsResponent(option)
     } else {
       console.log(res, option)
       gotoError()
@@ -153,7 +171,7 @@ class HttpRequest implements HttpRequestInterface {
   /**
  * 请求失败
  */
-  requestFail(err: any, option: InitOption) {
+  requestFail(err: any, option: InitOption | UploadFileOption) {
     console.log(err)
     // requestFlag = false;
     for (let i = requestList.length - 1; i >= 0; i--) {
@@ -209,6 +227,39 @@ class HttpRequest implements HttpRequestInterface {
     }
   }
 
+  createUpFileOption(option: UploadFileOption, resolve: any, reject: any): WechatMiniprogram.UploadFileOption & { requestType: string } {
+    //给每次请求配上token
+    let token = ''
+    try {
+      token = store.token || '';
+    } catch (e) {
+      console.log(e)
+    }
+    return {
+      requestType: 'uploadFile',
+      url: option.allUrl || `${this.BASEURL}${option.url}`,
+      name: option.name || 'file',
+      filePath: option.filePath,
+      formData: option.formData || {},
+      header: {
+        ...(option.header || {}),
+        'Authorization': token
+      },
+      success: (res: any) => {
+        resolve(res)
+      },
+      fail: (err: any) => {
+        this.requestFail(err, option)
+        reject()
+      },
+      complete: () => {
+        if (option.requestLoading) {
+          wx.hideLoading();
+        }
+      }
+    }
+  }
+
   // 当401时需要拦截 当然 这两个里也可以做其他的拦截
   async interceptorsRequest(): Promise<void> {
     if (!isRefreshing) {
@@ -223,7 +274,7 @@ class HttpRequest implements HttpRequestInterface {
     }
   }
   // 如果401需要拦截接下来所有的请求
-  async interceptorsResponent(option: InitOption): Promise<any> {
+  async interceptorsResponent(option: InitOption | UploadFileOption): Promise<any> {
     try {
       if (!isRefreshing) {
         isRefreshing = true
@@ -232,14 +283,23 @@ class HttpRequest implements HttpRequestInterface {
         responents.forEach(cb => cb());
         requests = [];
         responents = [];
-        return http.request(option)
+        if ((option as UploadFileOption).requestType === 'file') {
+          return http.upFile(option as UploadFileOption)
+        } else {
+          return http.request(option as InitOption)
+        }
       } else {
         return new Promise(resolve => {
           console.log(option)
           responents.push(async () => {
             try {
               console.log(option)
-              const res = await http.request(option)
+              let res
+              if ((option as UploadFileOption).requestType === 'file') {
+                res = await http.upFile(option as UploadFileOption)
+              } else {
+                res = await http.request(option as InitOption)
+              }
               resolve(res)
             } catch (e) {
               console.log(e)
@@ -268,6 +328,30 @@ class HttpRequest implements HttpRequestInterface {
       // 这里因为必须要跳出这个promise 要把resolve传进去
       let options = this.createOptions(option, resolve, reject)
       const requestTask = wx.request(options);
+      requestList.push(requestTask)
+    }).then((res) => {
+      return this.requestSuccess(res, option)
+    })
+  }
+
+  // 上传文件
+  upFile<T>(option: UploadFileOption = {
+    url: '',
+    filePath: '',
+    formData: {},
+    requestType: 'file'
+  }): Promise<IRes<T>> {
+    return new Promise(async (resolve, reject) => {
+      // 请求提示弹窗
+      if (option.requestLoading) {
+        wx.showLoading({
+          title: '请稍等',
+        })
+      }
+      await this.interceptorsRequest()
+      // 这里因为必须要跳出这个promise 要把resolve传进去
+      let options = this.createUpFileOption(option, resolve, reject)
+      const requestTask = wx.uploadFile(options);
       requestList.push(requestTask)
     }).then((res) => {
       return this.requestSuccess(res, option)

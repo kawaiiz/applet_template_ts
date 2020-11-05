@@ -4,18 +4,36 @@ import store from '../../store/index/index'
 import { otherAction } from '../../store/other/other'
 import { OtherAction, OtherStore } from '../../store/other/data'
 import { toast } from '../../public/utils/util'
+import { dataCheck, dataCheckItem } from '../../public/components/public/form/ts/form_verification'
+import { Rules, FormItemError } from '../../public/components/public/form/ts/data'
+import { debounce } from 'lodash'
+// 获取应用实例
+const app = getApp<IAppOption>()
 
 type InitComputed = {
   typeText: string
 }
 
-type InitData = { 
-  type: boolean
+type InitData = {
+  BASEURL: string,
+  IMAGEURL: string,
+  requestData: any,
+  type: boolean,
+  rules: Rules,
+  rangeList: any[],
+  error: {
+    [key: string]: FormItemError
+  },
 } & InitComputed & OtherStore
 
 type InitProperty = {}
 
 type InitMethod = {
+  handleChangePicker(e: GlobalData.WxAppletsEvent): void,
+  handleChangeInput(e: GlobalData.WxAppletsEvent): void,
+  handleChangeImages(e: GlobalData.WxAppletsEvent): void,
+  handleChangeUpdataLoading(e: GlobalData.WxAppletsEvent): void
+  handleSubmit(): void,
   handleClickCaptcha(): void
   handleChangeType(): void
   onLoad(options: any): void
@@ -28,7 +46,7 @@ Component<InitData, InitProperty, InitMethod>({
   options: {
     addGlobalClass: true,
   },
-  /**
+  /** 
    * 组件的属性列表
    */
   properties: {
@@ -46,8 +64,39 @@ Component<InitData, InitProperty, InitMethod>({
    * 组件的初始数据
    */
   data: {
+    BASEURL: app.globalData.BASEURL,
+    IMAGEURL: app.globalData.IMAGEURL,
+    requestData: {},
     type: false,
-    typeText: ''
+    typeText: '',
+    rangeList: [{
+      id: 1, name: '类型一'
+    }, {
+      id: 2, name: '类型二'
+    }, {
+      id: 3, name: '类型三'
+    }],
+    rules: {
+      name: {
+        required: true,
+        type: 'string',
+        message: '请输入活动名称~'
+      },
+      typeId: {
+        required: true,
+        message: '请选择支出类型~'
+      },
+      date: {
+        required: true,
+        message: '请选择支出日期~'
+      },
+      money: {
+        required: true,
+        type: 'number',
+        message: '请输入实际支出数额~'
+      }
+    },
+    error: {},
   },
   computed: {
     typeText(data: InitData & WechatMiniprogram.Component.PropertyOptionToData<InitProperty>) {
@@ -71,6 +120,48 @@ Component<InitData, InitProperty, InitMethod>({
    */
   methods: {
     ...otherAction,
+    // 输入文字事件
+    handleChangeInput: debounce(function (this: WechatMiniprogram.Component.Instance<InitData, InitProperty, InitMethod, {}>, e: GlobalData.WxAppletsEvent,) {
+      const { rules } = this.data
+      const { key } = e.currentTarget.dataset
+      const { value } = e.detail
+      this.setData({
+        [`requestData.${key}`]: value,
+        [`error.${key}`]: dataCheckItem(rules[key], value, key)
+      })
+    }, 200, {
+      leading: false,
+      trailing: true
+    }),
+    handleChangePicker(e) {
+      console.log(e)
+      const { rules } = this.data
+      const { key } = e.currentTarget.dataset
+      const { value } = e.detail
+      let newValue = null
+      const setData: { [key: string]: any } = {}
+      if (key === 'typeId') {
+        const { rangeList } = this.data
+        newValue = rangeList && rangeList[value].id
+      } else if (key === 'date') {
+        newValue = value
+      }
+      setData[`requestData.${key}`] = newValue;
+      setData[`error.${key}`] = dataCheckItem(rules[key], newValue, key);
+      this.setData(setData)
+    },
+    // 上传图片 删除图片
+    handleChangeImages(e) {
+      this.setData({
+        'requestData.images': e.detail.value,
+      })
+    },
+    // 上传图片设置禁止提交
+    handleChangeUpdataLoading(e) {
+      this.setData({
+        upDataLoading: e.detail.value
+      })
+    },
     // 修改登录方式
     handleChangeType() {
       const { type } = this.data
@@ -94,10 +185,27 @@ Component<InitData, InitProperty, InitMethod>({
 
         this.setCaptchaTime()
       } catch (e) {
-        console.log(e)
         toast(e.errMsg || '短信发送失败，请稍后重试！')
       }
     },
+    //  提交
+    handleSubmit: debounce(function (this: WechatMiniprogram.Component.Instance<InitData, InitProperty, InitMethod>) {
+      try {
+        const { requestData, rules } = this.data
+        const check = dataCheck(rules, requestData)
+        console.log(check)
+        if (check.errorArr.length > 0) {
+          this.setData({
+            error: check.errorObj
+          })
+        }
+      } catch (e) {
+
+      }
+    }, 200, {
+      leading: false,
+      trailing: true
+    }),
     onLoad(options: any) {
       console.log(options)
     },

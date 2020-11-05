@@ -1,0 +1,14 @@
+<van-cell required="{{required}}" title-width="{{titleWidth}}" border="{{lineBreak?false:border}}" title="{{label}}" title-class="zml--form-item-title-class">
+  <block wx:if="{{!lineBreak}}">
+    <slot></slot>
+    <view class="zml--error-message zml--text-align-{{errorMessageAlign}}" hidden="{{ !error }}">
+      {{ errorMessage }}
+    </view>
+  </block>
+</van-cell>
+<van-cell border="{{border}}" wx:if="{{lineBreak}}">
+  <slot></slot>
+  <view class="zml--error-message  zml--text-align-{{errorMessageAlign}}" hidden="{{ !error }}">
+    {{ errorMessage }}
+  </view>
+</van-cell>

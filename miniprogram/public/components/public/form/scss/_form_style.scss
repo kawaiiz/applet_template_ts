@@ -1,0 +1,67 @@
+@charset "UTF-8";
+page {
+  --cell-text-color:#333;// cell的title颜色
+  --cell-vertical-padding: 28rpx;// 控制表单每一行的高度
+  --cell-font-size:26rpx;// 控制cell内文字
+  --cell-value-color:#A2A2A2;// 控制cell内文字颜色
+  --field-label-color:#333;// field的label颜色
+  --field-placeholder-text-color:#A2A2A2;// 输入框提示语颜色
+  --field-input-text-color:#A2A2A2; // 输入框文字颜色
+  // --field-word-limit-font-size: 26rpx;
+
+  --field-error-message-color:#ee0a24; // 输入框错误提示颜色
+}  
+
+// 这里的input,picker,form前缀是微信的bug externalClasses导致的，兼容bug。
+.zml--form-container,.form--zml--form-container{
+  border-radius: 20rpx; 
+  overflow: hidden;
+  .zml--form-item-title-class,.input--zml--form-item-title-class,.picker--zml--form-item-title-class,.cell--zml--form-item-title-class{
+    font-weight: bold;
+  }
+
+  // input专属
+  .zml--form-item-input-class,.input--zml--form-item-input-class,.picker--zml--form-item-input-class{  
+    font-weight: bold;  
+    color:#A2A2A2;
+  }
+
+  // picker组件的样式 
+  .zml--picker{
+    height: 100%;
+    .zml--picker-value{
+      text-align: right;
+      font-weight: bold;
+      padding-right: 15rpx; 
+      font-size: 26rpx; 
+    } 
+  } 
+
+  .zml--form-value-color{
+    color:#A2A2A2;
+    font-weight: bold;
+  }
+
+  // 错误提示专属
+  .zml--error-message{
+    text-align: left;
+    font-size: 24rpx;
+    color:var(--field-error-message-color) 
+  }
+
+  .zml--text-align-left{
+    text-align: left;
+  }
+  .zml--text-align-right{
+    text-align: right;
+  }
+  .zml--text-align-center{
+    text-align: center;
+  }
+
+  .zml--icon-box{
+    height: 100%;
+    min-height: 48rpx;
+    margin-left: 20rpx;
+  }
+} 

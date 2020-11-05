@@ -1,0 +1,6 @@
+<scroll-view class="tabs" scroll-x="{{true}}">
+  <view class="tab {{tabCurrent===index?'active':''}}" wx:for="{{dataList}}" wx:key="id" bindtap="handleClickTab" data-index="{{index}}">
+    <view class="text">{{item[tabTextKey]}}</view>
+    <view class="line" hidden="{{tabCurrent!==index}}"></view>
+  </view>
+</scroll-view>

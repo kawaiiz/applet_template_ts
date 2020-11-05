@@ -35,7 +35,7 @@ Component<InitData, InitProperty, InitMethod>({
   storeBindings: {
     store,
     fields: {
-      pageConfig: () => store.pageConfig,
+      pageConfig: (store:GlobalDataStore) => store.pageConfig,
     }
   },
   /**

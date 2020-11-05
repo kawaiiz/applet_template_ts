@@ -24,3 +24,4 @@ Component({
     data: {},
     methods: {}
 });
+export {};

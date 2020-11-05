@@ -1,0 +1,21 @@
+var pickerShowText = function (mode, value, rangeKey) {
+  if (mode === 'selector') {
+    return rangeKey ? value[rangeKey] : value
+  } else if (mode === 'multiSelector') {
+    return value.reduce(function (str, item) {
+      return str + ' ' + (rangeKey ? item[rangeKey] : item)
+    }, '')
+  } else if (mode === 'time') {
+    return value
+  } else if (mode === 'date') {
+    return value
+  } else if (mode === 'region') {
+    return value.reduce(function (str, item) {
+      return str + ' ' + item
+    }, '')
+  }
+}
+
+module.exports = {
+  pickerShowText: pickerShowText
+}

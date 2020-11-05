@@ -4,3 +4,31 @@
 <view>store</view>
 <view>秒数：{{captchaTime}}</view>
 <button bindtap="handleClickCaptcha">发短信</button>
+<view class="form-container">
+  <my-form>
+    <my-input required="{{rules.name.required}}" input-align="right" label="活动名称" placeholder="请输入活动名称" error-message="{{error.name.message}}" error-message-align="right" bind:input="handleChangeInput" data-key="name">
+      <view slot="right-icon" class="icon-box box box-col-center">
+        <image mode="aspectFit" class="icon icon-1" src="{{IMAGEURL}}cost_add_icon_1.png" />
+      </view>
+    </my-input>
+    <my-picker required="{{rules.typeId.required}}" label="支出类型" range="{{payTypeList}}" range-key="name" error="{{error.typeId.error}}" error-message="{{error.typeId.message}}" error-message-align="right" placeholder="请选择支出类型" bindchange="handleChangePicker" data-key="typeId">
+      <view slot="right-icon" class="icon-box box box-col-center">
+        <image mode="aspectFit" class="icon icon-1" src="{{IMAGEURL}}cost_add_icon_1.png" />
+      </view>
+    </my-picker>
+    <my-picker mode="date" required="{{rules.date.required}}" label="支出日期" error="{{error.date.error}}" error-message="{{error.date.message}}" error-message-align="right" placeholder="请选择支出日期" bindchange="handleChangePicker" data-key="date">
+      <view slot="right-icon" class="icon-box box box-col-center">
+        <image mode="aspectFit" class="icon icon-2" src="{{IMAGEURL}}cost_add_icon_date.png" />
+      </view>
+    </my-picker>
+    <my-input required="{{rules.money.required}}" type="number" input-align="right" label="实际支出(元)" placeholder="请输入实际支出" error-message="{{error.money.message}}" error-message-align="right" bind:input="handleChangeInput" data-key="money">
+      <view slot="right-icon" class="icon-box box box-col-center">
+        <image mode="aspectFit" class="icon icon-1" src="{{IMAGEURL}}cost_add_icon_1.png" />
+      </view>
+    </my-input>
+    <my-cell border="{{false}}" label="上传照片" lineBreak="{{true}}">
+      <my-up-img BASEURL="{{BASEURL}}" token="{{token}}" upFileUrl="null" bindchangevaluelist="handleChangeImages" bindchangedisabled="handleChangeUpdataLoading" />
+    </my-cell>
+  </my-form>
+</view>
+<view class="button-style submit-btn" bindtap="handleSubmit">确定</view>

@@ -18,7 +18,7 @@ var operationNumber = function (arg1: number, arg2: number, operator: string): n
   }
   var r1, r2, max, _r1, _r2;
   try { r1 = arg1.toString().split(".")[1].length } catch (e) { r1 = 0 }
-  try { r2 = arg2.toString().split(".")[1].length } catch (e) { r2 = 0 }
+  try { r2 = arg2.toString().split(".")[1].length } catch (e) { r2 = 0 } 
   max = Math.max(r1, r2)
   _r1 = max - r1;
   _r2 = max - r2;

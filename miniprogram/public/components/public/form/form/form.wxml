@@ -1,0 +1,3 @@
+<van-cell-group custom-class="zml--form-container" title="{{title}}" border="{{border}}">
+  <slot></slot>
+</van-cell-group>

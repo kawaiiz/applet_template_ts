@@ -34,7 +34,6 @@ declare namespace GlobalData {
     phoneSystem: 'ios' | 'android' | undefined // 系统类型
   }
 
-
   // 转发
   interface Transmit {
     title?: string,

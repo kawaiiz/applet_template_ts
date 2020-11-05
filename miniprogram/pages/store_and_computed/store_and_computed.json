@@ -1,4 +1,10 @@
 {
   "component": true,
-  "usingComponents": {}
+  "usingComponents": {
+    "my-form": "/public/components/public/form/form/form",
+    "my-input": "/public/components/public/form/input/input",
+    "my-picker": "/public/components/public/form/picker/picker",
+    "my-cell": "/public/components/public/form/cell/cell",
+    "my-up-img": "/public/components/public/up_img/up_img"
+  }
 }

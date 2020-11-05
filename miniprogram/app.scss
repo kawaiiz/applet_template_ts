@@ -1,7 +1,12 @@
 @import "./public/wxss/_common.scss";
 @import "./public/wxss/_main.scss";
 @import './miniprogram_npm/@vant/weapp/common/index.wxss';
+@import "./public/wxss/_van_var.scss";
+@import "./public/components/public/form/scss/form_style";
 
+page{
+  background-color: #f5f5f5;
+}
 //  改变checkbox 样式的css
 checkbox .wx-checkbox-input.wx-checkbox-input-checked{
   border-color:$c-main !important;

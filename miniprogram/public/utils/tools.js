@@ -147,7 +147,7 @@ export const toTree = (arr, pID) => {
     const arrNotParent = arr.filter(({ pId }) => pId && !ids.includes(pId));
     const _ = (arr, pID) => arr
         .filter(({ pId }) => pId == pID)
-        .map(a => (Object.assign({}, a, { children: _(arr.filter(({ pId }) => pId != pID), a.id) })));
+        .map(a => (Object.assign(Object.assign({}, a), { children: _(arr.filter(({ pId }) => pId != pID), a.id) })));
     return _(arr, pID).concat(arrNotParent);
 };
 export function getHandledValue(num) {
