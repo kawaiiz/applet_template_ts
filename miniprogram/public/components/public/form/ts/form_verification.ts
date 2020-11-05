@@ -21,21 +21,8 @@ export const dataCheckItem = (rule: Rule, value: any, key: string): FormItemErro
   }
   // 必填检测 
   if (rule.required &&
-    (valueType === undefined ||
-      value === null ||
-      isNaN(value) ||
-      ((valueType === 'string' || Array.isArray(value)) && value.length === 0))
+    (valueType === undefined || (valueType === 'number' && isNaN(value)) || value === null || ((valueType === 'string' || Array.isArray(value)) && value.length === 0))
   ) {
-    errorInfo.message = rule.message
-    return errorInfo
-  }
-  // 类型检测
-  if (rule.type && valueType !== rule.type) {
-    errorInfo.message = '数据类型错误，请检查'
-    return errorInfo
-  }
-  // 正则检测
-  if (rule.pattern && !rule.pattern.test(value)) {
     errorInfo.message = rule.message
     return errorInfo
   }

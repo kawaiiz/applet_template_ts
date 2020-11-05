@@ -29,3 +29,4 @@ Component({
         resize: function () { },
     },
 });
+export {};

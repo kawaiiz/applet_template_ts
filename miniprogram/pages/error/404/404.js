@@ -19,3 +19,4 @@ Page({
     onReachBottom: function () {
     },
 });
+export {};

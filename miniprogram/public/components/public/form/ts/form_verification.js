@@ -10,18 +10,7 @@ export const dataCheckItem = (rule, value, key) => {
         return errorInfo;
     }
     if (rule.required &&
-        (valueType === undefined ||
-            value === null ||
-            isNaN(value) ||
-            ((valueType === 'string' || Array.isArray(value)) && value.length === 0))) {
-        errorInfo.message = rule.message;
-        return errorInfo;
-    }
-    if (rule.type && valueType !== rule.type) {
-        errorInfo.message = '数据类型错误，请检查';
-        return errorInfo;
-    }
-    if (rule.pattern && !rule.pattern.test(value)) {
+        (valueType === undefined || (valueType === 'number' && isNaN(value)) || value === null || ((valueType === 'string' || Array.isArray(value)) && value.length === 0))) {
         errorInfo.message = rule.message;
         return errorInfo;
     }

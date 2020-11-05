@@ -11,7 +11,7 @@
         <image mode="aspectFit" class="icon icon-1" src="{{IMAGEURL}}cost_add_icon_1.png" />
       </view>
     </my-input>
-    <my-picker required="{{rules.typeId.required}}" label="支出类型" range="{{payTypeList}}" range-key="name" error="{{error.typeId.error}}" error-message="{{error.typeId.message}}" error-message-align="right" placeholder="请选择支出类型" bindchange="handleChangePicker" data-key="typeId">
+    <my-picker required="{{rules.typeId.required}}" label="支出类型" range="{{rangeList}}" range-key="name" error="{{error.typeId.error}}" error-message="{{error.typeId.message}}" error-message-align="right" placeholder="请选择支出类型" bindchange="handleChangePicker" data-key="typeId">
       <view slot="right-icon" class="icon-box box box-col-center">
         <image mode="aspectFit" class="icon icon-1" src="{{IMAGEURL}}cost_add_icon_1.png" />
       </view>

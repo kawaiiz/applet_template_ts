@@ -31,7 +31,7 @@ Component({
         },
         disabled: {
             type: Boolean,
-            value: true
+            value: false
         },
         titleWidth: {
             type: String,
