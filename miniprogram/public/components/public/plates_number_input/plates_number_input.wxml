@@ -1,0 +1,2 @@
+<my-input inputValue="{{inputValue}}" currentIndex="{{currentIndex}}" bindchangecurrentindex="handleChangeCurrentIndex" catchtap="catchTap" />
+<my-typewriting show="{{typewritingShow}}" keyType="{{keyType}}" bindclose="handleClickTypewritingClose" bindclickitem="handleClickTypewritingKey" binddelete="handleClickTypewritingDel" catchtap="catchTap" />

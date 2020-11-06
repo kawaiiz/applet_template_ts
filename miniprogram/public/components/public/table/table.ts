@@ -65,11 +65,11 @@ Component<InitData, InitProperty, InitMethod>({
     }, // 是否出现提示块
     tipTitle: {
       type: String,
-      value: ''
+      value: '提示'
     },// 提示块内的标题文字
     tipSubtitle: {
       type: String,
-      value: ''
+      value: '暂无数据'
     },// 提示块内的副标题文字
     select: {
       type: Boolean,

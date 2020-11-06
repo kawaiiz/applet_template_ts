@@ -1,0 +1,53 @@
+<view class="car-plate-container" hidden="{{!show}}">
+  <view class="action box box-row-between">
+    <view class="action-del" bindtap="handleClick" data-item="delete">删除</view>
+    <view class="action-close" bindtap="handleClick" data-item='close'>收起</view>
+  </view>
+  <view class="car-plate">
+    <block wx:if="{{keyType==='zh'}}">
+      <view class="wordList">
+        <view class="wordItem" wx:for="{{cityKeyword1}}" wx:key="*this" bindtap="handleClick" data-type="1" data-item="{{item}}">
+          {{item}}
+        </view>
+      </view>
+      <view class="wordList">
+        <view class="wordItem" wx:for="{{cityKeyword2}}" wx:key="*this" bindtap="handleClick" data-type="1" data-item="{{item}}">
+          {{item}}
+        </view>
+      </view>
+      <view class="wordList">
+        <view class="wordItem" wx:for="{{cityKeyword3}}" wx:key="*this" bindtap="handleClick" data-type="1" data-item="{{item}}">
+          {{item}}
+        </view>
+      </view>
+      <view class="wordList">
+        <view class="wordItem" wx:for="{{cityKeyword4}}" wx:key="*this" bindtap="handleClick" data-type="1" data-item="{{item}}">
+          {{item}}
+        </view>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="wordList">
+        <view class="wordItem" wx:for="{{keyNumber}}" wx:key="*this" bindtap="handleClick" data-type="2" data-item="{{item}}">
+          {{item}}
+        </view>
+      </view>
+      <view class="wordList">
+        <view class="wordItem" wx:for="{{wordList1}}" wx:key="*this" bindtap="handleClick" data-type="2" data-item="{{item}}">
+          {{item}}
+        </view>
+      </view>
+      <view class="wordList">
+        <view class="wordItem" wx:for="{{wordList2}}" wx:key="*this" bindtap="handleClick" data-type="2" data-item="{{item}}">
+          {{item}}
+        </view>
+      </view>
+      <view class="wordList">
+        <view class="wordItem" wx:for="{{wordList3}}" wx:key="*this" bindtap="handleClick" data-item="{{item}}">
+          {{item}}
+        </view>
+        <!-- <view class="wordItem wordConfirm" bindtap="handleClick" data-item="confirm">确定</view> -->
+      </view>
+    </block>
+  </view>
+</view>

@@ -1,9 +1,9 @@
 <wxs module="tools" src="./picker.wxs"></wxs>
 <van-cell title-width="{{titleWidth}}" required="{{required}}" title="{{label}}" title-class="zml--form-item-title-class">
   <view class="box box-row-end">
-    <picker class="zml--picker" value="{{value}}" mode="{{mode}}" range="{{range}}" range-key="{{rangeKey}}" bindchange="handleChangePicker" disabled="{{disabled}}">
+    <picker class="zml--picker" value="{{_value}}" mode="{{mode}}" range="{{range}}" range-key="{{rangeKey}}" bindchange="handleChangePicker" disabled="{{disabled}}">
       <view class="zml--picker-value no-wrap zml--form-value-color zml--text-align-{{inputAlign}}">
-        {{pickerValue?tools.pickerShowText(mode,pickerValue,rangeKey):placeholder}}
+        {{pickerShowData?tools.pickerShowText(mode,pickerShowData,rangeKey):placeholder}}
       </view>
     </picker>
     <view slot="right-icon">

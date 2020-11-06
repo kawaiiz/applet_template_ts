@@ -145,16 +145,19 @@ Component<InitData, InitProperty, InitMethod>({
    * 组件的方法列表
    */
   methods: {
+    // input方法触发
     handleInput(e) {
       this.triggerEvent('input', {
         value: e.detail
       })
     },
+    // change方法触发
     handleChange(e) {
       this.triggerEvent('change', {
         value: e.detail
       })
     },
+    // 清空内容触发
     handleClickClear(_e) {
       this.triggerEvent('clear')
     }

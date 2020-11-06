@@ -1,0 +1,10 @@
+<view class="input-container box box-row-between">
+  <block wx:for="{{8}}">
+    <view class="input" bindtap="handleClickInput" data-index="{{index}}">
+      <view class="value {{currentIndex === index?'active':''}}">{{inputValue[index]||''}}</view>
+      <!-- 只有在是新能源的框子 且没有输入文字才显示 -->
+      <image class="xny-bg" src="../../img/xny_text.png" wx:if="{{index===7&&!inputValue[index]}}" />
+    </view>
+    <view wx:if="{{index===1}}">·</view>
+  </block>
+</view>

@@ -9,17 +9,44 @@
 `scrollViewHeight`控制可滚动区域高度。  
 `rowKey`用于指明行的唯一标识符，在勾选中有使用。  
 `getListLoading`请求列表的loading  
-`showTipImage`无数据时的提示文本
+`showTipImage`无数据时的提示文本内容
 `tipTitle`无数据时的提示文本主标题  
 `tipSubtitle`无数据时的提示文本副标题标题  
 `select`控制是否出现勾选。  
 `selectKey`勾选的初始值  
 `generic:action-td`当列表项内具有操作列，需要在`columns`内添加`key:action`的一项，操作列的内容往往需要自定义，小程序不提供react,vue的`rander函数`，所以使用到了抽象节点，该属性指明抽象节点的组件。操作列位置可以不固定，如需多个操作列要修改内部代码，内容不限,点击事件由`bindclickaction`触发，抽象节点的组件代码在下面贴出。  
+
+| 参数 | 说明 | 类型 | 默认值 |
+|-----|-----|-----|-----|
+|rowKey|	用于指明行的唯一标识符，在勾选中有使用	| string | id |
+|scrollViewHeight|控制可滚动区域高度。|string|  200rpx|
+|columns|	表格的配置	| Columns[] | [] |	
+|dataList|	数据	| any[] | [] |	
+|getListLoading|	请求列表的loading 	| boolean | false|
+|showTipImage|	无数据时的提示文本图片	| boolean | false|
+|tipTitle|	无数据时的提示文本主标题   | string | 提示 |
+|tipSubtitle|	无数据时的提示文本副标题标题 	| string |  暂无数据|
+|select|	控制是否出现勾选。 	| boolean | false|
+|selectKey|	勾选的初始值 	| any[] | []|
+|generic:action-td|	当列表项内具有操作列，需要在`columns`内添加`key:action`的一项，操作列的内容往往需要自定义，小程序不提供react,vue的`rander函数`，所以使用到了抽象节点，该属性指明抽象节点的组件。操作列位置可以不固定，点击事件由`bindclickaction`触发，抽象节点的组件代码在下面贴出。如需多个操作列要修改内部代码（添加特殊的key，在循环中判断到这个key，就显示指定的抽象节点）	| component | 
+
+
+
+
 2. 事件介绍  
 `bindcheckkey`勾选事件 返回被勾选项的rowKey数组
 `bindclicklistitem`点击列表行事件 
 `bindscrolltolower`,`bindscrolltoupper`滚动触底/滚动触顶事件
 `bindclickaction`点击抽象节点内的代码
+
+|事件 | 解释| 类型|
+|-----|-----|-----|-----|
+|bindcheckkey| 勾选事件 返回被勾选项的rowKey数组 | Function({ from:number(调整位置的item的开始index), to:number(调整位置的item的结束index)})
+|bindclicklistitem| 点击列表行事件  | Function({value: {index:number（当前行序号）,item: any（当前行的内容）}})
+|bindscrolltolower| 滚动触底 | Function()
+|bindscrolltoupper| 滚动触顶 | Function()
+|bindclickaction| 点击抽象节点内的代码 | Function({ value: e.detail.value}(这里的值具体是看虚拟节点里的点击事件传什么数据往table，我这里是{ value: {type:(这个按钮的含义字段，如‘close’),index:(当前的行),item:(当前行的数据)}}))
+
 
 3. 使用代码  
 引入组件的代码  
@@ -42,6 +69,7 @@ bindscrolltolower="getList"
 bindclickaction="handleClickActionBtn" 
 />
 ```   
+
 action-td的目标组件代码
 ```html
 <view class="action-box box box-row-center">
@@ -53,6 +81,8 @@ action-td的目标组件代码
   </view>
 </view>
 ```
+
+action-td的目标组件的ts
 ```typescript
   /**
    * 组件的方法列表
@@ -62,8 +92,11 @@ action-td的目标组件代码
       const { type } = e.currentTarget.dataset
       const { index, item } = this.dataset
       this.triggerEvent('clickaction', {
-        value: type,
-        index, item
+        value:{
+          type:(这个按钮的含义字段，如‘close’),
+          index:(当前的行),
+          item:(当前行的数据)
+        } 
       })
     }
   },

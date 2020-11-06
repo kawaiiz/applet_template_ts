@@ -31,11 +31,6 @@ Component({
             }
         }
     },
-    lifetimes: {
-        ready() {
-            this.initData();
-        }
-    },
     data: {
         itemInfo: {},
         scale: 1,
@@ -107,6 +102,24 @@ Component({
             this.setData({
                 translateY: 0
             });
-        }
-    }
+        },
+        tipFc() {
+            const { index, maxIndex } = this.data;
+            if (typeof index !== 'number') {
+                console.error('index:index字段必填，是组件的排序号码。');
+            }
+            if (typeof maxIndex !== 'number') {
+                console.error('maxIndex:maxIndex字段必填，是组件的最大排序号码，用于判断边界情况。');
+            }
+        },
+    },
+    lifetimes: {
+        attached: function () { },
+        ready() {
+            this.tipFc();
+            this.initData();
+        },
+        moved: function () { },
+        detached: function () { },
+    },
 });

@@ -1,0 +1,61 @@
+@charset "UTF-8";
+@import "../../../../../wxss/main";
+
+.car-plate-container{
+  padding: 10rpx 0;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100vw;
+  z-index: 10000;
+  background: #fff;
+  border-top: 1px solid rgb(211, 207, 207);
+  .action{
+    .action-del,.action-close{
+      padding: 10rpx 20rpx;
+      font-size: 30rpx;
+      letter-spacing: 8rpx;
+    }
+  }
+}
+.car-plate{
+  padding: 10rpx;
+  /* height: 150px; */
+  font-size: 30rpx;
+  .action{
+    .action-del{
+
+    }
+    .action-close{
+
+    }
+  }
+}
+.wordList{ 
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+.wordItem{
+  margin: 5rpx;
+  width: 70rpx;
+  height: 70rpx;
+  line-height: 70rpx;
+  text-align: center;
+  border: 1px solid #eee;
+  border-radius: 10rpx;
+}
+.wordConfirm{
+  width: 130rpx;
+  color: #fff;
+  background: $c-main;
+}
+.wordClear{
+  width: 100rpx;
+}
+.clearImg{
+  width: 60rpx;
+  height: 60rpx;
+  vertical-align: middle;
+}

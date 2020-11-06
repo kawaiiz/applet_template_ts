@@ -1,4 +1,4 @@
-<view style="{{bgColor?'background:'+bgColor:''}}" class="fixed">
+<view style="{{bgColor?'background:'+bgColor:''}}" class="{{!contentFull?'fixed':''}}">
   <view class="status-bar" style="height: {{(pageConfig.statusBarHeight / pageConfig.pixelRate) + 'rpx'}}"></view>
   <view class="capsule-line" style="height: {{(pageConfig.capsuleHeight / pageConfig.pixelRate) + 'rpx'}};line-height: {{(pageConfig.capsuleHeight / pageConfig.pixelRate) + 'rpx'}}">
     <view class="left-box">

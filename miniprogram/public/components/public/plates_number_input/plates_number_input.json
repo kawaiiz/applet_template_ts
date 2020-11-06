@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "my-input": "./components/input/input",
+    "my-typewriting": "./components/typewriting/typewriting"
+  }
+}

@@ -21,7 +21,7 @@ export const dataCheckItem = (rule: Rule, value: any, key: string): FormItemErro
   }
   // 必填检测 
   if (rule.required &&
-    (valueType === undefined || (valueType === 'number' && isNaN(value)) || value === null || ((valueType === 'string' || Array.isArray(value)) && value.length === 0))
+    (valueType === 'undefined' || (valueType === 'number' && isNaN(value)) || value === null || ((valueType === 'string' || Array.isArray(value)) && value.length === 0))
   ) {
     errorInfo.message = rule.message
     return errorInfo

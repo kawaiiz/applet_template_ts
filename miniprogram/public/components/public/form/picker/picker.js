@@ -1,5 +1,7 @@
+const computedBehavior = require('miniprogram-computed');
 const app = getApp();
 Component({
+    behaviors: [computedBehavior],
     options: {
         addGlobalClass: true,
         multipleSlots: true
@@ -17,8 +19,16 @@ Component({
             type: String,
             value: 'picker标题'
         },
-        value: {
-            type: Object,
+        numberValue: {
+            type: Number,
+            value: undefined
+        },
+        stringValue: {
+            type: String,
+            value: undefined
+        },
+        arrayValue: {
+            type: Array,
             value: undefined
         },
         mode: {
@@ -80,50 +90,99 @@ Component({
     },
     data: {
         IMAGEURL: app.globalData.IMAGEURL,
-        pickerValue: null
+        _value: null,
+        pickerShowData: null,
+    },
+    watch: {
+        'numberValue': function (numberValue) {
+            this.setValue();
+        },
+        'stringValue': function (stringValue) {
+            this.setValue();
+        },
+        'arrayValue': function (arrayValue) {
+            this.setValue();
+        },
+        'range': function (range) {
+            this.setValue();
+        }
     },
     methods: {
-        handleChangePicker(e) {
-            const { value } = e.detail;
-            const { range, mode } = this.data;
-            let pickerValue = null;
+        setValue() {
+            const { mode, numberValue, stringValue, arrayValue, range } = this.data;
+            let value;
             if (mode === 'selector') {
-                pickerValue = range[value];
+                if (range.length === 0)
+                    return;
+                value = numberValue;
             }
             else if (mode === 'multiSelector') {
-                pickerValue = value.map((item, index) => {
+                if (range.length === 0)
+                    return;
+                value = arrayValue;
+            }
+            else if (mode === 'time') {
+                value = stringValue;
+            }
+            else if (mode === 'date') {
+                value = stringValue;
+            }
+            else if (mode === 'region') {
+                if (range.length === 0)
+                    return;
+                value = arrayValue;
+            }
+            this.setData({
+                _value: value,
+                pickerShowData: this.createPickerShowData(value) || null
+            });
+        },
+        createPickerShowData(value) {
+            const { mode, range } = this.data;
+            if (mode === 'selector') {
+                return range[value];
+            }
+            else if (mode === 'multiSelector') {
+                return value.map((item, index) => {
                     return range[index][item];
                 });
             }
             else if (mode === 'time') {
-                pickerValue = value;
+                return value;
             }
             else if (mode === 'date') {
-                pickerValue = value;
+                return value;
             }
             else if (mode === 'region') {
-                pickerValue = value;
+                return value;
             }
+        },
+        handleChangePicker(e) {
+            const { value } = e.detail;
+            let pickerShowData = this.createPickerShowData(value);
             this.setData({
-                pickerValue
+                _value: value,
+                pickerShowData
             });
             this.emitEventChange(value);
         },
         emitEventChange(value) {
             this.triggerEvent('change', {
-                value
+                value,
             });
         },
         tipFc() {
             const { mode, range } = this.data;
             if ((mode === 'selector' || mode === 'multiSelector') && !range) {
-                console.error('普通选择模式、多选模式mode字段必填');
+                console.error('range:普通选择模式、多选模式range字段必填');
             }
         }
     },
     lifetimes: {
         attached: function () { },
-        ready: function () { },
+        ready: function () {
+            this.tipFc();
+        },
         moved: function () { },
         detached: function () { },
     },

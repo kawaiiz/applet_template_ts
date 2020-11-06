@@ -40,6 +40,11 @@ Component({
             value: false
         }
     },
+    data: {
+        showList: [],
+        valueList: [],
+        disabled: false,
+    },
     watch: {
         imageList(imageList) {
             const { BASEURL } = this.data;
@@ -71,11 +76,6 @@ Component({
         disabled(_disabled) {
             this.handleChangeDisabled();
         },
-    },
-    data: {
-        showList: [],
-        valueList: [],
-        disabled: false,
     },
     methods: {
         handleClickSeeImage(e) {
@@ -212,12 +212,12 @@ Component({
         },
         handleChangeValueList() {
             this.triggerEvent('changevaluelist', {
-                valueList: this.data.valueList.filter(item => !!item)
+                value: this.data.valueList.filter(item => !!item)
             });
         },
         handleChangeDisabled() {
             this.triggerEvent('changedisabled', {
-                disabled: this.data.disabled
+                value: this.data.disabled
             });
         },
     },

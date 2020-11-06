@@ -25,6 +25,7 @@ type InitMethod = {
   handleTouchmove: (...arg: any) => void,
   handleTouchend: (e: any) => void,
   emitParentEvent: () => void,
+  tipFc(): void
 }
 
 Component<InitData, InitProperty, InitMethod>({
@@ -52,12 +53,6 @@ Component<InitData, InitProperty, InitMethod>({
       },
       unlinked() {
       }
-    }
-  },
-
-  lifetimes: {
-    ready() {
-      this.initData()
     }
   },
   /**
@@ -143,8 +138,28 @@ Component<InitData, InitProperty, InitMethod>({
       this.setData({
         translateY: 0
       })
-    }
-  }
+    },
+    tipFc() {
+      const { index, maxIndex } = this.data
+      if (typeof index !== 'number') {
+        console.error('index:index字段必填，是组件的排序号码。')
+      }
+      if (typeof maxIndex !== 'number') {
+        console.error('maxIndex:maxIndex字段必填，是组件的最大排序号码，用于判断边界情况。')
+      }
+    },
+  },
+
+  lifetimes: {
+    // 生命周期函数，可以为函数，或一个在methods段中定义的方法名
+    attached: function () { },
+    ready() {
+      this.tipFc()
+      this.initData()
+    },
+    moved: function () { },
+    detached: function () { },
+  },
 })
 
 export { }

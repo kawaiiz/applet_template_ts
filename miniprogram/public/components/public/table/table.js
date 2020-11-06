@@ -32,11 +32,11 @@ Component({
         },
         tipTitle: {
             type: String,
-            value: ''
+            value: '提示'
         },
         tipSubtitle: {
             type: String,
-            value: ''
+            value: '暂无数据'
         },
         select: {
             type: Boolean,

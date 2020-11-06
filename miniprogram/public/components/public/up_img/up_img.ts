@@ -65,6 +65,14 @@ Component<InitData, InitProperty, InitMethod>({
       value: false
     }
   },
+  /**
+ * 组件的初始数据
+ */
+  data: {
+    showList: [],// 用于显示用的数组
+    valueList: [],// 用于传给父组件的数组
+    disabled: false,// 上传时需要禁用上传按钮
+  },
   watch: {
     imageList(this: WechatMiniprogram.Component.Instance<InitData, InitProperty, InitMethod>, imageList: any[]) {
       const { BASEURL } = this.data
@@ -103,14 +111,7 @@ Component<InitData, InitProperty, InitMethod>({
     //   console.log(showList)
     // }
   },
-  /**
-   * 组件的初始数据
-   */
-  data: {
-    showList: [],// 用于显示用的数组
-    valueList: [],// 用于传给父组件的数组
-    disabled: false,// 上传时需要禁用上传按钮
-  },
+
 
   /**
    * 组件的方法列表
@@ -256,13 +257,13 @@ Component<InitData, InitProperty, InitMethod>({
     //侦听图片数量变化触发函数
     handleChangeValueList() {
       this.triggerEvent('changevaluelist', {
-        valueList: this.data.valueList.filter(item => !!item)
+        value: this.data.valueList.filter(item => !!item)
       })
     },
     //侦听上传事件 触发disabled事件
     handleChangeDisabled() {
       this.triggerEvent('changedisabled', {
-        disabled: this.data.disabled
+        value: this.data.disabled
       })
     },
   },

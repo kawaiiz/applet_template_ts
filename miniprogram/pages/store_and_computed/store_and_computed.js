@@ -11,7 +11,7 @@ const computedBehavior = require('miniprogram-computed');
 const { storeBindingsBehavior } = require('mobx-miniprogram-bindings');
 import store from '../../store/index/index';
 import { otherAction } from '../../store/other/other';
-import { toast } from '../../public/utils/util';
+import { toast, mockData } from '../../public/utils/util';
 import { dataCheck, dataCheckItem } from '../../public/components/public/form/ts/form_verification';
 import { debounce } from 'lodash';
 const app = getApp();
@@ -32,10 +32,16 @@ Component({
     data: {
         BASEURL: app.globalData.BASEURL,
         IMAGEURL: app.globalData.IMAGEURL,
-        requestData: {},
+        payTypePickerValue: 2,
+        requestData: {
+            "name": "请问",
+            "typeId": 1,
+            "date": "2020-11-06",
+            "money": "请问"
+        },
         type: false,
         typeText: '',
-        rangeList: [{
+        payTypeList: [{
                 id: 1, name: '类型一'
             }, {
                 id: 2, name: '类型二'
@@ -63,6 +69,7 @@ Component({
             }
         },
         error: {},
+        upDataLoading: false
     },
     computed: {
         typeText(data) {
@@ -98,8 +105,9 @@ Component({
             let newValue = null;
             const setData = {};
             if (key === 'typeId') {
-                const { rangeList } = this.data;
-                newValue = rangeList && rangeList[value].id;
+                const { payTypeList } = this.data;
+                newValue = payTypeList && payTypeList[value].id;
+                setData.payTypePickerValue = value;
             }
             else if (key === 'date') {
                 newValue = value;
@@ -138,18 +146,38 @@ Component({
                 }
             });
         }, handleSubmit: debounce(function () {
-            try {
-                const { requestData, rules } = this.data;
-                const check = dataCheck(rules, requestData);
-                console.log(check);
-                if (check.errorArr.length > 0) {
+            return __awaiter(this, void 0, void 0, function* () {
+                try {
+                    const { requestData, rules, upDataLoading } = this.data;
+                    const check = dataCheck(rules, requestData);
+                    console.log(check);
+                    if (check.errorArr.length > 0) {
+                        this.setData({
+                            error: check.errorObj
+                        });
+                        return;
+                    }
+                    if (upDataLoading)
+                        return;
                     this.setData({
-                        error: check.errorObj
+                        upDataLoading: true
+                    });
+                    const res = yield mockData('data', requestData);
+                    toast(res.errorMsg || '添加成功');
+                    this.setData({
+                        upDataLoading: false,
+                        requestData: {},
+                        payTypePickerValue: -1
                     });
                 }
-            }
-            catch (e) {
-            }
+                catch (e) {
+                    this.setData({
+                        upDataLoading: false,
+                    });
+                    toast(e.errorMsg || '新增失败，请稍后再试~');
+                    console.log(e);
+                }
+            });
         }, 200, {
             leading: false,
             trailing: true

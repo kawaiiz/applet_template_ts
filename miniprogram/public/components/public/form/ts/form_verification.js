@@ -10,7 +10,7 @@ export const dataCheckItem = (rule, value, key) => {
         return errorInfo;
     }
     if (rule.required &&
-        (valueType === undefined || (valueType === 'number' && isNaN(value)) || value === null || ((valueType === 'string' || Array.isArray(value)) && value.length === 0))) {
+        (valueType === 'undefined' || (valueType === 'number' && isNaN(value)) || value === null || ((valueType === 'string' || Array.isArray(value)) && value.length === 0))) {
         errorInfo.message = rule.message;
         return errorInfo;
     }
