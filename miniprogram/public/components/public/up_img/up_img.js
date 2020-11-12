@@ -220,17 +220,22 @@ Component({
                 value: this.data.disabled
             });
         },
+        tipFc() {
+            const { BASEURL, token, upFileUrl, onlyShow } = this.data;
+            if (!BASEURL)
+                console.error('props中缺少BASEURL！');
+            if (!onlyShow) {
+                if (!token)
+                    console.error('props中缺少token！');
+                if (!upFileUrl)
+                    console.error('props中缺少upFileUrl！');
+            }
+        }
     },
     lifetimes: {
         attached: function () { },
         ready: function () {
-            const { BASEURL, token, upFileUrl } = this.data;
-            if (!BASEURL)
-                console.error('props中缺少BASEURL！');
-            if (!token)
-                console.error('props中缺少token！');
-            if (!upFileUrl)
-                console.error('props中缺少upFileUrl！');
+            this.tipFc();
         },
         moved: function () { },
         detached: function () { },

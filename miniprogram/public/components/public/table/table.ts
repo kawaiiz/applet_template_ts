@@ -28,6 +28,7 @@ type InitMethod = {
   handleClickListItem(e: GlobalData.WxAppletsEvent): void,
   handleClickActionBtn(e: GlobalData.WxAppletsEvent): void,
   handleClickCheck(e: GlobalData.WxAppletsEvent): void
+  tipFc(): void
 }
 
 Component<InitData, InitProperty, InitMethod>({
@@ -175,12 +176,8 @@ Component<InitData, InitProperty, InitMethod>({
           value
         })
       })
-    }
-  },
-
-  lifetimes: {
-    // 生命周期函数，可以为函数，或一个在methods段中定义的方法名
-    attached: function () {
+    },
+    tipFc() {
       const { rowKey, columns } = this.data
       if (!rowKey) {
         console.error('table组件必须指明每一行的唯一标识的字段名，且必须为字符串，数字将会被转为字符串,for循环中的wx:key不使用该字段，用的是computed中设置的row_key字段')
@@ -188,6 +185,13 @@ Component<InitData, InitProperty, InitMethod>({
       if (!columns) {
         console.error('table组件必须指明columns')
       }
+    }
+  },
+
+  lifetimes: {
+    // 生命周期函数，可以为函数，或一个在methods段中定义的方法名
+    attached: function () {
+      this.tipFc()
     },
     moved: function () { },
     detached: function () { },

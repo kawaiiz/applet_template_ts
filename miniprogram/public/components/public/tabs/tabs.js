@@ -15,6 +15,26 @@ Component({
         initTabCurrent: {
             type: Number,
             value: undefined
+        },
+        backgroundColor: {
+            type: String,
+            value: '#fff'
+        },
+        color: {
+            type: String,
+            value: '#aaa'
+        },
+        activeColor: {
+            type: String,
+            value: '#333'
+        },
+        borderRadius: {
+            type: Boolean,
+            value: true
+        },
+        boxShadow: {
+            type: Boolean,
+            value: true
         }
     },
     data: {

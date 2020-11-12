@@ -13,10 +13,12 @@
           <checkbox checked="{{checkObj[item[rowKey]]}}" catchtap="handleClickCheck" data-item="{{item}}" data-index="{{index}}" />
         </view>
         <block wx:for="{{columns}}" wx:for-index="cIndex" wx:for-item="cItem" wx:key="key">
-          <view class="td" style="width:{{item.width||'calc( (calc(100% - 50rpx)) / '+columns.length+')'}};{{cIndex===columns.length-1?'flex-grow:1;flex-shrink:1':''}}" data-key="{{cItem.key}}" data-index="{{index}}" wx:if="{{cItem.key!=='action'}}">
+          <view class="td" style="width:{{cItem.width||'calc( (calc(100% - 50rpx)) / '+columns.length+')'}};{{cIndex===columns.length-1?'flex-grow:1;flex-shrink:1':''}}" data-key="{{cItem.key}}" data-index="{{index}}" wx:if="{{cItem.type!=='action'}}">
             {{item[cItem.key]}}
           </view>
-          <action-td data-index="{{index}}" data-item="{{item}}" data-index="{{index}}" bindclickaction="handleClickActionBtn" wx:else></action-td>
+          <view class="action-td" style="width:{{cItem.width||'calc( (calc(100% - 50rpx)) / '+columns.length+')'}};{{cIndex===columns.length-1?'flex-grow:1;flex-shrink:1':''}}" wx:else>
+            <action-td data-item="{{item}}" data-index="{{index}}" data-columns="{{cItem}}" bindclickaction="handleClickAction"></action-td>
+          </view>
         </block>
       </view>
     </view>

@@ -29,6 +29,7 @@ type InitMethod = {
   handleDownloadData(data: { showListItem: ShowListItem, valueListItem?: any }[]): void,
   handleChangeValueList(): void,
   handleChangeDisabled(): void,
+  tipFc(): void
 }
 
 Component<InitData, InitProperty, InitMethod>({
@@ -266,16 +267,21 @@ Component<InitData, InitProperty, InitMethod>({
         value: this.data.disabled
       })
     },
+    tipFc() {
+      const { BASEURL, token, upFileUrl, onlyShow } = this.data
+      if (!BASEURL) console.error('props中缺少BASEURL！')
+      if (!onlyShow) {
+        if (!token) console.error('props中缺少token！')
+        if (!upFileUrl) console.error('props中缺少upFileUrl！')
+      }
+    }
   },
 
   lifetimes: {
     // 生命周期函数，可以为函数，或一个在methods段中定义的方法名
     attached: function () { },
     ready: function () {
-      const { BASEURL, token, upFileUrl } = this.data
-      if (!BASEURL) console.error('props中缺少BASEURL！')
-      if (!token) console.error('props中缺少token！')
-      if (!upFileUrl) console.error('props中缺少upFileUrl！')
+      this.tipFc()
     },
     moved: function () { },
     detached: function () { },

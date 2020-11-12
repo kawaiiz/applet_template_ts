@@ -9,6 +9,11 @@ type InitProperty = {
   dataList: WechatMiniprogram.Component.FullProperty<ArrayConstructor>,
   tabTextKey: WechatMiniprogram.Component.FullProperty<StringConstructor>,
   initTabCurrent: WechatMiniprogram.Component.FullProperty<NumberConstructor>,
+  backgroundColor: WechatMiniprogram.Component.FullProperty<StringConstructor>,
+  color: WechatMiniprogram.Component.FullProperty<StringConstructor>,
+  activeColor: WechatMiniprogram.Component.FullProperty<StringConstructor>,
+  borderRadius: WechatMiniprogram.Component.FullProperty<BooleanConstructor>,
+  boxShadow: WechatMiniprogram.Component.FullProperty<BooleanConstructor>,
 }
 
 type InitMethod = {
@@ -35,6 +40,26 @@ Component<InitData, InitProperty, InitMethod>({
     initTabCurrent: {
       type: Number,
       value: undefined
+    },
+    backgroundColor: {
+      type: String,
+      value: '#fff'
+    },
+    color: {
+      type: String,
+      value: '#aaa'
+    },
+    activeColor: {
+      type: String,
+      value: '#333'
+    },
+    borderRadius: {
+      type: Boolean,
+      value: true
+    },
+    boxShadow: {
+      type: Boolean,
+      value: true
     }
   },
 

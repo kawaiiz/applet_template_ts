@@ -1,6 +1,8 @@
-<scroll-view class="tabs" scroll-x="{{true}}">
+<scroll-view class="tabs {{borderRadius?'border-radius':''}} {{boxShadow?'box-shadow':''}}" style="background-color:{{backgroundColor}}" scroll-x="{{true}}">
   <view class="tab {{tabCurrent===index?'active':''}}" wx:for="{{dataList}}" wx:key="id" bindtap="handleClickTab" data-index="{{index}}">
-    <view class="text">{{item[tabTextKey]}}</view>
-    <view class="line" hidden="{{tabCurrent!==index}}"></view>
+    <view class="text" style="color:{{tabCurrent===index?activeColor:color}}">
+      {{item[tabTextKey]}}
+    </view>
+    <view class="line" style="background-color:{{activeColor}}" hidden="{{tabCurrent!==index}}"></view>
   </view>
 </scroll-view>
