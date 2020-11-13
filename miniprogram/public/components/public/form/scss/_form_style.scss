@@ -26,6 +26,11 @@ page {
     color:#A2A2A2;
   }
 
+  // cell专属样式
+  .zml--cell-content-class,.cell--zml--cell-content-class{
+    padding-top: 0;
+  }
+
   // picker组件的样式 
   .zml--picker{
     height: 100%;

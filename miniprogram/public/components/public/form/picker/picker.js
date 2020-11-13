@@ -17,7 +17,7 @@ Component({
         },
         label: {
             type: String,
-            value: 'picker标题'
+            value: ''
         },
         numberValue: {
             type: Number,

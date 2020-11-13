@@ -9,8 +9,8 @@ export interface Rule {
 }
 
 // 表单的rules字段
-export interface Rules {
-  [key: string]: Rule
+export type Rules<T> = {
+  [key in keyof T]: Rule
 }
 
 export interface FormItemError {

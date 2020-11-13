@@ -1,13 +1,19 @@
 <van-cell required="{{required}}" title-width="{{titleWidth}}" border="{{lineBreak?false:border}}" title="{{label}}" title-class="zml--form-item-title-class">
+  <slot wx:if="{{!label}}" name="label" slot="title" />
+  <slot name="left-icon" slot="icon" />
+  <slot name="right-icon" slot="right-icon" />
   <block wx:if="{{!lineBreak}}">
     <slot></slot>
     <view class="zml--error-message zml--text-align-{{errorMessageAlign}}" hidden="{{ !error }}">
       {{ errorMessage }}
     </view>
   </block>
+  <block wx:else>
+    <slot name="label-right" ></slot>
+  </block>
 </van-cell>
-<van-cell border="{{border}}" wx:if="{{lineBreak}}">
-  <slot></slot>
+<van-cell border="{{border}}" wx:if="{{lineBreak}}" custom-class="zml--cell-content-class">
+  <slot></slot> 
   <view class="zml--error-message  zml--text-align-{{errorMessageAlign}}" hidden="{{ !error }}">
     {{ errorMessage }}
   </view>

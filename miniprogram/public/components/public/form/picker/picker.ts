@@ -61,7 +61,7 @@ Component<InitData, InitProperty, InitMethod>({
     },// 字段名
     label: {
       type: String,
-      value: 'picker标题'
+      value: ''
     },// 标题
     numberValue: {
       type: Number,

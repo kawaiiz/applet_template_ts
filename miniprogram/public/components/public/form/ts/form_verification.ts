@@ -49,15 +49,17 @@ export const dataCheckItem = (rule: Rule, value: any, key: string): FormItemErro
  */
 
 
-export const dataCheck = (rules: Rules, requestData: any) => {
+export const dataCheck = <T>(rules: Rules<T>, requestData: T) => {
   const errorArr: { key: string, error: boolean, message: string }[] = []
   const errorObj: {
     [key: string]: FormItemError
   } = {}
-  const requestDataKey = Object.keys(rules)
-  requestDataKey.forEach(item => {
-    const rule = rules[item]
-    const value = requestData[item]
+  const requestDataKey = Object.keys(rules as {
+    [key in keyof T]: Rule
+  })
+  requestDataKey.forEach((item) => {
+    const rule = rules[item as keyof T]
+    const value = requestData[item as keyof T]
     const errorInfo = dataCheckItem(rule, value, item)
     if (errorInfo.error) {
       errorArr.push(errorInfo)

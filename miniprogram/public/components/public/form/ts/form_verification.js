@@ -32,7 +32,7 @@ export const dataCheck = (rules, requestData) => {
     const errorArr = [];
     const errorObj = {};
     const requestDataKey = Object.keys(rules);
-    requestDataKey.forEach(item => {
+    requestDataKey.forEach((item) => {
         const rule = rules[item];
         const value = requestData[item];
         const errorInfo = dataCheckItem(rule, value, item);
