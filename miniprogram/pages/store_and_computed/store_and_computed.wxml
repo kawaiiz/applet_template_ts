@@ -34,4 +34,3 @@
 <button class="button-style submit-btn" disabled="{{upDataLoading}}" loading="{{upDataLoading}}" bindtap="handleSubmit">
   确定
 </button>
-<plates-number-input />

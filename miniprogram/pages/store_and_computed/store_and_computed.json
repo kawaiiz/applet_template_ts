@@ -5,7 +5,6 @@
     "my-input": "/public/components/public/form/input/input",
     "my-picker": "/public/components/public/form/picker/picker",
     "my-cell": "/public/components/public/form/cell/cell",
-    "my-up-img": "/public/components/public/up_img/up_img",
-    "plates-number-input": "/public/components/public/plates_number_input/plates_number_input"
+    "my-up-img": "/public/components/public/up_img/up_img"
   }
 }

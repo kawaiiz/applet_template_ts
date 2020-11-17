@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { throttle } from 'lodash';
+const throttle= require('lodash.throttle');
 Component({
     options: {
         addGlobalClass: true,

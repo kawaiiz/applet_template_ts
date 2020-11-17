@@ -6,7 +6,7 @@ import { OtherAction, OtherStore } from '../../store/other/data'
 import { toast, mockData } from '../../public/utils/util'
 import { dataCheck, dataCheckItem } from '../../public/components/public/form/ts/form_verification'
 import { Rules, FormItemError } from '../../public/components/public/form/ts/data'
-import { debounce } from 'lodash'
+const debounce = require('lodash.debounce')
 // 获取应用实例
 const app = getApp<IAppOption>()
 
@@ -20,7 +20,7 @@ type InitData = {
   requestData: any,
   payTypePickerValue: number | null,
   type: boolean,
-  rules: Rules,
+  rules: Rules<any>,
   payTypeList: any[],
   error: {
     [key: string]: FormItemError
@@ -95,7 +95,7 @@ Component<InitData, InitProperty, InitMethod>({
         message: '请选择支出类型~'
       },
       date: {
-        required: true, 
+        required: true,
         message: '请选择支出日期~'
       },
       money: {
