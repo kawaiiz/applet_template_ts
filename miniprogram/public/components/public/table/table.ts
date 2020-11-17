@@ -26,7 +26,7 @@ type InitMethod = {
   handleScrolltolower(): void,
   handleScrolltoupper(): void,
   handleClickListItem(e: GlobalData.WxAppletsEvent): void,
-  handleClickActionBtn(e: GlobalData.WxAppletsEvent): void,
+  handleClickAction(e: GlobalData.WxAppletsEvent): void,
   handleClickCheck(e: GlobalData.WxAppletsEvent): void
   tipFc(): void
 }
@@ -151,7 +151,7 @@ Component<InitData, InitProperty, InitMethod>({
       })
     },
     // 如果有action 里面有点击事件 怎触发该事件
-    handleClickActionBtn(e) {
+    handleClickAction(e) {
       this.triggerEvent('clickaction', {
         value: e.detail.value
       })
