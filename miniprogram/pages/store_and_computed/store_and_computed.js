@@ -13,7 +13,7 @@ import store from '../../store/index/index';
 import { otherAction } from '../../store/other/other';
 import { toast, mockData } from '../../public/utils/util';
 import { dataCheck, dataCheckItem } from '../../public/components/public/form/ts/form_verification';
-const debounce = require('lodash.debounce');
+import debounce  from 'lodash.debounce';
 const app = getApp();
 Component({
     behaviors: [computedBehavior, storeBindingsBehavior],

@@ -6,7 +6,7 @@ import { OtherAction, OtherStore } from '../../store/other/data'
 import { toast, mockData } from '../../public/utils/util'
 import { dataCheck, dataCheckItem } from '../../public/components/public/form/ts/form_verification'
 import { Rules, FormItemError } from '../../public/components/public/form/ts/data'
-const debounce = require('lodash.debounce')
+import debounce  from 'lodash.debounce'
 // 获取应用实例
 const app = getApp<IAppOption>()
 

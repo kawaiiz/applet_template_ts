@@ -10,6 +10,8 @@
   "author": "",
   "license": "",
   "dependencies": {
+    "@types/lodash.debounce": "^4.0.6",
+    "@types/lodash.throttle": "^4.1.6",
     "@vant/weapp": "^1.5.2",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
@@ -18,7 +20,6 @@
     "mobx-miniprogram-bindings": "^1.2.1"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.158",
     "miniprogram-api-typings": "^2.11.0",
     "typescript": "^4.0.5"
   }

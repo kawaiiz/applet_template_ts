@@ -19,6 +19,7 @@
     "pretty": true,
     "strictPropertyInitialization": true,
     "sourceMap": false,
+    "allowSyntheticDefaultImports": true,
     "lib": [
       "ES2018"
     ],

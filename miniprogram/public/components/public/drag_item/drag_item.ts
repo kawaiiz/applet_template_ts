@@ -1,4 +1,4 @@
-const throttle= require('lodash.throttle')
+import throttle from 'lodash.throttle'
 
 import { DragItemInfo } from "./data";
 type InitData = {
