@@ -1,27 +1,13 @@
+<wxs src="./table.wxs" module="table" />
 <view class="list">
   <view class="tr box tr-th">
     <view class="th select" hidden="{{!select}}"></view>
-    <view class="th" style="width:{{item.width||'calc( (calc(100% - 50rpx)) / '+columns.length+')'}};{{index===columns.length-1?'flex-grow:1;flex-shrink:1':''}}" wx:for="{{columns}}" wx:key="key">
+    <view class="th" style="width:{{table.computedTdWidth(columns,select)}};{{index===columns.length-1?'flex-grow:1;flex-shrink:1':''}}" wx:for="{{columns}}" wx:key="key">
       {{item.title}}
     </view>
   </view>
   <scroll-view class="scroll-view" scroll-y scroll-top="{{scrollTop}}" style="height:{{scrollViewHeight}}" bindscrolltolower="handleScrolltolower" bindscrolltoupper="handleScrolltoupper" hidden="{{showTipImage}}" lower-threshold="{{100}}">
-    <view>
-      <!-- wx:key="{{rowKey}}"标识符字符串是传进来的 -->
-      <view class="tr box" wx:for="{{showDataList}}" wx:key="row_key" open-type="navigate" url="/pages/index/drug_details/drug_details?id={{item.id}}" bindtap="handleClickListItem" data-item="{{item}}" data-index="{{index}}">
-        <view class="td select" wx:if="{{select}}">
-          <checkbox checked="{{checkObj[item[rowKey]]}}" catchtap="handleClickCheck" data-item="{{item}}" data-index="{{index}}" />
-        </view>
-        <block wx:for="{{columns}}" wx:for-index="cIndex" wx:for-item="cItem" wx:key="key">
-          <view class="td" style="width:{{cItem.width||'calc( (calc(100% - 50rpx)) / '+columns.length+')'}};{{cIndex===columns.length-1?'flex-grow:1;flex-shrink:1':''}}" data-key="{{cItem.key}}" data-index="{{index}}" wx:if="{{cItem.type!=='action'}}">
-            {{item[cItem.key]}}
-          </view>
-          <view class="action-td" style="width:{{cItem.width||'calc( (calc(100% - 50rpx)) / '+columns.length+')'}};{{cIndex===columns.length-1?'flex-grow:1;flex-shrink:1':''}}" wx:else>
-            <action-td data-item="{{item}}" data-index="{{index}}" data-columns="{{cItem}}" bindclickaction="handleClickAction"></action-td>
-          </view>
-        </block>
-      </view>
-    </view>
+    <my-tr bindclicklistitem="handleClickListItem" bindclickaction="handleClickAction" bindcheckkey="handleClickCheck" wx:for="{{showDataList}}" wx:key="row_key" rowKey="{{rowKey}}" columns="{{columns}}" item="{{item}}" index="{{index}}" select="{{select}}" checked="{{checkObj[item[rowKey]]}}" isExpand="{{isExpand}}" expandValueKey="{{expandValueKey}}" initExpandValue="{{initExpandValue}}" generic:action-td="action-td"></my-tr>
     <i-load-more tip="{{getListLoading?'请求中':'暂无更多数据'}}" loading="{{ getListLoading }}" />
   </scroll-view>
   <view class="tip-image-block box box-col-center" style="height:{{scrollViewHeight}}" hidden="{{!showTipImage}}">

@@ -42,10 +42,27 @@ Component({
             type: Boolean,
             value: false
         },
-        selectKey: {
+        selectKeys: {
             type: Array,
             value: []
         },
+        isExpand: {
+            type: Boolean,
+            value: false
+        },
+        expandValueKey: {
+            type: String,
+        },
+        initExpandValue: {
+            type: String,
+        },
+        expandStyle: {
+            type: String,
+        },
+    },
+    data: {
+        scrollTop: 0,
+        checkObj: {},
     },
     computed: {
         showDataList(data) {
@@ -69,19 +86,15 @@ Component({
                 this.setScrollTop();
             }
         },
-        'selectKey': function (selectKey) {
+        'selectKeys': function (selectKeys) {
             const newCheckObj = {};
-            selectKey.forEach(item => {
+            selectKeys.forEach(item => {
                 newCheckObj[item] = true;
             });
             this.setData({
                 checkObj: newCheckObj
             });
         }
-    },
-    data: {
-        scrollTop: 0,
-        checkObj: {},
     },
     methods: {
         setScrollTop() {
@@ -96,21 +109,17 @@ Component({
             this.triggerEvent('scrolltoupper');
         },
         handleClickListItem(e) {
-            const { index } = e.currentTarget.dataset;
             this.triggerEvent('clicklistitem', {
-                value: {
-                    index,
-                    item: e.currentTarget.dataset.item
-                }
+                value: e.detail.value
             });
         },
-        handleClickActionBtn(e) {
+        handleClickAction(e) {
             this.triggerEvent('clickaction', {
                 value: e.detail.value
             });
         },
         handleClickCheck(e) {
-            const { item } = e.currentTarget.dataset;
+            const { item } = e.detail.value;
             const { checkObj, rowKey } = this.data;
             const newCheckObj = Object.assign({}, checkObj);
             newCheckObj[item[rowKey]] = !newCheckObj[item[rowKey]];

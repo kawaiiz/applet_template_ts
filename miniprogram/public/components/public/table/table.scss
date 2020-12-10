@@ -3,7 +3,6 @@
   margin:0 30rpx;
   position: relative;
   background-color: #fff;
-  border-radius: 30rpx;
   overflow: hidden;
   .tip-image-block{
     width: 100%;
@@ -30,43 +29,20 @@
   }
 }
 
- 
-
 // 表格数据
 .tr{
   border-bottom: 2rpx solid #DDDDDD;
- 
-  .th,.td{
-    width: 25%;
+  .th{
     padding: 35rpx 20rpx;
+    font-size: 28rpx;
+    color: #333; 
+    font-weight: bold;
     text-align: center;
     white-space:normal; 
     word-break:break-all;
-  
-  }
-  .th{
-    font-size: 28rpx;
-    color: #333;
-    font-weight: bold;
     &.select{
-      width: 50rpx;
-    }
-  }
-  .td{
-    font-size: 24rpx;
-    color: #333;
-    word-break:break-all;
-    display: flex;
-    -ms-flex-flow: wrap;
-    flex-flow: wrap;
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
-    justify-content: center;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    &.select{
-      width: 50rpx;
+      width: 60rpx;
+      padding: 0 1rpx; 
     }
   }
 }

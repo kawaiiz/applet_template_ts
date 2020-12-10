@@ -9,11 +9,11 @@
     </view>
   </block>
   <block wx:else>
-    <slot name="label-right" ></slot>
+    <slot name="label-right"></slot>
   </block>
 </van-cell>
 <van-cell border="{{border}}" wx:if="{{lineBreak}}" custom-class="zml--cell-content-class">
-  <slot></slot> 
+  <slot></slot>
   <view class="zml--error-message  zml--text-align-{{errorMessageAlign}}" hidden="{{ !error }}">
     {{ errorMessage }}
   </view>

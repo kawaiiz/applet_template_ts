@@ -5,7 +5,9 @@ export interface Rule {
   pattern?: RegExp,// 正则
   min?: number,// 最小值
   max?: number,// 最大值
-  validator?: Function,// 自定义校验函数
+  validator?: (rule: Rule, value: any, key: string, _this?: any) => {
+    error: boolean, message?: string
+  },// 自定义校验函数
 }
 
 // 表单的rules字段

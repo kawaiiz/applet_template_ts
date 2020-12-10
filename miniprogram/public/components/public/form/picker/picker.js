@@ -94,16 +94,16 @@ Component({
         pickerShowData: null,
     },
     watch: {
-        'numberValue': function (numberValue) {
+        'numberValue': function (_numberValue) {
             this.setValue();
         },
-        'stringValue': function (stringValue) {
+        'stringValue': function (_stringValue) {
             this.setValue();
         },
-        'arrayValue': function (arrayValue) {
+        'arrayValue': function (_arrayValue) {
             this.setValue();
         },
-        'range': function (range) {
+        'range': function (_range) {
             this.setValue();
         }
     },

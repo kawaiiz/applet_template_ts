@@ -1,7 +1,9 @@
 {
   "component": true,
   "usingComponents": {
-    "i-load-more": "/public/components/public/load_more/index"
+    "i-load-more": "/public/components/public/load_more/index",
+    "my-tr": "./components/tr/tr",
+    "my-td": "./components/td/td"
   },
   "componentGenerics": {
     "action-td": true

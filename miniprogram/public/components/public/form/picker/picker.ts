@@ -146,20 +146,20 @@ Component<InitData, InitProperty, InitMethod>({
     pickerShowData: null,// picker被选中的项的展示值
   },
   watch: {
-    'numberValue': function (numberValue: number) {
+    'numberValue': function (_numberValue: number) {
       // console.log('numberValue:', numberValue)
 
       this.setValue()
     },
-    'stringValue': function (stringValue: string,) {
+    'stringValue': function (_stringValue: string,) {
       // console.log('stringValue:', stringValue)
       this.setValue()
     },
-    'arrayValue': function (arrayValue: any[]) {
+    'arrayValue': function (_arrayValue: any[]) {
       // console.log('arrayValue:', arrayValue)
       this.setValue()
     },
-    'range': function (range: any[]) {
+    'range': function (_range: any[]) {
       this.setValue()
     }
   },

@@ -18,7 +18,11 @@ type InitProperty = {
   tipTitle: WechatMiniprogram.Component.FullProperty<StringConstructor>,
   tipSubtitle: WechatMiniprogram.Component.FullProperty<StringConstructor>,
   select: WechatMiniprogram.Component.FullProperty<BooleanConstructor>,
-  selectKey: WechatMiniprogram.Component.FullProperty<ArrayConstructor>
+  selectKeys: WechatMiniprogram.Component.FullProperty<ArrayConstructor>,
+  isExpand: WechatMiniprogram.Component.FullProperty<BooleanConstructor>,
+  expandValueKey: WechatMiniprogram.Component.FullProperty<StringConstructor>,
+  initExpandValue: WechatMiniprogram.Component.FullProperty<StringConstructor>,
+  expandStyle: WechatMiniprogram.Component.FullProperty<StringConstructor>,
 }
 
 type InitMethod = {
@@ -76,12 +80,31 @@ Component<InitData, InitProperty, InitMethod>({
       type: Boolean,
       value: false
     }, // 是否开启勾选
-    selectKey: {
+    selectKeys: {
       type: Array,
       value: []
     }, // 勾选的初始rowKey列表
+    isExpand: {
+      type: Boolean,
+      value: false
+    },// 是否需要展开
+    expandValueKey: {
+      type: String,
+    },// 展开的内容的key
+    initExpandValue: {
+      type: String,
+    },
+    expandStyle: {
+      type: String,
+    },
   },
-
+  /**
+   * 组件的初始数据
+   */
+  data: {
+    scrollTop: 0,// 设置回到顶部
+    checkObj: {},// 勾选的项的存储对象
+  },
   computed: {
     showDataList(data: InitData & WechatMiniprogram.Component.PropertyOptionToData<InitProperty>) {
       const { columns, dataList, rowKey } = data
@@ -103,10 +126,10 @@ Component<InitData, InitProperty, InitMethod>({
         this.setScrollTop()
       }
     },
-    // selectKey用于初始化勾选 每次改变都会更新勾选
-    'selectKey': function (selectKey: any[]) {
+    // selectKeys用于初始化勾选 每次改变都会更新勾选
+    'selectKeys': function (selectKeys: any[]) {
       const newCheckObj: { [key: string]: boolean } = {}
-      selectKey.forEach(item => {
+      selectKeys.forEach(item => {
         newCheckObj[item] = true
       })
       this.setData({
@@ -114,13 +137,7 @@ Component<InitData, InitProperty, InitMethod>({
       })
     }
   },
-  /**
-   * 组件的初始数据
-   */
-  data: {
-    scrollTop: 0,// 设置回到顶部
-    checkObj: {},// 勾选的项的存储对象
-  },
+
 
   /**
    * 组件的方法列表
@@ -142,12 +159,8 @@ Component<InitData, InitProperty, InitMethod>({
     },
     // 点击表格中一项触发
     handleClickListItem(e) {
-      const { index } = e.currentTarget.dataset
       this.triggerEvent('clicklistitem', {
-        value: {
-          index,
-          item: e.currentTarget.dataset.item
-        }
+        value: e.detail.value
       })
     },
     // 如果有action 里面有点击事件 怎触发该事件
@@ -159,7 +172,7 @@ Component<InitData, InitProperty, InitMethod>({
     // 勾选事件 
     // 只记录勾选的rowKey 因为index和item在初始化的时候是无法获取的
     handleClickCheck(e) {
-      const { item } = e.currentTarget.dataset
+      const { item } = e.detail.value
       const { checkObj, rowKey } = this.data
       const newCheckObj = { ...checkObj }
       newCheckObj[item[rowKey]] = !newCheckObj[item[rowKey]]
