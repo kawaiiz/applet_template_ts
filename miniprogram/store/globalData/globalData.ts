@@ -1,17 +1,12 @@
-const {  action } = require('mobx-miniprogram')
-// mockData
+const { action } = require('mobx-miniprogram')
 import { setNavStyle, } from '../../public/utils/util'
-import { getUserInfo } from './service'
-import { GlobalDataStore, GlobalDataAction } from './data'
-// import { value } from './mock'
+import { getUserInfo, login } from './service'
+import { GlobalDataStore, GlobalDataAction, UserInfo } from './data'
+import { mockData } from '../../public/utils/util'
 const data: GlobalDataStore = {
   loginFlag: 0,// 是否登录 0 未判断/ 1 已登录/ 2 未登录
   token: "",// token
-  userInfo: {
-    id: NaN,
-    mobile: '', // 手机号
-    isAuth: false // 是否认证
-  },// 用户信息
+  userInfo: {} as UserInfo,// 用户信息
   pageConfig: setNavStyle(),// 屏幕参数
 }
 
@@ -19,10 +14,13 @@ export const globalAction: GlobalDataAction = {
   // 获取用户信息 如果过期 则要前往登录 没过期就前往首页
   getUserInfo: action(async function (this: GlobalDataStore & GlobalDataAction) {
     try {
-      const res = await getUserInfo()
-      // const res = await mockData('data', {
-      //   name: '测试mock'
-      // })
+      // const res = await getUserInfo()
+      const res = await mockData<UserInfo>('data', {
+        id: 1,
+        nickname: '测试mock',
+        mobile: '',
+        avatar: '',
+      })
       this.userInfo = res.data
     } catch (e) {
       console.log(e)
@@ -42,13 +40,32 @@ export const globalAction: GlobalDataAction = {
         this.loginFlag = 1 // 登录有效 设置登录位
         await this.initGlobalData()
       } else {
+        this.login()
         this.loginFlag = 2 // token清除 设置登录位
       }
     } catch (e) {
       console.log(e)
       this.loginFlag = 2 // token清除 设置登录位
     }
-  })
+  }),
+  login: action(async function (this: GlobalDataStore & GlobalDataAction) {
+    return new Promise((resolve, reject) => {
+      try {
+        wx.login({
+          success: async (res) => {
+            // let res1 = await login({ code: res.code })
+            // await this.setToken(res.data)
+
+            await this.setToken('this is token')
+            resolve(undefined)
+          }
+        })
+      } catch (e) {
+        reject(undefined)
+      }
+    })
+
+  }),
 }
 
 /** 用于与业务无关的信息 如屏幕信息、获取短信的标识 */

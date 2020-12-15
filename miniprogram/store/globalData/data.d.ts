@@ -1,7 +1,8 @@
 export interface UserInfo {
   id: number,
+  nickname: string,
+  avatar: string,
   mobile: string, // 手机号
-  isAuth: boolean // 是否认证
 }
 
 export interface GlobalDataStore {
@@ -15,5 +16,6 @@ export interface GlobalDataStore {
 export type GlobalDataAction = {
   getUserInfo(): void,
   initGlobalData(): void,
-  setToken(token: string): Promise<undefined>
+  setToken(token: string): Promise<undefined>,
+  login(): Promise<undefined>,
 }
