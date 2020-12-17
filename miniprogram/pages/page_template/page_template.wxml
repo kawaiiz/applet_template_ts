@@ -1,4 +1,4 @@
-<my-nav>
-  <my-nav-btn slot="leftBtn" type="back"></my-nav-btn>
-  <view slot="center" class="page-title">页面模板</view>
+<my-nav bgColor="#687CEE">
+  <my-nav-btn slot="leftBtn" homepage="/pages/index/index/index" color="#fff"></my-nav-btn>
+  <view slot="center" class="page-title">页面名称</view>
 </my-nav>
