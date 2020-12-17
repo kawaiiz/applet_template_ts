@@ -1,5 +1,4 @@
 import throttle from 'lodash.throttle'
-
 import { DragItemInfo } from "./data";
 type InitData = {
   itemInfo: DragItemInfo | {},
@@ -92,7 +91,9 @@ Component<InitData, InitProperty, InitMethod>({
     },
     // 长按选取
     handleLongpressItem(e: any) {
-      wx.vibrateShort()
+      wx.vibrateShort({
+        type: 'light'
+      })
       this.setData({
         isActive: true,
         scale: 1.1,

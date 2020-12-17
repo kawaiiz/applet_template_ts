@@ -148,7 +148,6 @@ Component<InitData, InitProperty, InitMethod>({
   watch: {
     'numberValue': function (_numberValue: number) {
       // console.log('numberValue:', numberValue)
-
       this.setValue()
     },
     'stringValue': function (_stringValue: string,) {

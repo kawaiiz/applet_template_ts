@@ -1,4 +1,4 @@
-import { Rules, Rule, FormItemError } from './data'
+import { Rules, Rule, FormItemError, ReturnDataCheckError } from './data'
 /**
  * @param {Rule} rules 表单配置
  * @param {value} 字段值 表单配置
@@ -6,7 +6,6 @@ import { Rules, Rule, FormItemError } from './data'
  * @param {_this} 当前页面实例
  * @returns  {key:string,status:boolean,message:string} 
  */
-
 
 export const dataCheckItem = <K>(rule: Rule, value: any, key: string, _this?: K): FormItemError => {
   const valueType = typeof value
@@ -30,6 +29,19 @@ export const dataCheckItem = <K>(rule: Rule, value: any, key: string, _this?: K)
     errorInfo.message = rule.message
     return errorInfo
   }
+
+  if (rule.pattern) {
+    if (rule.required && (valueType !== 'string' || !rule.pattern().test(value))) {
+      // 这里的value 一定是有值的 因为上面有校验必填
+      errorInfo.message = rule.message
+      return errorInfo
+    } else if (!rule.required && value && (valueType !== 'string' || !rule.pattern().test(value))) {
+      // 当非必填  则值可以为空  不为空时需要遵守正则规矩
+      errorInfo.message = rule.message
+      return errorInfo
+    }
+  }
+
   if (rule.type && valueType !== rule.type && !(rule.type === 'array' && Array.isArray(value)) && !(rule.type === 'number' && !isNaN(Number(value)) && Number(value).toString().length === value.length)) {
     errorInfo.message = '值类型与预期类型不同~'
     return errorInfo
@@ -59,8 +71,8 @@ export const dataCheckItem = <K>(rule: Rule, value: any, key: string, _this?: K)
  */
 
 
-export const dataCheck = <T, K>(rules: Rules<T>, requestData: T, _this?: K) => {
-  const errorArr: { key: string, error: boolean, message: string }[] = []
+export const dataCheck = <T, K>(rules: Rules<T>, requestData: T, _this?: K): ReturnDataCheckError => {
+  const errorArr: FormItemError[] = []
   const errorObj: {
     [key: string]: FormItemError
   } = {}

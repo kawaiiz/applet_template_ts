@@ -60,7 +60,9 @@ Component({
             }).exec();
         },
         handleLongpressItem(e) {
-            wx.vibrateShort();
+            wx.vibrateShort({
+                type: 'light'
+            });
             this.setData({
                 isActive: true,
                 scale: 1.1,

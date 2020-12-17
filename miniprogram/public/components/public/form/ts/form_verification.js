@@ -17,6 +17,16 @@ export const dataCheckItem = (rule, value, key, _this) => {
         errorInfo.message = rule.message;
         return errorInfo;
     }
+    if (rule.pattern) {
+        if (rule.required && (valueType !== 'string' || !rule.pattern().test(value))) {
+            errorInfo.message = rule.message;
+            return errorInfo;
+        }
+        else if (!rule.required && value && (valueType !== 'string' || !rule.pattern().test(value))) {
+            errorInfo.message = rule.message;
+            return errorInfo;
+        }
+    }
     if (rule.type && valueType !== rule.type && !(rule.type === 'array' && Array.isArray(value)) && !(rule.type === 'number' && !isNaN(Number(value)) && Number(value).toString().length === value.length)) {
         errorInfo.message = '值类型与预期类型不同~';
         return errorInfo;
