@@ -10,3 +10,14 @@ export function getUserInfo() {
     requestLoading: true
   })
 }
+
+
+
+// 登录
+export async function login(data: { code: string }) {
+  return await http.request<string>({
+    url: '',
+    method: 'POST',
+    data,
+  })
+}

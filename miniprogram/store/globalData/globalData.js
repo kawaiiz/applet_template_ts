@@ -9,22 +9,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 const { action } = require('mobx-miniprogram');
 import { setNavStyle, } from '../../public/utils/util';
-import { getUserInfo } from './service';
+import { mockData } from '../../public/utils/util';
 const data = {
     loginFlag: 0,
     token: "",
-    userInfo: {
-        id: NaN,
-        mobile: '',
-        isAuth: false
-    },
+    userInfo: {},
     pageConfig: setNavStyle(),
 };
 export const globalAction = {
     getUserInfo: action(function () {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const res = yield getUserInfo();
+                const res = yield mockData('data', {
+                    id: 1,
+                    nickname: '测试mock',
+                    mobile: '',
+                    avatar: '',
+                });
                 this.userInfo = res.data;
             }
             catch (e) {
@@ -47,6 +48,7 @@ export const globalAction = {
                     yield this.initGlobalData();
                 }
                 else {
+                    this.login();
                     this.loginFlag = 2;
                 }
             }
@@ -55,6 +57,23 @@ export const globalAction = {
                 this.loginFlag = 2;
             }
         });
-    })
+    }),
+    login: action(function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                try {
+                    wx.login({
+                        success: (res) => __awaiter(this, void 0, void 0, function* () {
+                            yield this.setToken('this is token');
+                            resolve(undefined);
+                        })
+                    });
+                }
+                catch (e) {
+                    reject(undefined);
+                }
+            });
+        });
+    }),
 };
 export default Object.assign(Object.assign({}, data), globalAction);
