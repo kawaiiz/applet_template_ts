@@ -1,6 +1,5 @@
 
 // 获取应用实例
-const app = getApp<IAppOption>()
 type InitData = {
   expandAimation: WechatMiniprogram.Animation | null,
   expandAimationData: WechatMiniprogram.AnimationExportResult | null,
@@ -18,11 +17,13 @@ type InitProperty = {
   expandValueKey: WechatMiniprogram.Component.FullProperty<StringConstructor>,
   initExpandValue: WechatMiniprogram.Component.FullProperty<StringConstructor>,
   expandStyle: WechatMiniprogram.Component.FullProperty<StringConstructor>,
+  dynamicValue: WechatMiniprogram.Component.FullProperty<ObjectConstructor>,
 }
 
 type InitMethod = {
   handleClickListItem(e: GlobalData.WxAppletsEvent): void,
   handleClickAction(e: GlobalData.WxAppletsEvent): void,
+  handleClickExpand(e: GlobalData.WxAppletsEvent): void,
   handleClickCheck(e: GlobalData.WxAppletsEvent): void,
   setExpand(): void,
   initAnimate(): void
@@ -74,6 +75,10 @@ Component<InitData, InitProperty, InitMethod>({
     expandStyle: {
       type: String,
     },// 展开区域的样式字符串
+    dynamicValue: {
+      type: Object,
+      optionalTypes: [Array, String, Number, Boolean, null]
+    },// 给action-td传动态值
   },
 
   /**
@@ -103,6 +108,12 @@ Component<InitData, InitProperty, InitMethod>({
     // 如果有action 里面有点击事件 怎触发该事件
     handleClickAction(e) {
       this.triggerEvent('clickaction', {
+        value: e.detail.value
+      })
+    },
+    // 如果有expand 里面有点击事件 怎触发该事件
+    handleClickExpand(e) {
+      this.triggerEvent('clickexpand', {
         value: e.detail.value
       })
     },

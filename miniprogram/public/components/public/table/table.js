@@ -12,7 +12,7 @@ Component({
         },
         scrollViewHeight: {
             type: String,
-            value: '200rpx'
+            value: '400rpx'
         },
         columns: {
             type: Array,
@@ -59,6 +59,11 @@ Component({
         expandStyle: {
             type: String,
         },
+        dynamicValue: {
+            type: Object,
+            optionalTypes: [Array, String, Number, Boolean, null],
+            value: {}
+        },
     },
     data: {
         scrollTop: 0,
@@ -103,6 +108,9 @@ Component({
             });
         },
         handleScrolltolower() {
+            const { showTipImage } = this.data;
+            if (showTipImage)
+                return;
             this.triggerEvent('scrolltolower');
         },
         handleScrolltoupper() {
@@ -114,6 +122,11 @@ Component({
             });
         },
         handleClickAction(e) {
+            this.triggerEvent('clickaction', {
+                value: e.detail.value
+            });
+        },
+        handleClickExpand(e) {
             this.triggerEvent('clickaction', {
                 value: e.detail.value
             });

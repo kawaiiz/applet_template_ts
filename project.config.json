@@ -1,83 +1,85 @@
 {
-    "description": "项目配置文件",
-    "packOptions": {
-        "ignore": []
+  "description": "项目配置文件",
+  "packOptions": {
+    "ignore": []
+  },
+  "miniprogramRoot": "miniprogram/",
+  "compileType": "miniprogram",
+  "libVersion": "2.6.1",
+  "projectname": "applet_templatets",
+  "scripts": {
+    "beforeCompile": "npm run tsc",
+    "beforePreview": "npm run tsc",
+    "beforeUpload": "npm run tsc"
+  },
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "preloadBackgroundData": false,
+    "minified": true,
+    "newFeature": true,
+    "coverView": true,
+    "nodeModules": true,
+    "autoAudits": false,
+    "showShadowRootInWxmlPanel": true,
+    "scopeDataCheck": false,
+    "uglifyFileName": false,
+    "checkInvalidKey": true,
+    "checkSiteMap": true,
+    "uploadWithSourceMap": true,
+    "compileHotReLoad": false,
+    "useMultiFrameRuntime": true,
+    "useApiHook": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
     },
-    "miniprogramRoot": "miniprogram/",
-    "compileType": "miniprogram",
-    "libVersion": "2.6.1",
-    "projectname": "applet_templatets",
-    "scripts": {
-        "beforeCompile": "npm run tsc",
-        "beforePreview": "npm run tsc",
-        "beforeUpload": "npm run tsc"
+    "useIsolateContext": true,
+    "useCompilerModule": true,
+    "userConfirmedUseCompilerModuleSwitch": false,
+    "packNpmManually": false,
+    "packNpmRelationList": [],
+    "bundle": false,
+    "useApiHostProcess": true
+  },
+  "simulatorType": "wechat",
+  "simulatorPluginLibVersion": {},
+  "appid": "wxa363b23f23561c2f",
+  "condition": {
+    "search": {
+      "list": []
     },
-    "setting": {
-        "urlCheck": false,
-        "es6": true,
-        "enhance": true,
-        "postcss": true,
-        "preloadBackgroundData": false,
-        "minified": true,
-        "newFeature": true,
-        "coverView": true,
-        "nodeModules": true,
-        "autoAudits": false,
-        "showShadowRootInWxmlPanel": true,
-        "scopeDataCheck": false,
-        "uglifyFileName": false,
-        "checkInvalidKey": true,
-        "checkSiteMap": true,
-        "uploadWithSourceMap": true,
-        "compileHotReLoad": false,
-        "useMultiFrameRuntime": false,
-        "useApiHook": true,
-        "babelSetting": {
-            "ignore": [],
-            "disablePlugins": [],
-            "outputPath": ""
-        },
-        "useIsolateContext": true,
-        "useCompilerModule": true,
-        "userConfirmedUseCompilerModuleSwitch": false,
-        "packNpmManually": false,
-        "packNpmRelationList": []
+    "conversation": {
+      "list": []
     },
-    "simulatorType": "wechat",
-    "simulatorPluginLibVersion": {},
-    "appid": "wxa363b23f23561c2f",
-    "condition": {
-        "search": {
-            "list": []
+    "plugin": {
+      "list": []
+    },
+    "game": {
+      "list": []
+    },
+    "gamePlugin": {
+      "list": []
+    },
+    "miniprogram": {
+      "list": [
+        {
+          "id": -1,
+          "name": "pages/login/login/login",
+          "pathName": "pages/login/login/login",
+          "query": "test=123456",
+          "scene": null
         },
-        "conversation": {
-            "list": []
-        },
-        "plugin": {
-            "list": []
-        },
-        "game": {
-            "list": []
-        },
-        "gamePlugin": {
-            "list": []
-        },
-        "miniprogram": {
-            "list": [
-                {
-                    "id": -1,
-                    "name": "pages/login/login/login",
-                    "pathName": "pages/login/login/login",
-                    "query": "test=123456",
-                    "scene": null
-                },
-                {
-                    "id": -1,
-                    "name": "500",
-                    "pathName": "pages/error/500/500",
-                    "scene": null
-                }
-            ]
+        {
+          "id": -1,
+          "name": "500",
+          "pathName": "pages/error/500/500",
+          "scene": null
         }
+      ]
     }
+  }
 }

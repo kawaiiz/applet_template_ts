@@ -1,20 +1,26 @@
+const app = getApp();
 Component({
     options: {
         addGlobalClass: true,
     },
-    properties: {},
-    data: {},
-    methods: {
-        onLoad(options) {
-            console.log(options);
+    properties: {
+        type: {
+            type: String,
+            value: 'top'
         },
-        onShow() {
-            console.log('onShow');
+        size: {
+            type: Number,
+            value: 8
         },
-        onReady() {
-            console.log('onReady');
-        },
+        color: {
+            type: String,
+            value: '#555555'
+        }
     },
+    data: {
+        IMAGEURL: app.globalData.IMAGEURL,
+    },
+    methods: {},
     lifetimes: {
         attached: function () { },
         moved: function () { },

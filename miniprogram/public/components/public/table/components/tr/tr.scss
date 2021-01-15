@@ -3,8 +3,9 @@
   border-bottom: 2rpx solid #DDDDDD;
 // 表格数据
   .tr{
+    min-height: 120rpx;
     .td{
-      padding: 35rpx 20rpx;
+      padding: 35rpx 10rpx;
       text-align: center;
       white-space:normal; 
       word-break:break-all;

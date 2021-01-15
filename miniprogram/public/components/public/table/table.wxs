@@ -1,4 +1,4 @@
-function computedTdWidth( columns, select) {
+function computedTdWidth(columns, select) {
   if (columns.width) {
     return columns.width
   } else if (select) {

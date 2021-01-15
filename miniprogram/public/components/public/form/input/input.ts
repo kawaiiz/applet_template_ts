@@ -30,8 +30,10 @@ type InitProperty = {
 
 type InitMethod = {
   handleInput(e: GlobalData.WxAppletsEvent): void,
+  handleBlur(e: GlobalData.WxAppletsEvent): void,
   handleChange(e: GlobalData.WxAppletsEvent): void,
   handleClickClear(e: GlobalData.WxAppletsEvent): void
+  handleFocus(e: GlobalData.WxAppletsEvent): void
 }
 
 Component<InitData, InitProperty, InitMethod>({
@@ -151,6 +153,12 @@ Component<InitData, InitProperty, InitMethod>({
         value: e.detail
       })
     },
+    // blur方法触发
+    handleBlur(e) {
+      this.triggerEvent('blur', {
+        value: e.detail
+      })
+    },
     // change方法触发
     handleChange(e) {
       this.triggerEvent('change', {
@@ -160,7 +168,14 @@ Component<InitData, InitProperty, InitMethod>({
     // 清空内容触发
     handleClickClear(_e) {
       this.triggerEvent('clear')
-    }
+    },
+    // 聚焦触发
+    // blur方法触发
+    handleFocus(e) {
+      this.triggerEvent('focus', {
+        value: e.detail
+      })
+    },
   },
 
   lifetimes: {

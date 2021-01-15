@@ -10,12 +10,16 @@
         {{item[cItem.key]}}
       </view>
       <view class="action-td" style="width:{{table.computedTdWidth(columns,select)}};{{cIndex===columns.length-1?'flex-grow:1;flex-shrink:1':''}}" wx:else>
-        <!-- <slot name="action-td"></slot> -->
-        <action-td item="{{item}}" index="{{index}}" columns="{{cItem}}" bindclickaction="handleClickAction" slot="action-td"></action-td>
+        <action-td item="{{item}}" index="{{index}}" columns="{{cItem}}" dynamicValue="{{dynamicValue}}" bindclickaction="handleClickAction" slot="action-td"></action-td>
       </view>
     </block>
   </view>
   <view class="expand" style="{{expandStyle}}" wx:if="{{isExpand}}" animation="{{expandAimationData}}">
-    <view class="expand-box">{{item[expandValueKey]||initExpandValue}}</view>
+    <view class="expand-box" wx:if="{{expandValueKey}}">
+      {{item[expandValueKey]||initExpandValue}}
+    </view>
+    <view wx:else>
+      <expand-component item="{{item}}" index="{{index}}" dynamicValue="{{dynamicValue}}" bindclickexpand="handleClickExpand"></expand-component>
+    </view>
   </view>
 </view>

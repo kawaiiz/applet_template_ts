@@ -1,11 +1,12 @@
 {
   "component": true,
   "usingComponents": {
-    "i-load-more": "/public/components/public/load_more/index",
     "my-tr": "./components/tr/tr",
-    "my-td": "./components/td/td"
+    "my-td": "./components/td/td",
+    "my-empty": "/public/components/public/empty/empty"
   },
   "componentGenerics": {
-    "action-td": true
+    "action-td": true,
+    "expand-component": true
   }
 }

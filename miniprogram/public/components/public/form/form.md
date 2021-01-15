@@ -116,6 +116,8 @@ input的参数大部分与vant的field保持一致。
 |bindinput| 输入事件 | Function({ value:string(input值)})
 |bindchange| input值变化事件 | Function({ value:string(input值)})
 |bindclear| 清空input事件 | Function()
+|bindblur| 失焦事件 | Function()
+|bindfocus| 聚焦事件 | Function()
 
 --------------------------------------------------  
 --------------------------------------------------  

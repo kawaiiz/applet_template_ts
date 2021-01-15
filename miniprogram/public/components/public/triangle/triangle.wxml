@@ -1,0 +1,1 @@
+<view class="triangle triangle-{{type}}" style="border-width:{{size}}rpx;border-{{type}}-color:{{color}}"></view>

@@ -23,6 +23,7 @@ type InitProperty = {
   expandValueKey: WechatMiniprogram.Component.FullProperty<StringConstructor>,
   initExpandValue: WechatMiniprogram.Component.FullProperty<StringConstructor>,
   expandStyle: WechatMiniprogram.Component.FullProperty<StringConstructor>,
+  dynamicValue: WechatMiniprogram.Component.FullProperty<ObjectConstructor>,
 }
 
 type InitMethod = {
@@ -31,6 +32,7 @@ type InitMethod = {
   handleScrolltoupper(): void,
   handleClickListItem(e: GlobalData.WxAppletsEvent): void,
   handleClickAction(e: GlobalData.WxAppletsEvent): void,
+  handleClickExpand(e: GlobalData.WxAppletsEvent): void,
   handleClickCheck(e: GlobalData.WxAppletsEvent): void
   tipFc(): void
 }
@@ -50,7 +52,7 @@ Component<InitData, InitProperty, InitMethod>({
     }, // 指明datalist里item的哪一项可以用作是key
     scrollViewHeight: {
       type: String,
-      value: '200rpx'
+      value: '400rpx'
     }, // 表格数据块高度
     columns: {
       type: Array,
@@ -93,10 +95,15 @@ Component<InitData, InitProperty, InitMethod>({
     },// 展开的内容的key
     initExpandValue: {
       type: String,
-    },
+    },// 展开内容为空时 显示的文字
     expandStyle: {
       type: String,
-    },
+    },// 展开信息的div的样式
+    dynamicValue: {
+      type: Object,
+      optionalTypes: [Array, String, Number, Boolean, null],
+      value: {}
+    },// 给action-td传动态值
   },
   /**
    * 组件的初始数据
@@ -151,10 +158,13 @@ Component<InitData, InitProperty, InitMethod>({
     },
     // 滚动到底部触发
     handleScrolltolower() {
+      const { showTipImage } = this.data
+      if (showTipImage) return
       this.triggerEvent('scrolltolower')
     },
     // 滚动到顶部触发
     handleScrolltoupper() {
+
       this.triggerEvent('scrolltoupper')
     },
     // 点击表格中一项触发
@@ -165,6 +175,12 @@ Component<InitData, InitProperty, InitMethod>({
     },
     // 如果有action 里面有点击事件 怎触发该事件
     handleClickAction(e) {
+      this.triggerEvent('clickaction', {
+        value: e.detail.value
+      })
+    },
+    // 如果有expand 里面有点击事件 怎触发该事件
+    handleClickExpand(e) {
       this.triggerEvent('clickaction', {
         value: e.detail.value
       })

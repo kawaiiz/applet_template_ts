@@ -99,6 +99,11 @@ Component({
                 value: e.detail
             });
         },
+        handleBlur(e) {
+            this.triggerEvent('lur', {
+                value: e.detail
+            });
+        },
         handleChange(e) {
             this.triggerEvent('change', {
                 value: e.detail

@@ -1,4 +1,3 @@
-const app = getApp();
 Component({
     options: {
         addGlobalClass: true,
@@ -42,6 +41,10 @@ Component({
         expandStyle: {
             type: String,
         },
+        dynamicValue: {
+            type: Object,
+            optionalTypes: [Array, String, Number, Boolean, null]
+        },
     },
     data: {
         expandAimation: null,
@@ -61,6 +64,11 @@ Component({
         },
         handleClickAction(e) {
             this.triggerEvent('clickaction', {
+                value: e.detail.value
+            });
+        },
+        handleClickExpand(e) {
+            this.triggerEvent('clickexpand', {
                 value: e.detail.value
             });
         },

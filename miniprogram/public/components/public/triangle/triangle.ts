@@ -1,7 +1,14 @@
+// 获取应用实例
+const app = getApp<IAppOption>()
+type InitData = {
+  IMAGEURL: string,
+}
 
-type InitData = {}
-
-type InitProperty = {}
+type InitProperty = {
+  type: WechatMiniprogram.Component.FullProperty<StringConstructor>,
+  size: WechatMiniprogram.Component.FullProperty<NumberConstructor>,
+  color: WechatMiniprogram.Component.FullProperty<StringConstructor>
+}
 
 type InitMethod = {
 }
@@ -14,29 +21,31 @@ Component<InitData, InitProperty, InitMethod>({
    * 组件的属性列表
    */
   properties: {
-
+    type: {
+      type: String,
+      value: 'top'
+    },// 'bottom' 'top' 'left' 'right'
+    size: {
+      type: Number,
+      value: 8
+    },
+    color: {
+      type: String,
+      value: '#555555'
+    }
   },
 
   /**
    * 组件的初始数据
    */
   data: {
-
+    IMAGEURL: app.globalData.IMAGEURL,
   },
 
   /**
    * 组件的方法列表
    */
   methods: {
-    onLoad(options: any) {
-      console.log(options)
-    },
-    onShow() {
-      console.log('onShow')
-    },
-    onReady() {
-      console.log('onReady')
-    },
   },
 
   lifetimes: {
