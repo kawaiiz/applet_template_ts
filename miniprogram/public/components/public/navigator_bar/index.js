@@ -13,6 +13,14 @@ Component({
         contentFull: {
             type: Boolean,
             value: false
+        },
+        longCenter: {
+            type: Boolean,
+            value: false
+        },
+        nobgcontent: {
+            type: Boolean,
+            value: false
         }
     },
     storeBindings: {

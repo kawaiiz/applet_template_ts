@@ -1,7 +1,6 @@
 // 获取应用实例
 const app = getApp<IAppOption>()
 type InitData = {
-  IMAGEURL: string,
 }
 
 type InitProperty = {
@@ -27,7 +26,6 @@ Component<InitData, InitProperty, InitMethod>({
    * 组件的初始数据
    */
   data: {
-    IMAGEURL: app.globalData.IMAGEURL,
   },
 
   /**

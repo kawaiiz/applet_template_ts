@@ -3,6 +3,7 @@
   border-bottom: 2rpx solid #DDDDDD;
 // 表格数据
   .tr{
+    display: flex;
     min-height: 120rpx;
     .td{
       padding: 35rpx 10rpx;
@@ -33,7 +34,7 @@
     color: #A2A2A2;
     line-height: 54rpx;
     word-wrap:  break-word;   
-    word-break: break-all;  
+    word-break: break-all;   
     overflow: hidden;
     opacity: 0;
     .expand-box{

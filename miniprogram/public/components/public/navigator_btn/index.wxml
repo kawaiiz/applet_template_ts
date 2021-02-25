@@ -1,16 +1,30 @@
-<view class="nav-btn-box" wx:if="{{type==='all'}}">
-  <view class="capsule" style=" border:1rpx solid {{color}};">
-    <navigator class="icon box box-row-center" hover-class="none" open-type="navigateBack" delta="1" wx:if="{{showLeft}}">
-      <van-icon name="arrow-left" color="{{color}}" size="{{20}}" />
-    </navigator>
-    <view class="line" style="border-right: 1rpx solid {{color}};" wx:if="{{showLeft&&showRight}}"></view>
+<block wx:if="{{pageLength>1}}">
+  <view class="nav-btn-box" wx:if="{{type==='all'}}">
+    <view class="capsule" style=" border:1rpx solid {{color}};">
+      <navigator class="icon box box-row-center" hover-class="none" open-type="navigateBack" delta="1" wx:if="{{showLeft}}">
+        <van-icon name="arrow-left" color="{{color}}" size="{{20}}" />
+      </navigator>
+      <view class="line" style="border-right: 1rpx solid {{color}};" wx:if="{{showLeft&&showRight}}"></view>
+      <navigator class="icon box box-row-center" hover-class="none" open-type="switchTab" url="{{homepage}}" wx:if="{{showRight}}">
+        <van-icon name="wap-home" size="{{20}}" color="{{color}}" />
+      </navigator>
+    </view>
+  </view>
+  <view class="nav-btn-box other" wx:elif="{{type==='home'}}">
     <navigator class="icon box box-row-center" hover-class="none" open-type="switchTab" url="{{homepage}}" wx:if="{{showRight}}">
       <van-icon name="wap-home" size="{{20}}" color="{{color}}" />
     </navigator>
   </view>
-</view>
-<view class="nav-btn-box other" wx:else>
-  <navigator class="icon" hover-class="none" open-type="navigateBack" delta="1" wx:if="{{showLeft}}">
-    <van-icon name="arrow-left" color="{{color}}" size="{{20}}" />
-  </navigator>
-</view>
+  <view class="nav-btn-box other" wx:else>
+    <navigator class="icon" hover-class="none" open-type="navigateBack" delta="1" wx:if="{{showLeft}}">
+      <van-icon name="arrow-left" color="{{color}}" size="{{20}}" />
+    </navigator>
+  </view>
+</block>
+<block wx:else>
+  <view class="nav-btn-box other">
+    <navigator class="icon box box-row-center" hover-class="none" open-type="switchTab" url="{{homepage}}">
+      <van-icon name="wap-home" size="{{20}}" color="{{color}}" />
+    </navigator>
+  </view>
+</block>

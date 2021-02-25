@@ -26,6 +26,11 @@
   text-overflow: ellipsis;
 }
 
+.long-box{
+  width: 72%;
+  height: 100%;
+}
+
 .fixed{
   width: 100%;
   position: fixed;

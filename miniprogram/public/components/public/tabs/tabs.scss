@@ -3,8 +3,13 @@
 .tabs{
   width: 100vw;
   background: #FFFFFF;
-  overflow: hidden;
+  overflow: hidden; 
   white-space: nowrap;
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    color: transparent;
+  }
   &.border-radius{
     border-radius: 0 0 50rpx 50rpx;
   }
@@ -13,11 +18,12 @@
   }
   .tab{
     display: inline-block;
-    width: 250rpx;
+    min-width: 200rpx;
     height: 80rpx;
     position: relative;
     line-height: 80rpx;
     text-align: center;
+    padding: 0 10rpx;
     &.active{
       .text{
         color: $c-main;

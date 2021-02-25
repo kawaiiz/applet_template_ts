@@ -1,18 +1,5 @@
-var operationNumber = function (arg1, arg2, operator) {
-    var oper = ['+', '-', '*', '/'];
-    if (isNaN(arg1) || isNaN(arg2) || oper.indexOf(operator) < 0) {
-        return NaN;
-    }
-    if (operator === '/' && Number(arg2) === 0) {
-        return Infinity;
-    }
-    if (operator === '*' && Number(arg2) === 0) {
-        return 0;
-    }
-    if ((arg1 === arg2 || Number(arg1) === Number(arg2)) && operator === '-') {
-        return 0;
-    }
-    var r1, r2, max, _r1, _r2;
+export function toolAdd(arg1, arg2) {
+    var r1, r2, m, c;
     try {
         r1 = arg1.toString().split(".")[1].length;
     }
@@ -25,58 +12,72 @@ var operationNumber = function (arg1, arg2, operator) {
     catch (e) {
         r2 = 0;
     }
-    max = Math.max(r1, r2);
-    _r1 = max - r1;
-    _r2 = max - r2;
-    let newArg1 = String(arg1);
-    let newArg2 = String(arg2);
-    if (_r1 !== 0) {
-        newArg1 = arg1 + '0'.repeat(_r1);
-    }
-    if (_r2 !== 0) {
-        newArg2 = arg2 + '0'.repeat(_r2);
-    }
-    arg1 = Number(newArg1.replace('.', ''));
-    arg2 = Number(newArg2.replace('.', ''));
-    var r3 = operator === '*' ? (max * 2) : (operator === '/' ? 0 : max);
-    var newNum = 0;
-    if (operator === '+') {
-        newNum = arg1 + arg2;
-    }
-    else if (operator === '-') {
-        newNum = arg1 - arg2;
-    }
-    else if (operator === '*') {
-        newNum = arg1 * arg2;
-    }
-    else if (operator === '/') {
-        newNum = arg1 / arg2;
-    }
-    if (r3 !== 0) {
-        var nStr = newNum.toString();
-        nStr = nStr.replace(/^-/, '');
-        if (nStr.length < r3 + 1) {
-            nStr = '0'.repeat(r3 + 1 - nStr.length) + nStr;
+    c = Math.abs(r1 - r2);
+    m = Math.pow(10, Math.max(r1, r2));
+    if (c > 0) {
+        var cm = Math.pow(10, c);
+        if (r1 > r2) {
+            arg1 = Number(arg1.toString().replace(".", ""));
+            arg2 = Number(arg2.toString().replace(".", "")) * cm;
         }
-        nStr = nStr.replace(new RegExp('(\\\d{' + r3 + '})$'), '.$1');
-        if (newNum < 0) {
-            nStr = '-' + nStr;
+        else {
+            arg1 = Number(arg1.toString().replace(".", "")) * cm;
+            arg2 = Number(arg2.toString().replace(".", ""));
         }
-        newNum = Number(nStr);
     }
-    return newNum;
-};
-export function toolAdd(arg1, arg2) {
-    return operationNumber(arg1, arg2, '+');
+    else {
+        arg1 = Number(arg1.toString().replace(".", ""));
+        arg2 = Number(arg2.toString().replace(".", ""));
+    }
+    return (arg1 + arg2) / m;
 }
 export function toolSub(arg1, arg2) {
-    return operationNumber(arg1, arg2, '-');
+    var r1, r2, m, n;
+    try {
+        r1 = arg1.toString().split(".")[1].length;
+    }
+    catch (e) {
+        r1 = 0;
+    }
+    try {
+        r2 = arg2.toString().split(".")[1].length;
+    }
+    catch (e) {
+        r2 = 0;
+    }
+    m = Math.pow(10, Math.max(r1, r2));
+    n = (r1 >= r2) ? r1 : r2;
+    return (arg1 * m - arg2 * m) / m;
 }
 export function toolMul(arg1, arg2) {
-    return operationNumber(arg1, arg2, '*');
+    var m = 0, s1 = arg1.toString(), s2 = arg2.toString();
+    try {
+        m += s1.split(".")[1].length;
+    }
+    catch (e) {
+    }
+    try {
+        m += s2.split(".")[1].length;
+    }
+    catch (e) {
+    }
+    return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
 }
 export function toolDiv(arg1, arg2) {
-    return operationNumber(arg1, arg2, '/');
+    var t1 = 0, t2 = 0, r1, r2;
+    try {
+        t1 = arg1.toString().split(".")[1].length;
+    }
+    catch (e) {
+    }
+    try {
+        t2 = arg2.toString().split(".")[1].length;
+    }
+    catch (e) {
+    }
+    r1 = Number(arg1.toString().replace(".", ""));
+    r2 = Number(arg2.toString().replace(".", ""));
+    return (r1 / r2) * Math.pow(10, t2 - t1);
 }
 export function toolNumber(num) {
     var num_str = num.toString();
@@ -155,11 +156,11 @@ export function getHandledValue(num) {
 }
 export function getDate(data, startType) {
     let d;
-    if (typeof data === "object") {
+    if (typeof data === "object" && data !== null) {
         d = data;
     }
     else if (typeof data === "string") {
-        d = new Date(data);
+        d = new Date(data.indexOf('Z') !== -1 ? data.replace(/\//g, '-') : data.replace(/-/g, '/').replace(/T/, ' '));
     }
     else if (typeof data === "number") {
         if (!isMillisecond(data)) {
@@ -170,8 +171,10 @@ export function getDate(data, startType) {
         }
     }
     else {
-        d = new Date(data);
+        console.log('data', data);
+        d = data ? new Date(data) : new Date();
     }
+    console.log('d', d);
     let year = d.getFullYear();
     let month = getHandledValue(d.getMonth() + 1);
     let date = getHandledValue(d.getDate());

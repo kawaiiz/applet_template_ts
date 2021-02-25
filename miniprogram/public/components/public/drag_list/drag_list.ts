@@ -18,7 +18,7 @@ Component<InitData, InitProperty, InitMethod>({
   options: {
     addGlobalClass: true,
   },
-  /** 
+  /**
    * 组件的属性列表
    */
   properties: {
@@ -71,7 +71,7 @@ Component<InitData, InitProperty, InitMethod>({
     },
     // 更新列表数据
     async _updateDataChange() {
-      /*
+      /**
        * 使用函数节流限制重复去设置数组内容进而限制多次重复渲染
        * 暂时没有研究微信在渲染的时候是否会进行函数节流
        */

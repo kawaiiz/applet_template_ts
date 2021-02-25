@@ -31,7 +31,7 @@ Component<InitData, InitProperty, InitMethod>({
   options: {
     addGlobalClass: true,
   },
-  /** 
+  /**
    * 组件的属性列表
    */
   properties: {
@@ -70,7 +70,7 @@ Component<InitData, InitProperty, InitMethod>({
     }
   },
 
-  /** 
+  /**
    * 组件的方法列表
    */
   methods: {

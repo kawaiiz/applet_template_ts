@@ -8,6 +8,8 @@ type InitData = {} & GlobalDataStore
 type InitProperty = {
   bgColor: WechatMiniprogram.Component.FullProperty<StringConstructor>,
   contentFull: WechatMiniprogram.Component.FullProperty<BooleanConstructor>,
+  longCenter: WechatMiniprogram.Component.FullProperty<BooleanConstructor>,
+  nobgcontent: WechatMiniprogram.Component.FullProperty<BooleanConstructor>,
 }
 
 type InitMethod = {
@@ -30,12 +32,20 @@ Component<InitData, InitProperty, InitMethod>({
     contentFull: {
       type: Boolean,
       value: false
+    },
+    longCenter: {
+      type: Boolean,
+      value: false
+    },
+    nobgcontent: {
+      type: Boolean,
+      value: false
     }
   },
   storeBindings: {
     store,
     fields: {
-      pageConfig: (store:GlobalDataStore) => store.pageConfig,
+      pageConfig: (store: GlobalDataStore) => store.pageConfig,
     }
   },
   /**

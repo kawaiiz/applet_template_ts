@@ -20,16 +20,18 @@ App({
     },
     checkLogin() {
         return __awaiter(this, void 0, void 0, function* () {
-            const token = wx.getStorageSync('token') || '';
-            yield store.setToken(token);
+            const token = wx.getStorageSync(config.ACCESS_TOKEN) || '';
+            const refreshToken = wx.getStorageSync(config.REFRESH_TOKEN) || '';
+            yield store.setToken(token, refreshToken);
+            yield store.initApp();
         });
     },
     globalData: {
         IMAGEURL: config.IMAGEURL,
         BASEURL: config.BASEURL,
         transmit: {
-            title: '终端开发管理系统',
-            path: '/pages/login/startup_page/startup_page',
+            title: '',
+            path: '',
             imageUrl: config.IMAGEURL + 'cover.jpg',
             success: function (res) {
                 console.log(res);

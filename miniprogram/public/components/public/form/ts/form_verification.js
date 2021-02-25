@@ -27,7 +27,7 @@ export const dataCheckItem = (rule, value, key, _this) => {
             return errorInfo;
         }
     }
-    if (rule.type && valueType !== rule.type && !(rule.type === 'array' && Array.isArray(value)) && !(rule.type === 'number' && !isNaN(Number(value)) && Number(value).toString().length === value.length)) {
+    if (rule.type && valueType !== rule.type && !(rule.type === 'array' && Array.isArray(value)) && !(rule.type === 'number' && !isNaN(Number(value)))) {
         errorInfo.message = '值类型与预期类型不同~';
         return errorInfo;
     }

@@ -7,8 +7,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { gotoLogin, gotoError } from './util';
-import { BASEURL } from "./config";
+import { gotoLogin, gotoError, toast, } from './util';
+import { BASEURL, httpConfig, ACCESS_TOKEN } from "./config";
 import http from './api.request';
 import store from '../../store/index/index';
 let isRefreshing = false;
@@ -28,41 +28,16 @@ const createFormData = (obj = {}) => {
     return result + '\r\n--XXX--';
 };
 const getToken = () => __awaiter(void 0, void 0, void 0, function* () {
-    return new Promise((resolve, reject) => {
-        console.log('获取token');
-        wx.login({
-            success(res) {
-                const { code } = res;
-                const requestData = { code, pid: 0, isTwo: 0, isPublic: 0 };
-                wx.request({
-                    url: `${BASEURL}/mini/login/login`,
-                    method: "POST",
-                    data: createFormData(requestData),
-                    header: {
-                        'content-type': 'multipart/form-data; boundary=XXX'
-                    },
-                    success(res) {
-                        return __awaiter(this, void 0, void 0, function* () {
-                            if (res.statusCode === 200 && res.data.code === 1) {
-                                yield store.setToken(res.data.data);
-                                isRefreshing = false;
-                                resolve();
-                            }
-                            else {
-                                reject();
-                            }
-                        });
-                    },
-                    fail(e) {
-                        reject(e);
-                    }
-                });
-            },
-            fail(e) {
-                reject(e);
-            }
-        });
-    });
+    try {
+        yield store.resetToken();
+        isRefreshing = false;
+    }
+    catch (e) {
+        console.log(e);
+        toast(e.msg || '登录信息已过期');
+        isRefreshing = false;
+        return Promise.reject(e);
+    }
 });
 class HttpRequest {
     constructor() {
@@ -82,23 +57,40 @@ class HttpRequest {
                 if (typeof data === 'string') {
                     data = JSON.parse(data);
                 }
-                if (data.status === 200) {
+                if (httpConfig.statusSuccess.indexOf(data[httpConfig.statusField]) !== -1) {
                     return Promise.resolve(data);
                 }
                 else {
-                    return Promise.reject(data);
+                    if (data[httpConfig.statusField] === false && data.code === -401) {
+                        yield store.setToken("");
+                        try {
+                            return yield this.interceptorsResponent(option);
+                        }
+                        catch (e) {
+                            gotoLogin();
+                            return Promise.reject(e);
+                        }
+                    }
+                    else if (data.code === 401) {
+                        gotoLogin();
+                        return Promise.reject(res.data);
+                    }
+                    else {
+                        return Promise.reject(res.data);
+                    }
                 }
             }
             else if (res.statusCode === 401) {
-                yield store.setToken("");
-                gotoLogin();
-                return Promise.reject();
+                try {
+                    return yield this.interceptorsResponent(option);
+                }
+                catch (e) {
+                    gotoLogin();
+                    return Promise.reject(e);
+                }
             }
             else if (res.statusCode === 403) {
                 return Promise.reject(res.data);
-            }
-            else if (res.data.status == 'token过期标识') {
-                return this.interceptorsResponent(option);
             }
             else {
                 console.log(res, option);
@@ -107,42 +99,43 @@ class HttpRequest {
             }
         });
     }
-    requestFail(err, option) {
-        console.log(err);
+    requestAbort() {
         for (let i = requestList.length - 1; i >= 0; i--) {
-            if (requestList[i].abort) {
+            if (requestList[i] && requestList[i].abort) {
                 requestList[i].abort();
             }
             requestList.pop();
         }
+        for (let i = requests.length - 1; i >= 0; i--) {
+            requests[i]();
+            requests.pop();
+        }
+        for (let i = responents.length - 1; i >= 0; i--) {
+            responents[i]();
+            responents.pop();
+        }
+    }
+    requestFail(err, option) {
         console.log(err, option);
+        this.requestAbort();
         gotoError();
     }
     createOptions(option, resolve, reject) {
-        let token = '';
-        try {
-            token = store.token || '';
-        }
-        catch (e) {
-            console.log(e);
-        }
+        let token = wx.getStorageSync(ACCESS_TOKEN) || '';
         if (option.contentType === 'multipart/form-data; boundary=XXX' && option.method === 'POST') {
             option.data = createFormData(option.data);
         }
         return {
             url: option.allUrl ? option.allUrl : this.BASEURL + option.url,
             data: option.data,
-            header: {
-                'Content-Type': option.contentType ? option.contentType : 'application/json;charset=UTF-8',
-                'Authorization': token
-            },
+            header: Object.assign({ 'Content-Type': option.contentType ? option.contentType : 'application/json;charset=UTF-8', 'Authorization': token }, (option.header || {})),
             method: option.method ? option.method : 'POST',
             success: (res) => {
                 resolve(res);
             },
             fail: (err) => {
                 this.requestFail(err, option);
-                reject();
+                reject(err);
             },
             complete: () => {
                 if (option.requestLoading) {
@@ -180,14 +173,21 @@ class HttpRequest {
             }
         };
     }
-    interceptorsRequest() {
+    interceptorsRequest(option) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!isRefreshing) {
+            if (!isRefreshing || option.isLogin) {
                 return Promise.resolve();
             }
             else {
-                return new Promise(resolve => {
-                    requests.push(() => __awaiter(this, void 0, void 0, function* () {
+                return new Promise((resolve, reject) => {
+                    requests.push((timeout) => __awaiter(this, void 0, void 0, function* () {
+                        if (timeout)
+                            return reject({
+                                code: null,
+                                msg: '登录过期',
+                                data: null,
+                                success: false
+                            });
                         resolve();
                     }));
                 });
@@ -212,11 +212,18 @@ class HttpRequest {
                     }
                 }
                 else {
-                    return new Promise(resolve => {
+                    return new Promise((resolve, reject) => {
                         console.log(option);
-                        responents.push(() => __awaiter(this, void 0, void 0, function* () {
+                        responents.push((timeout) => __awaiter(this, void 0, void 0, function* () {
                             try {
                                 console.log(option);
+                                if (timeout)
+                                    return reject({
+                                        code: null,
+                                        msg: '登录过期',
+                                        data: null,
+                                        success: false
+                                    });
                                 let res;
                                 if (option.requestType === 'file') {
                                     res = yield http.upFile(option);
@@ -234,7 +241,12 @@ class HttpRequest {
                 }
             }
             catch (e) {
-                return Promise.reject();
+                console.log(e);
+                requests.forEach(cb => cb(true));
+                responents.forEach(cb => cb(true));
+                requests = [];
+                responents = [];
+                return Promise.reject(e);
             }
         });
     }
@@ -248,7 +260,7 @@ class HttpRequest {
                     title: '请稍等',
                 });
             }
-            yield this.interceptorsRequest();
+            yield this.interceptorsRequest(option);
             let options = this.createOptions(option, resolve, reject);
             const requestTask = wx.request(options);
             requestList.push(requestTask);
@@ -268,7 +280,7 @@ class HttpRequest {
                     title: '请稍等',
                 });
             }
-            yield this.interceptorsRequest();
+            yield this.interceptorsRequest(option);
             let options = this.createUpFileOption(option, resolve, reject);
             const requestTask = wx.uploadFile(options);
             requestList.push(requestTask);

@@ -12,7 +12,7 @@ Component({
         },
         scrollViewHeight: {
             type: String,
-            value: '400rpx'
+            value: '600rpx'
         },
         columns: {
             type: Array,
@@ -127,7 +127,7 @@ Component({
             });
         },
         handleClickExpand(e) {
-            this.triggerEvent('clickaction', {
+            this.triggerEvent('clickexpand', {
                 value: e.detail.value
             });
         },

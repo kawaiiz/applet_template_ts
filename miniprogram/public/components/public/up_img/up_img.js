@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const computedBehavior = require('miniprogram-computed');
-import { gotoLogin, toast, isHaveBASEURL } from '../../../utils/util';
+import { upFile } from '../../../../store/globalData/service';
 Component({
     behaviors: [computedBehavior],
     options: {
@@ -16,10 +16,6 @@ Component({
     },
     properties: {
         BASEURL: {
-            type: String,
-            value: ''
-        },
-        upFileUrl: {
             type: String,
             value: ''
         },
@@ -31,10 +27,6 @@ Component({
             type: Number,
             value: 1000000
         },
-        token: {
-            type: String,
-            value: ''
-        },
         onlyShow: {
             type: Boolean,
             value: false
@@ -44,6 +36,7 @@ Component({
         showList: [],
         valueList: [],
         disabled: false,
+        downloadImageMap: {}
     },
     watch: {
         imageList(imageList) {
@@ -52,7 +45,10 @@ Component({
             const newValueList = [];
             imageList.forEach(item => {
                 if (typeof item === 'object') {
-                    newShowList.push(Object.assign(Object.assign({}, item), { path: isHaveBASEURL(item.path, BASEURL) ? item.path : `${BASEURL}${item.path}`, error: false }));
+                    newShowList.push({
+                        path: item.url,
+                        error: false
+                    });
                     newValueList.push(item);
                 }
                 else if (typeof item === 'string') {
@@ -78,13 +74,44 @@ Component({
         },
     },
     methods: {
+        downloadFile(url, index) {
+            const { downloadImageMap } = this.data;
+            if (downloadImageMap[index]) {
+                return Promise.resolve(downloadImageMap[index]);
+            }
+            return new Promise((resolve) => {
+                wx.downloadFile({
+                    url: url,
+                    success: (res) => {
+                        this.setData({
+                            [`downloadImageMap[${index}]`]: res.tempFilePath
+                        });
+                        resolve(res.tempFilePath);
+                    },
+                    fail: () => {
+                        this.setData({
+                            [`downloadImageMap[${index}]`]: url
+                        });
+                        resolve(url);
+                    }
+                });
+            });
+        },
         handleClickSeeImage(e) {
-            const { showList } = this.data;
-            const { index } = e.currentTarget.dataset;
-            const arr = showList.map(item => item.path);
-            wx.previewImage({
-                current: arr[index],
-                urls: arr
+            return __awaiter(this, void 0, void 0, function* () {
+                const { showList } = this.data;
+                const { index } = e.currentTarget.dataset;
+                const urlArr = showList.map(item => typeof item.path === 'string' ? item.path : item.path.url);
+                const systemInfo = wx.getSystemInfoSync();
+                wx.showLoading({
+                    title: '请等待'
+                });
+                const arr = systemInfo.platform === 'android' ? yield Promise.all(urlArr.map((item, index) => this.downloadFile(item, index))) : urlArr;
+                wx.hideLoading();
+                wx.previewImage({
+                    current: arr[index],
+                    urls: arr
+                });
             });
         },
         handleClickDel(e) {
@@ -139,55 +166,26 @@ Component({
             });
         },
         upImage(tempFilePath) {
-            const { token, upFileUrl, BASEURL } = this.data;
-            return new Promise((resolve) => {
-                wx.uploadFile({
-                    url: upFileUrl,
-                    filePath: tempFilePath,
-                    name: 'file',
-                    header: {
-                        Authorization: token,
-                    },
-                    formData: {
-                        token
-                    },
-                    success: (res) => {
-                        let data = JSON.parse(res.data);
-                        if (res.statusCode === 401) {
-                            toast({
-                                title: data.errorMsg || '登录失效，请重新登录',
-                                cb: gotoLogin
-                            });
-                            return;
+            return __awaiter(this, void 0, void 0, function* () {
+                try {
+                    const res = yield upFile(tempFilePath);
+                    console.log(res);
+                    return Promise.resolve({
+                        showListItem: {
+                            error: false,
+                            path: res.data.url,
+                        },
+                        valueListItem: Object.assign(Object.assign({}, res.data), { path: res.data.url })
+                    });
+                }
+                catch (e) {
+                    return Promise.resolve({
+                        showListItem: {
+                            error: true,
+                            path: tempFilePath
                         }
-                        if (data.status === 200) {
-                            resolve({
-                                showListItem: {
-                                    error: false,
-                                    path: isHaveBASEURL(data.data.path, BASEURL) ? data.data.path : `${BASEURL}${data.data.path}`,
-                                },
-                                valueListItem: Object.assign(Object.assign({}, data.data), { path: isHaveBASEURL(data.data.path, BASEURL) ? data.data.path : `${BASEURL}${data.data.path}` })
-                            });
-                        }
-                        else {
-                            resolve({
-                                showListItem: {
-                                    error: true,
-                                    path: data.data.path
-                                }
-                            });
-                        }
-                    },
-                    fail: (err) => {
-                        console.log(err);
-                        resolve({
-                            showListItem: {
-                                error: true,
-                                path: tempFilePath
-                            }
-                        });
-                    }
-                });
+                    });
+                }
             });
         },
         handleDownloadData(data) {
@@ -221,14 +219,10 @@ Component({
             });
         },
         tipFc() {
-            const { BASEURL, token, upFileUrl, onlyShow } = this.data;
+            const { BASEURL, onlyShow } = this.data;
             if (!BASEURL)
                 console.error('props中缺少BASEURL！');
             if (!onlyShow) {
-                if (!token)
-                    console.error('props中缺少token！');
-                if (!upFileUrl)
-                    console.error('props中缺少upFileUrl！');
             }
         }
     },

@@ -14,7 +14,7 @@ Component({
         },
         initTabCurrent: {
             type: Number,
-            value: undefined
+            value: 0
         },
         backgroundColor: {
             type: String,

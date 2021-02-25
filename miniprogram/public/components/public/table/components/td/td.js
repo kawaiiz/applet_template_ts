@@ -4,9 +4,7 @@ Component({
         addGlobalClass: true,
     },
     properties: {},
-    data: {
-        IMAGEURL: app.globalData.IMAGEURL,
-    },
+    data: {},
     methods: {},
     lifetimes: {
         attached: function () { },

@@ -10,6 +10,10 @@ export interface OtherStore {
 export type OtherAction = {
   getCaptcha(data: GetCaptchaData): void,
   setCaptchaTime(): void
+  initCaptcha(): void
 }
 
-export interface GetCaptchaData { mobile: string, type?: string }
+export interface GetCaptchaData {
+  mobile: string,
+  type?: string
+}

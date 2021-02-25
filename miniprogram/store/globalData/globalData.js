@@ -9,23 +9,36 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 const { action } = require('mobx-miniprogram');
 import { setNavStyle, } from '../../public/utils/util';
-import { mockData } from '../../public/utils/util';
+import { loginMobile, loginWorkNumber, resetToken, } from './service';
+import { mockData, gotoLogin } from '../../public/utils/util';
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '../../public/utils/config';
 const data = {
+    cMain: "#687CEE",
     loginFlag: 0,
     token: "",
     userInfo: {},
     pageConfig: setNavStyle(),
 };
 export const globalAction = {
+    getGlobalData: action(function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield Promise.all([]);
+            }
+            catch (e) {
+                console.log(e);
+            }
+        });
+    }),
+    initGlobalData: action(function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield Promise.all([this.getGlobalData()]);
+        });
+    }),
     getUserInfo: action(function () {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const res = yield mockData('data', {
-                    id: 1,
-                    nickname: '测试mock',
-                    mobile: '',
-                    avatar: '',
-                });
+                const res = yield mockData('data', {});
                 this.userInfo = res.data;
             }
             catch (e) {
@@ -33,47 +46,80 @@ export const globalAction = {
             }
         });
     }),
-    initGlobalData() {
+    setToken: action(function (token, refresh_token) {
         return __awaiter(this, void 0, void 0, function* () {
+            this.token = token;
+            wx.setStorageSync(ACCESS_TOKEN, token);
+            if (refresh_token || refresh_token === '') {
+                wx.setStorageSync(REFRESH_TOKEN, refresh_token);
+            }
         });
-    },
-    setToken: action(function (token) {
+    }),
+    initApp: action(function () {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                this.token = token;
-                wx.setStorageSync('token', token || '');
-                if (token) {
+                if (this.token) {
                     yield this.getUserInfo();
                     this.loginFlag = 1;
-                    yield this.initGlobalData();
+                    this.initGlobalData();
                 }
                 else {
-                    this.login();
                     this.loginFlag = 2;
                 }
             }
             catch (e) {
                 console.log(e);
                 this.loginFlag = 2;
+                return Promise.reject(e);
             }
         });
     }),
-    login: action(function () {
+    login: action(function (requestData, type) {
         return __awaiter(this, void 0, void 0, function* () {
-            return new Promise((resolve, reject) => {
-                try {
-                    wx.login({
-                        success: (res) => __awaiter(this, void 0, void 0, function* () {
-                            yield this.setToken('this is token');
-                            resolve(undefined);
-                        })
-                    });
+            try {
+                let res = null;
+                if (type === 'mobile') {
+                    res = yield loginMobile(requestData);
                 }
-                catch (e) {
-                    reject(undefined);
+                else if (type === 'workNumber') {
+                    res = yield loginWorkNumber(requestData);
                 }
-            });
+                console.log(res);
+                this.setToken(res.data.access_token, res.data.refresh_token);
+                yield this.initApp();
+                return res;
+            }
+            catch (e) {
+                return Promise.reject(e);
+            }
         });
     }),
+    logout: action(function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield this.setToken('', '');
+                yield this.initApp();
+                this.userInfo = {};
+                gotoLogin();
+            }
+            catch (e) {
+                console.log(e);
+            }
+        });
+    }),
+    resetToken: action(function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const res = yield resetToken();
+                this.setToken(res.data.access_token, res.data.refresh_token);
+            }
+            catch (e) {
+                console.log(e);
+                yield this.setToken('', '');
+                this.initApp();
+                return Promise.reject(e);
+            }
+        });
+    })
 };
 export default Object.assign(Object.assign({}, data), globalAction);

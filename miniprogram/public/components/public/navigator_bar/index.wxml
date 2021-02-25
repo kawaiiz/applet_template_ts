@@ -1,13 +1,20 @@
 <view style="{{bgColor?'background:'+bgColor:''}}" class="{{!contentFull?'fixed':''}}">
   <view class="status-bar" style="height: {{(pageConfig.statusBarHeight / pageConfig.pixelRate) + 'rpx'}}"></view>
   <view class="capsule-line" style="height: {{(pageConfig.capsuleHeight / pageConfig.pixelRate) + 'rpx'}};line-height: {{(pageConfig.capsuleHeight / pageConfig.pixelRate) + 'rpx'}}">
-    <view class="left-box">
-      <slot name="leftBtn"></slot>
-    </view>
-    <view class="content-box">
-      <slot name="center"></slot>
-    </view>
+    <block wx:if="{{longCenter}}">
+      <view class="long-box">
+        <slot></slot>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="left-box">
+        <slot name="leftBtn"></slot>
+      </view>
+      <view class="content-box">
+        <slot name="center"></slot>
+      </view>
+    </block>
     <view class="right-box"></view>
   </view>
 </view>
-<view class="" style="height: {{((pageConfig.statusBarHeight+pageConfig.capsuleHeight) / pageConfig.pixelRate) + 'rpx'}};{{bgColor?'background:'+bgColor:''}}" wx:if="{{!contentFull}}"></view>
+<view class="" style="height: {{((pageConfig.statusBarHeight+pageConfig.capsuleHeight) / pageConfig.pixelRate) + 'rpx'}};{{bgColor?'background:'+bgColor:''}}" wx:if="{{!nobgcontent&&!contentFull}}"></view> 

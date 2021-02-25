@@ -52,7 +52,7 @@ Component<InitData, InitProperty, InitMethod>({
     }, // 指明datalist里item的哪一项可以用作是key
     scrollViewHeight: {
       type: String,
-      value: '400rpx'
+      value: '600rpx'
     }, // 表格数据块高度
     columns: {
       type: Array,
@@ -181,7 +181,7 @@ Component<InitData, InitProperty, InitMethod>({
     },
     // 如果有expand 里面有点击事件 怎触发该事件
     handleClickExpand(e) {
-      this.triggerEvent('clickaction', {
+      this.triggerEvent('clickexpand', {
         value: e.detail.value
       })
     },

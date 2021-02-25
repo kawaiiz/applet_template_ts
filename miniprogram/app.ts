@@ -13,15 +13,17 @@ App<IAppOption>({
   },
   // 检查是否有token 有token就获取用户信息
   async checkLogin() {
-    const token = wx.getStorageSync('token') || '';
-    await store.setToken(token)
+    const token = wx.getStorageSync(config.ACCESS_TOKEN) || '';
+    const refreshToken = wx.getStorageSync(config.REFRESH_TOKEN) || '';
+    await store.setToken(token, refreshToken)
+    await store.initApp()
   },
   globalData: {
     IMAGEURL: config.IMAGEURL,
     BASEURL: config.BASEURL,
     transmit: {
-      title: '终端开发管理系统',
-      path: '/pages/login/startup_page/startup_page',
+      title: '',
+      path: '',
       imageUrl: config.IMAGEURL + 'cover.jpg',
       success: function (res: any) {
         console.log(res)

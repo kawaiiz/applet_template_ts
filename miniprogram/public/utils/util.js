@@ -94,7 +94,6 @@ export const setNavStyle = () => {
         phoneSystem: undefined
     };
     let res = wx.getSystemInfoSync();
-    console.log(res);
     config.phoneSystem = res.platform.toLowerCase();
     config.pixelRate = res.windowWidth / 750;
     config.platform = res.platform;
@@ -109,7 +108,7 @@ export const setNavStyle = () => {
     if (res.windowHeight > 750)
         config.isAllScreen = true;
     config.systemHeight = res.windowHeight;
-    console.log(config);
+    console.log(res, config);
     return config;
 };
 export const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -119,7 +118,7 @@ export function mockData(type, item, title, pageIndex, pageSize) {
             yield delay(1000);
             resolve({
                 data: item,
-                status: 1
+                code: 200
             });
         }));
     }
@@ -135,17 +134,17 @@ export function mockData(type, item, title, pageIndex, pageSize) {
                     list: dataList,
                     pageCount: 2
                 },
-                status: 1
+                code: 200
             });
         }));
     }
 }
 const isErrorPage = () => {
     const currentPage = getNowPage();
-    return currentPage.route.indexOf('error') === -1;
+    return currentPage.route.indexOf('error') !== -1;
 };
 export const gotoError = () => {
-    if (isErrorPage()) {
+    if (!isErrorPage()) {
         wx.navigateTo({
             url: '/pages/error/500/500?t=error'
         });
@@ -153,12 +152,17 @@ export const gotoError = () => {
 };
 const isStartPage = () => {
     const currentPage = getNowPage();
-    return currentPage.route.indexOf('pages/index/index/index') === -1;
+    if (currentPage) {
+        return currentPage.route.indexOf('pages/login/login/login') !== -1;
+    }
+    else {
+        return true;
+    }
 };
 export const gotoLogin = () => {
-    if (isStartPage()) {
+    if (!isStartPage()) {
         wx.reLaunch({
-            url: "/pages/index/index/index"
+            url: "/pages/login/login/login"
         });
     }
 };

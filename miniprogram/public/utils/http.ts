@@ -1,5 +1,5 @@
-import { gotoLogin, gotoError } from './util'
-import { BASEURL } from "./config"
+import { gotoLogin, gotoError, toast, } from './util'
+import { BASEURL, httpConfig, ACCESS_TOKEN, REFRESH_TOKEN } from "./config"
 import http from './api.request'
 import store from '../../store/index/index'
 /*
@@ -11,9 +11,10 @@ import store from '../../store/index/index'
 *
 * */
 export interface IRes<T> {
-  status: number,
-  errorMsg?: string,
-  data: T
+  code: number,
+  msg: string | null,
+  data: T,
+  success: boolean
 }
 
 interface InitOption {
@@ -31,7 +32,10 @@ interface InitOption {
   | 'TRACE'
   | 'CONNECT',
   contentType?: string
+  isLogin?: boolean
+  header?: Record<string, any>
 }
+
 
 interface UploadFileOption {
   url: string,
@@ -48,11 +52,12 @@ interface UploadFileOption {
 interface HttpRequestInterface {
   requestSuccess: (res: any, option: InitOption) => Promise<any>;
   requestFail: (res: any, option: InitOption) => void;
+  requestAbort: (timeout: any) => void
   createOptions(option: InitOption, resolve: any, reject: any): WechatMiniprogram.RequestOption;
   createUpFileOption(option: UploadFileOption, resolve: any, reject: any): WechatMiniprogram.UploadFileOption;
-  request: <T>(option: InitOption) => Promise<IRes<T>>;
+  request: (option: InitOption) => Promise<any>;
   upFile: <T>(option: UploadFileOption) => Promise<IRes<T>>
-  interceptorsRequest: () => Promise<any>
+  interceptorsRequest: (option: InitOption) => Promise<any>
   interceptorsResponent: (option: InitOption | UploadFileOption) => Promise<any>
 }
 
@@ -67,14 +72,14 @@ interface HttpRequestInterface {
 // 为防止同时多个请求进入
 // 是否正在刷新的标记
 let isRefreshing = false;
-// 待请求队列 在请求之前被拦截下来，每一项是被拦截下来的请求
-let requests: Function[] = [];
+// 待请求队列 在请求之前被拦截下来，每一项是被拦截下来的请求 当token更新成功时时 循环 requests/responents 直接执行 ，当token更新失败则需要取消里面的请求
+let requests: ((timeout?: boolean) => void)[] = [];
 // 待请求队列 在请求之后被拦截下来，每一项是被拦截下来的请求
-let responents: Function[] = [];
+let responents: ((timeout?: boolean) => void)[] = [];
 // 请求是否正常
 // let requestFlag = true
 // 请求对列
-let requestList: any[] = []
+let requestList: WechatMiniprogram.RequestTask[] = []
 
 const createFormData = (obj: { [key: string]: any } = {}) => {
   let result = ''
@@ -91,38 +96,15 @@ const createFormData = (obj: { [key: string]: any } = {}) => {
 
 // 获取token 恢复请求
 const getToken = async (): Promise<any> => {
-  return new Promise((resolve, reject) => {
-    console.log('获取token')
-    wx.login({
-      success(res) {
-        const { code } = res
-        const requestData = { code, pid: 0, isTwo: 0, isPublic: 0 }
-        wx.request({
-          url: `${BASEURL}/mini/login/login`,
-          method: "POST",
-          data: createFormData(requestData),
-          header: {
-            'content-type': 'multipart/form-data; boundary=XXX'
-          },
-          async success(res: any) {
-            if (res.statusCode === 200 && res.data.code === 1) {
-              await store.setToken(res.data.data)
-              isRefreshing = false
-              resolve()
-            } else {
-              reject()
-            }
-          },
-          fail(e) {
-            reject(e)
-          }
-        })
-      },
-      fail(e) {
-        reject(e)
-      }
-    })
-  })
+  try {
+    await store.resetToken()
+    isRefreshing = false
+  } catch (e) {
+    console.log(e)
+    toast(e.msg || '登录信息已过期')
+    isRefreshing = false
+    return Promise.reject(e)
+  }
 }
 
 class HttpRequest implements HttpRequestInterface {
@@ -143,56 +125,77 @@ class HttpRequest implements HttpRequestInterface {
       if (typeof data === 'string') {
         data = JSON.parse(data)
       }
-      if (data.status === 200) {
+      if (httpConfig.statusSuccess.indexOf(data[httpConfig.statusField]) !== -1) {
         return Promise.resolve(data)
       } else {
-        // gotoError()
-        return Promise.reject(data)
+        if (data[httpConfig.statusField] === false && data.code === -401) {
+          // 拦截请求
+          // 更新token
+          await store.setToken("")
+          try {
+            return await this.interceptorsResponent(option)
+          } catch (e) {
+            gotoLogin()
+            return Promise.reject(e)
+          }
+        } else if (data.code === 401) {
+          gotoLogin()
+          return Promise.reject(res.data)
+        } else {
+          return Promise.reject(res.data)
+        }
       }
     } else if (res.statusCode === 401) {
-      // 无权限
-      await store.setToken("")
-      gotoLogin()
-      return Promise.reject()
-    } else if (res.statusCode === 403) {
-      // 拒绝访问
-      return Promise.reject(res.data)
-    } else if (res.data.status == 'token过期标识') {
       // 拦截请求
-      // 更新token
-      return this.interceptorsResponent(option)
+      try {
+        return await this.interceptorsResponent(option)
+      } catch (e) {
+        gotoLogin()
+        return Promise.reject(e)
+      }
+    } else if (res.statusCode === 403) {
+      return Promise.reject(res.data)
     } else {
       console.log(res, option)
       gotoError()
       return Promise.reject(res.data)
     }
   }
-
   /**
- * 请求失败
- */
-  requestFail(err: any, option: InitOption | UploadFileOption) {
-    console.log(err)
+    *  操作失败需要清空队列里的所有请求
+    */
+  requestAbort() {
     // requestFlag = false;
     for (let i = requestList.length - 1; i >= 0; i--) {
-      if (requestList[i].abort) {
+      if (requestList[i] && requestList[i].abort) {
         requestList[i].abort();
       }
       requestList.pop()
     }
+    for (let i = requests.length - 1; i >= 0; i--) {
+      requests[i]()
+      requests.pop()
+    }
+    for (let i = responents.length - 1; i >= 0; i--) {
+      responents[i]()
+      responents.pop()
+    }
+  }
+
+  /**
+    * 请求操作失败（可能是手机网络不好 导致报错）
+    */
+  requestFail(err: any, option: InitOption | UploadFileOption) {
     console.log(err, option)
+    this.requestAbort()
     // 判断当前页是否是错误页，如果是就不跳了
     gotoError()
   }
 
   createOptions(option: InitOption, resolve: any, reject: any): WechatMiniprogram.RequestOption {
     //给每次请求配上token
-    let token = ''
-    try {
-      token = store.token || '';
-    } catch (e) {
-      console.log(e)
-    }
+    // let token = store.token || '';
+    let token = wx.getStorageSync(ACCESS_TOKEN) || '';
     if (option.contentType === 'multipart/form-data; boundary=XXX' && option.method === 'POST') {
       option.data = createFormData(option.data)
     }
@@ -209,7 +212,8 @@ class HttpRequest implements HttpRequestInterface {
       header: {
         // 'Content-Type': option.contentType ? option.contentType : 'application/json;charset=UTF-8',
         'Content-Type': option.contentType ? option.contentType : 'application/json;charset=UTF-8',
-        'Authorization': token
+        'Authorization': token,
+        ...(option.header || {})
       },
       method: option.method ? option.method : 'POST',
       success: (res: any) => {
@@ -217,7 +221,7 @@ class HttpRequest implements HttpRequestInterface {
       },
       fail: (err: any) => {
         this.requestFail(err, option)
-        reject()
+        reject(err)
       },
       complete: () => {
         if (option.requestLoading) {
@@ -260,20 +264,26 @@ class HttpRequest implements HttpRequestInterface {
     }
   }
 
-  // 当401时需要拦截 当然 这两个里也可以做其他的拦截
-  async interceptorsRequest(): Promise<void> {
-    if (!isRefreshing) {
+  // 当401时需要拦截后续非登录的请求 当然 这两个里也可以做其他的拦截
+  async interceptorsRequest(option: InitOption | UploadFileOption): Promise<void> {
+    if (!isRefreshing || (option as InitOption).isLogin) {
       return Promise.resolve()
     } else {
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         // 将resolve放进队列，用一个函数形式来保存，等token刷新后直接执行让代码跑下去
-        requests.push(async () => {
+        requests.push(async (timeout?: boolean) => {
+          if (timeout) return reject({
+            code: null,
+            msg: '登录过期',
+            data: null,
+            success: false
+          })
           resolve()
         })
       });
     }
   }
-  // 如果401需要拦截接下来所有的请求
+  // 如果401需要拦截接下来所有的请求 重新请求token 当token请求到则继续之前的请求，如果请求不到则要把之前的请求都给清空
   async interceptorsResponent(option: InitOption | UploadFileOption): Promise<any> {
     try {
       if (!isRefreshing) {
@@ -289,11 +299,18 @@ class HttpRequest implements HttpRequestInterface {
           return http.request(option as InitOption)
         }
       } else {
-        return new Promise(resolve => {
+        return new Promise((resolve, reject) => {
           console.log(option)
-          responents.push(async () => {
+          // 是否是时间过期 过期则不进行请求
+          responents.push(async (timeout?: boolean) => {
             try {
               console.log(option)
+              if (timeout) return reject({
+                code: null,
+                msg: '登录过期',
+                data: null,
+                success: false
+              })
               let res
               if ((option as UploadFileOption).requestType === 'file') {
                 res = await http.upFile(option as UploadFileOption)
@@ -309,7 +326,12 @@ class HttpRequest implements HttpRequestInterface {
         // return http.request(option)
       }
     } catch (e) {
-      return Promise.reject()
+      console.log(e)
+      requests.forEach(cb => cb(true));
+      responents.forEach(cb => cb(true));
+      requests = [];
+      responents = [];
+      return Promise.reject(e)
     }
   }
   // 请求
@@ -324,7 +346,7 @@ class HttpRequest implements HttpRequestInterface {
           title: '请稍等',
         })
       }
-      await this.interceptorsRequest()
+      await this.interceptorsRequest(option)
       // 这里因为必须要跳出这个promise 要把resolve传进去
       let options = this.createOptions(option, resolve, reject)
       const requestTask = wx.request(options);
@@ -348,7 +370,7 @@ class HttpRequest implements HttpRequestInterface {
           title: '请稍等',
         })
       }
-      await this.interceptorsRequest()
+      await this.interceptorsRequest(option)
       // 这里因为必须要跳出这个promise 要把resolve传进去
       let options = this.createUpFileOption(option, resolve, reject)
       const requestTask = wx.uploadFile(options);

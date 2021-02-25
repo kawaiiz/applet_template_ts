@@ -8,18 +8,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const { action } = require('mobx-miniprogram');
-import { delay } from '../../public/utils/util';
+import { delay, mockData } from '../../public/utils/util';
 const data = {
     captchaDisable: false,
     captchaTime: 60,
     defaultCaptchaTime: 60,
 };
 export const otherAction = {
-    getCaptcha: action(function (_data) {
+    getCaptcha: action(function (data) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                yield mockData('data', null);
                 this.captchaDisable = true;
-                return Promise.resolve();
             }
             catch (e) {
                 console.log(e);
@@ -32,10 +32,9 @@ export const otherAction = {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 while (true) {
-                    console.log(this);
-                    const { captchaTime } = this;
+                    const { captchaTime, captchaDisable } = this;
                     yield delay(1000);
-                    if (captchaTime > 0) {
+                    if (captchaTime > 0 && captchaDisable) {
                         this.captchaTime -= 1;
                     }
                     else {
@@ -50,6 +49,10 @@ export const otherAction = {
                 return Promise.reject(e);
             }
         });
+    }),
+    initCaptcha: action(function () {
+        this.captchaTime = this.defaultCaptchaTime;
+        this.captchaDisable = false;
     })
 };
 export default Object.assign(Object.assign({}, data), otherAction);

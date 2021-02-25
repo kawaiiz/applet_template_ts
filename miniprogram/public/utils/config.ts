@@ -1,15 +1,22 @@
-/* 
-* 域名地-址
+/*
+ * 域名地址
  */
-// 测试服务器
-// export const BASEURL: string = 'http://192.168.0.142:8090';
-
-// 姚本如电脑
-export const BASEURL: string = 'http://192.168.0.126.3001';
+export const BASEURL: string = 'http://192.168.0.48';
 
 /*  
-* 图片icon地址
-*/
-export const IMAGEURL: string = 'http://192.168.0.148:3001/applets/qx/market_recruiters/';
-// export const IMAGEURL: string = 'http://192.168.1.241:8099/profile/upload/ycrc/';
+ * 图片icon地址
+ */
+// export const IMAGEURL: string = 'http://192.168.0.148:3001/applets/qx/market_recruiters/';
+export const IMAGEURL: string = 'http://star.tklvyou.cn/Public/qx/';
 
+/**
+ * token在storage里的key
+ */
+
+export const ACCESS_TOKEN: string = 'access_token'
+export const REFRESH_TOKEN: string = 'refresh_token'
+
+export const httpConfig = {
+  statusField: 'success',
+  statusSuccess: [true]
+} 

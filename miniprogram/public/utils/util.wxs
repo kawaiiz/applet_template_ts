@@ -1,0 +1,22 @@
+var mobileEncryption = function (mobile) {
+  if (mobile && mobile.length == 11 && !isNaN(mobile)) {
+    var str = typeof mobile === 'string' ? mobile : mobile.toString()
+    return str.substring(0, 3) + '****' + str.substring(7)
+  } else {
+    return '手机号格式错误'
+  }
+}
+
+function arrToString(arr, key) {
+  return arr.reduce(function (total, item) {
+    if (total) {
+      return total + ',' + item[key]
+    } else {
+      return total + item[key]
+    }
+  }, '')
+}
+module.exports = {
+  mobileEncryption: mobileEncryption,
+  arrToString: arrToString
+}

@@ -8,20 +8,56 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import http from '../../public/utils/api.request';
+import { REFRESH_TOKEN } from '../../public/utils/config';
 export function getUserInfo() {
     return http.request({
-        url: '/api/member/info',
+        url: '/market/v1/getUserCenterInfo',
         method: 'GET',
         data: {},
-        requestLoading: true
+        contentType: "application/x-www-form-urlencoded",
+        requestLoading: true,
+        isLogin: true
     });
 }
-export function login(data) {
+export function loginWorkNumber(data) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield http.request({
-            url: '',
+            url: '/market/v1/marketNumLogin',
             method: 'POST',
             data,
+            isLogin: true
+        });
+    });
+}
+export function loginMobile(data) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield http.request({
+            url: '/market/v1/msgCodeLogin',
+            method: 'POST',
+            data,
+            isLogin: true
+        });
+    });
+}
+export function resetToken() {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield http.request({
+            url: '/market/v1/refreshToken',
+            method: 'POST',
+            data: {},
+            isLogin: true,
+            header: {
+                refresh_token: wx.getStorageSync(REFRESH_TOKEN)
+            }
+        });
+    });
+}
+export function upFile(url) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield http.upFile({
+            url: '/market/v1/upload',
+            filePath: url,
+            requestType: 'file'
         });
     });
 }

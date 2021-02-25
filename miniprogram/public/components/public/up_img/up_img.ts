@@ -3,18 +3,18 @@ const computedBehavior = require('miniprogram-computed')
 import { ShowListItem, ValueListItem } from './data'
 import { IRes } from '../../../utils/http'
 import { gotoLogin, toast, isHaveBASEURL } from '../../../utils/util'
-
+import { upFile } from '../../../../store/globalData/service'
+import { UpFileResponse } from "../../../../store/globalData/data";
 
 type InitData = {
   showList: ShowListItem[],// 用于显示用的数组
   valueList: ValueListItem[],// 用于传给父组件的数组 存的是返回的信息
   disabled: boolean,// 上传时需要禁用上传按钮
+  downloadImageMap: { [key: string]: string }
 }
 
 type InitProperty = {
   BASEURL: WechatMiniprogram.Component.FullProperty<StringConstructor>,
-  token: WechatMiniprogram.Component.FullProperty<StringConstructor>,
-  upFileUrl: WechatMiniprogram.Component.FullProperty<StringConstructor>,
   imageList: WechatMiniprogram.Component.FullProperty<ArrayConstructor>,
   maxLength: WechatMiniprogram.Component.FullProperty<NumberConstructor>,
   onlyShow: WechatMiniprogram.Component.FullProperty<BooleanConstructor>,
@@ -29,7 +29,8 @@ type InitMethod = {
   handleDownloadData(data: { showListItem: ShowListItem, valueListItem?: any }[]): void,
   handleChangeValueList(): void,
   handleChangeDisabled(): void,
-  tipFc(): void
+  tipFc(): void,
+  downloadFile(url: string, index: number): Promise<string>
 }
 
 Component<InitData, InitProperty, InitMethod>({
@@ -45,10 +46,6 @@ Component<InitData, InitProperty, InitMethod>({
       type: String,
       value: ''
     },// 域名  如果返回的url是截取的 需要自己拼接一下
-    upFileUrl: {
-      type: String,
-      value: ''
-    },// 上传图片的地址
     imageList: {
       type: Array,
       value: []
@@ -57,10 +54,6 @@ Component<InitData, InitProperty, InitMethod>({
       type: Number,
       value: 1000000
     },// 最大上传数量
-    token: {
-      type: String,
-      value: ''
-    },// 
     onlyShow: {
       type: Boolean,
       value: false
@@ -73,6 +66,7 @@ Component<InitData, InitProperty, InitMethod>({
     showList: [],// 用于显示用的数组
     valueList: [],// 用于传给父组件的数组
     disabled: false,// 上传时需要禁用上传按钮
+    downloadImageMap: {}
   },
   watch: {
     imageList(this: WechatMiniprogram.Component.Instance<InitData, InitProperty, InitMethod>, imageList: any[]) {
@@ -82,8 +76,7 @@ Component<InitData, InitProperty, InitMethod>({
       imageList.forEach(item => {
         if (typeof item === 'object') {
           newShowList.push({
-            ...item,
-            path: isHaveBASEURL(item.path as string, BASEURL) ? item.path : `${BASEURL}${item.path}`,
+            path: item.url,
             error: false
           })
           newValueList.push(item)
@@ -118,11 +111,40 @@ Component<InitData, InitProperty, InitMethod>({
    * 组件的方法列表
    */
   methods: {
+    downloadFile(url, index) {
+      const { downloadImageMap } = this.data
+      if (downloadImageMap[index]) {
+        return Promise.resolve(downloadImageMap[index])
+      }
+      return new Promise((resolve) => {
+        wx.downloadFile({
+          url: url, //仅为示例，并非真实的资源
+          success: (res) => {
+            this.setData({
+              [`downloadImageMap[${index}]`]: res.tempFilePath
+            })
+            resolve(res.tempFilePath)
+          },
+          fail: () => {
+            this.setData({
+              [`downloadImageMap[${index}]`]: url
+            })
+            resolve(url)
+          }
+        })
+      })
+    },
     // 点击查看大图
-    handleClickSeeImage(e) {
+    async handleClickSeeImage(e) {
       const { showList } = this.data
       const { index } = e.currentTarget.dataset
-      const arr = showList.map(item => item.path)
+      const urlArr = showList.map(item => typeof item.path === 'string' ? item.path : item.path.url)
+      const systemInfo = wx.getSystemInfoSync()
+      wx.showLoading({
+        title: '请等待'
+      })
+      const arr = systemInfo.platform === 'android' ? await Promise.all(urlArr.map((item, index) => this.downloadFile(item, index))) : urlArr
+      wx.hideLoading()
       wx.previewImage({
         current: arr[index],
         urls: arr
@@ -181,59 +203,28 @@ Component<InitData, InitProperty, InitMethod>({
       }
     },
     // 单个上传主体
-    upImage(tempFilePath) {
-      const { token, upFileUrl, BASEURL } = this.data
-      return new Promise((resolve) => {
-        wx.uploadFile({
-          url: upFileUrl,
-          filePath: tempFilePath,
-          name: 'file',
-          header: {
-            Authorization: token,
+    async upImage(tempFilePath) {
+      try {
+        const res = await upFile(tempFilePath)
+        console.log(res)
+        return Promise.resolve({
+          showListItem: {
+            error: false,
+            path: res.data.url,
           },
-          formData: {
-            token
-          },
-          success: (res) => {
-            let data: IRes<any> = JSON.parse(res.data)
-            if (res.statusCode === 401) {
-              toast({
-                title: data.errorMsg || '登录失效，请重新登录',
-                cb: gotoLogin
-              })
-              return
-            }
-            if (data.status === 200) {
-              resolve({
-                showListItem: {
-                  error: false,
-                  path: isHaveBASEURL(data.data.path as string, BASEURL) ? data.data.path : `${BASEURL}${data.data.path}`,
-                },
-                valueListItem: {
-                  ...data.data,
-                  path: isHaveBASEURL(data.data.path as string, BASEURL) ? data.data.path : `${BASEURL}${data.data.path}`,
-                }
-              })
-            } else {
-              resolve({
-                showListItem: {
-                  error: true,
-                  path: data.data.path
-                }
-              })
-            }
-          },
-          fail: (err) => {
-            console.log(err)
-            resolve({
-              showListItem: {
-                error: true,
-                path: tempFilePath
-              }
-            })
+          valueListItem: {
+            ...res.data,
+            path: res.data.url,
           }
         })
-      })
+      } catch (e) {
+        return Promise.resolve({
+          showListItem: {
+            error: true,
+            path: tempFilePath
+          }
+        })
+      }
     },
     // 处理上传后的数据
     handleDownloadData(data) {
@@ -268,11 +259,10 @@ Component<InitData, InitProperty, InitMethod>({
       })
     },
     tipFc() {
-      const { BASEURL, token, upFileUrl, onlyShow } = this.data
+      const { BASEURL, onlyShow } = this.data
       if (!BASEURL) console.error('props中缺少BASEURL！')
       if (!onlyShow) {
-        if (!token) console.error('props中缺少token！')
-        if (!upFileUrl) console.error('props中缺少upFileUrl！')
+
       }
     }
   },

@@ -1,6 +1,8 @@
 // public/components/public/navigator_btn/index.js
-type InitData = {}
-
+type InitData = {
+  pageLength: number // 页面长度
+}
+// import data from '../../../../app.json'
 type InitProperty = {
   type: WechatMiniprogram.Component.FullProperty<StringConstructor>,
   homepage: WechatMiniprogram.Component.FullProperty<StringConstructor>,
@@ -10,7 +12,6 @@ type InitProperty = {
 }
 
 type InitMethod = {
-  tipFc(): void
 }
 
 Component<InitData, InitProperty, InitMethod>({
@@ -24,7 +25,7 @@ Component<InitData, InitProperty, InitMethod>({
     },
     homepage: {
       type: String,
-      value: ""
+      value: "/pages/index/index/index"
     },
     color: {
       type: String,
@@ -43,26 +44,23 @@ Component<InitData, InitProperty, InitMethod>({
    * 组件的初始数据
    */
   data: {
-
+    pageLength: 0 // 页面长度
   },
 
   /**
    * 组件的方法列表
    */
   methods: {
-    tipFc() {
-      const { type, homepage } = this.data
-      if (type === 'all' && !homepage) {
-        console.error('homepage:按钮全部出现下，homepage字段必填。')
-      }
-    }
+
   },
 
   lifetimes: {
     // 生命周期函数，可以为函数，或一个在methods段中定义的方法名
     attached: function () { },
     ready: function () {
-      this.tipFc()
+      this.setData({
+        pageLength: getCurrentPages().length
+      })
     },
     moved: function () { },
     detached: function () { },

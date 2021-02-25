@@ -6,7 +6,7 @@ Component({
         },
         homepage: {
             type: String,
-            value: ""
+            value: "/pages/index/index/index"
         },
         color: {
             type: String,
@@ -21,19 +21,16 @@ Component({
             value: true
         }
     },
-    data: {},
-    methods: {
-        tipFc() {
-            const { type, homepage } = this.data;
-            if (type === 'all' && !homepage) {
-                console.error('homepage:按钮全部出现下，homepage字段必填。');
-            }
-        }
+    data: {
+        pageLength: 0
     },
+    methods: {},
     lifetimes: {
         attached: function () { },
         ready: function () {
-            this.tipFc();
+            this.setData({
+                pageLength: getCurrentPages().length
+            });
         },
         moved: function () { },
         detached: function () { },

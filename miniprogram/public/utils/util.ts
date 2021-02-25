@@ -123,7 +123,6 @@ export const setNavStyle = () => {
     phoneSystem: undefined           //系统版本
   }
   let res = wx.getSystemInfoSync();
-  console.log(res)
   // 设置系统
   config.phoneSystem = res.platform.toLowerCase() as "ios" | "android";
   config.pixelRate = res.windowWidth / 750;
@@ -138,7 +137,7 @@ export const setNavStyle = () => {
   }
   if (res.windowHeight > 750) config.isAllScreen = true;
   config.systemHeight = res.windowHeight;
-  console.log(config)
+  console.log(res, config)
   return config
 }
 
@@ -163,7 +162,7 @@ export function mockData<T>(type: 'data' | 'list', item: T, title?: string, page
       await delay(1000)
       resolve({
         data: item,
-        status: 1
+        code: 200
       } as IRes<T>)
     })
   } else {
@@ -182,7 +181,7 @@ export function mockData<T>(type: 'data' | 'list', item: T, title?: string, page
           list: dataList,
           pageCount: 2
         },
-        status: 1
+        code: 200
       } as IRes<{
         list: T[];
         pageCount: number;
@@ -191,49 +190,53 @@ export function mockData<T>(type: 'data' | 'list', item: T, title?: string, page
   }
 }
 
-/* 
+/*
  *是否已经在错误页
  */
 const isErrorPage = () => {
   // 判断当前页是否是错误页，如果是就不跳了
   const currentPage = getNowPage()
-  return currentPage.route.indexOf('error') === -1
+  return currentPage.route.indexOf('error') !== -1
 }
 
-/* 
+/*
  * 前往错误页 
  */
 export const gotoError = () => {
   // 判断当前页是否是错误页，如果是就不跳了
-  if (isErrorPage()) {
+  if (!isErrorPage()) {
     wx.navigateTo({
       url: '/pages/error/500/500?t=error'
     })
   }
 }
 
-/* 
+/*
  * 是否已经在登录页
  */
 const isStartPage = () => {
-  // 判断当前页是否是错误页，如果是就不跳了
+  // 判断当前页是否是登录页，如果是就不跳了
   const currentPage = getNowPage()
-  return currentPage.route.indexOf('pages/index/index/index') === -1
+  if (currentPage) {
+    return currentPage.route.indexOf('pages/login/login/login') !== -1
+  } else {
+    return true
+  }
 }
 
-/* 
+/*
  * 前往登录页
  */
 export const gotoLogin = () => {
   // 判断当前页是否是启动页页，如果是就不跳了
-  if (isStartPage()) {
+  if (!isStartPage()) {
     wx.reLaunch({
-      url: "/pages/index/index/index"
+      url: "/pages/login/login/login"
     })
   }
 }
 
-/* 
+/*
  * console 带上路径
  */
 export const myConsole = (data: any, _this: any) => {
@@ -242,7 +245,7 @@ export const myConsole = (data: any, _this: any) => {
 }
 
 
-/* 
+/*
  * 用于判断图片返回的路径是否带有域名
  */
 export const isHaveBASEURL = (string: string, BASEURL: string) => {

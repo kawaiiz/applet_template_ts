@@ -1,77 +1,85 @@
-var operationNumber = function (arg1: number, arg2: number, operator: string): number {
-  var oper = ['+', '-', '*', '/'];
-  // 不合法的运算
-  if (isNaN(arg1) || isNaN(arg2) || oper.indexOf(operator) < 0) {
-    return NaN;
-  }
-  // 除以0
-  if (operator === '/' && Number(arg2) === 0) {
-    return Infinity;
-  }
-  // 和0相乘
-  if (operator === '*' && Number(arg2) === 0) {
-    return 0;
-  }
-  // 相等两个数字相减
-  if ((arg1 === arg2 || Number(arg1) === Number(arg2)) && operator === '-') {
-    return 0;
-  }
-  var r1, r2, max, _r1, _r2;
-  try { r1 = arg1.toString().split(".")[1].length } catch (e) { r1 = 0 }
-  try { r2 = arg2.toString().split(".")[1].length } catch (e) { r2 = 0 } 
-  max = Math.max(r1, r2)
-  _r1 = max - r1;
-  _r2 = max - r2;
-  let newArg1 = String(arg1)
-  let newArg2 = String(arg2)
-  if (_r1 !== 0) {
-    newArg1 = arg1 + '0'.repeat(_r1)
-  }
-  if (_r2 !== 0) {
-    newArg2 = arg2 + '0'.repeat(_r2)
-  }
-  arg1 = Number(newArg1.replace('.', ''))
-  arg2 = Number(newArg2.replace('.', ''))
-  var r3 = operator === '*' ? (max * 2) : (operator === '/' ? 0 : max);
-  var newNum = 0
-  if (operator === '+') {
-    newNum = arg1 + arg2
-  } else if (operator === '-') {
-    newNum = arg1 - arg2
-  } else if (operator === '*') {
-    newNum = arg1 * arg2
-  } else if (operator === '/') {
-    newNum = arg1 / arg2
-  }
-  if (r3 !== 0) {
-    var nStr = newNum.toString();
-    nStr = nStr.replace(/^-/, '');
-    if (nStr.length < r3 + 1) {
-      nStr = '0'.repeat(r3 + 1 - nStr.length) + nStr;
-    }
-    nStr = nStr.replace(new RegExp('(\\\d{' + r3 + '})$'), '.$1');
-    if (newNum < 0) {
-      nStr = '-' + nStr;
-    }
-    newNum = Number(nStr);
-  }
-  return newNum;
-}
 //加法 
 export function toolAdd(arg1: number, arg2: number): number {
-  return operationNumber(arg1, arg2, '+');
+  var r1, r2, m, c;
+  try {
+    r1 = arg1.toString().split(".")[1].length;
+  }
+  catch (e) {
+    r1 = 0;
+  }
+  try {
+    r2 = arg2.toString().split(".")[1].length;
+  }
+  catch (e) {
+    r2 = 0;
+  }
+  c = Math.abs(r1 - r2);
+  m = Math.pow(10, Math.max(r1, r2));
+  if (c > 0) {
+    var cm = Math.pow(10, c);
+    if (r1 > r2) {
+      arg1 = Number(arg1.toString().replace(".", ""));
+      arg2 = Number(arg2.toString().replace(".", "")) * cm;
+    } else {
+      arg1 = Number(arg1.toString().replace(".", "")) * cm;
+      arg2 = Number(arg2.toString().replace(".", ""));
+    }
+  } else {
+    arg1 = Number(arg1.toString().replace(".", ""));
+    arg2 = Number(arg2.toString().replace(".", ""));
+  }
+  return (arg1 + arg2) / m;
 }
 //减法 
 export function toolSub(arg1: number, arg2: number): number {
-  return operationNumber(arg1, arg2, '-');
+  var r1, r2, m, n;
+  try {
+    r1 = arg1.toString().split(".")[1].length;
+  }
+  catch (e) {
+    r1 = 0;
+  }
+  try {
+    r2 = arg2.toString().split(".")[1].length;
+  }
+  catch (e) {
+    r2 = 0;
+  }
+  m = Math.pow(10, Math.max(r1, r2)); //last modify by deeka //动态控制精度长度
+  n = (r1 >= r2) ? r1 : r2;
+  return (arg1 * m - arg2 * m) / m;
 }
 //乘法 
 export function toolMul(arg1: number, arg2: number): number {
-  return operationNumber(arg1, arg2, '*');
+  var m = 0, s1 = arg1.toString(), s2 = arg2.toString();
+  try {
+    m += s1.split(".")[1].length;
+  }
+  catch (e) {
+  }
+  try {
+    m += s2.split(".")[1].length;
+  }
+  catch (e) {
+  }
+  return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
 }
 // 除法
 export function toolDiv(arg1: number, arg2: number): number {
-  return operationNumber(arg1, arg2, '/');
+  var t1 = 0, t2 = 0, r1, r2;
+  try {
+    t1 = arg1.toString().split(".")[1].length;
+  }
+  catch (e) {
+  }
+  try {
+    t2 = arg2.toString().split(".")[1].length;
+  }
+  catch (e) {
+  }
+  r1 = Number(arg1.toString().replace(".", ""));
+  r2 = Number(arg2.toString().replace(".", ""));
+  return (r1 / r2) * Math.pow(10, t2 - t1);
 }
 
 // 将科学记数法用数字显示
@@ -200,10 +208,10 @@ export interface GetDateInterface {
 export function getDate(data: Date | string | number, startType?: "yyyy-mm-dd" | "yyyy-mm-dd hh:mm:ss" | "yyyymmddhh hhmm" | "hh:mm" | "yyyy年mm月dd日"): GetDateInterface {
   // 传 时间或时间戳
   let d: Date
-  if (typeof data === "object") {
+  if (typeof data === "object" && data !== null) {
     d = data
   } else if (typeof data === "string") {
-    d = new Date(data);
+    d = new Date(data.indexOf('Z') !== -1 ? data.replace(/\//g, '-') : data.replace(/-/g, '/').replace(/T/, ' '));
   } else if (typeof data === "number") {
     if (!isMillisecond(data)) {
       d = new Date(data * 1000);
@@ -211,8 +219,10 @@ export function getDate(data: Date | string | number, startType?: "yyyy-mm-dd" |
       d = new Date(data);
     }
   } else {
-    d = new Date(data);
+    console.log('data', data)
+    d = data ? new Date(data) : new Date();
   }
+  console.log('d', d)
   let year = d.getFullYear();
   let month = getHandledValue(d.getMonth() + 1);
   let date = getHandledValue(d.getDate());

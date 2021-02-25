@@ -1,6 +1,5 @@
 
 .list{
-  margin:0 30rpx;
   position: relative;
   background-color: #fff;
   overflow: hidden;
@@ -25,12 +24,13 @@
     }
   }
   .scroll-view{
-    overflow: hidden;
+    overflow: hidden; 
   }
 }
 
 // 表格数据
 .tr{
+  display: flex;
   border-bottom: 2rpx solid #DDDDDD;
   .th{
     padding: 35rpx 10rpx;
