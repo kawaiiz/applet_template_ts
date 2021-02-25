@@ -1,6 +1,6 @@
 # 小程序模板
 ---
-该项目是公司内部的小程序模板  
+该项目是小程序模板  
 使用了原生小程序、typescript、scss  
 采用了官方封装的store、comptued、watch插件
 ├─page_template
