@@ -6,8 +6,8 @@ export const BASEURL: string = 'http://192.168.0.48';
 /*  
  * 图片icon地址
  */
-// export const IMAGEURL: string = 'http://192.168.0.148:3001/applets/qx/market_recruiters/';
-export const IMAGEURL: string = 'http://star.tklvyou.cn/Public/qx/';
+// export const IMAGEURL: string = '';
+export const IMAGEURL: string = '';
 
 /**
  * token在storage里的key
